@@ -1,0 +1,393 @@
+import json
+
+# Section 4: Model Deployment — 50 Exam-Standard Questions
+# Mapped to official Databricks ML Associate Exam Guide (Mar 2025)
+
+questions = [
+# ============================================================
+# SUB-TOPIC 1: Identify the differences and advantages of
+# model serving approaches: batch, realtime, and streaming
+# Questions 1–10
+# ============================================================
+{"id":1,"subtopic":"Sub-topic 1: Identify the differences and advantages of model serving approaches: batch, realtime, and streaming",
+ "text":"A retail company needs to generate product recommendations for all 5 million customers every night to populate their email campaign the next morning. Which inference approach is most appropriate?",
+ "options":["A. Deploy a real-time serving endpoint and query it once per customer via a scheduled loop","B. Use mlflow.pyfunc.spark_udf() in a scheduled Databricks job for distributed batch inference","C. Configure a Structured Streaming pipeline that reads from a Kafka topic of customer events","D. Deploy the model to a GPU endpoint with scale-to-zero disabled and send bulk POST requests"],"answer":1,
+ "explanation":"B. Batch inference via spark_udf() in a scheduled job is ideal for large-scale, non-interactive workloads like nightly campaigns. It leverages Spark parallelism to process millions of rows cost-effectively with no always-on infrastructure. Real-time endpoints (A/D) are designed for per-request latency not bulk scoring, and streaming (C) requires a continuous data source, not a scheduled run."},
+{"id":2,"subtopic":"",
+ "text":"A fintech application must approve or deny loan applications within 200 milliseconds of submission. The application serves one customer at a time. Which deployment approach should be used?",
+ "options":["A. A scheduled Spark batch job that processes pending applications every five minutes","B. A Structured Streaming pipeline reading from a Kafka topic of loan submissions","C. A Databricks Model Serving endpoint queried via REST API per loan submission","D. A pandas-based notebook triggered by a webhook that calls model.predict() on each row"],"answer":2,
+ "explanation":"C. Real-time inference via a Model Serving endpoint provides millisecond-level latency per request, meeting the 200 ms requirement. Batch jobs (A) introduce minutes of delay, streaming (B) has seconds-level latency, and notebook-based webhooks (D) are not designed for sub-second per-request serving."},
+{"id":3,"subtopic":"",
+ "text":"An IoT platform receives sensor readings continuously from 50,000 devices and must write anomaly scores to a Delta table for downstream real-time dashboards. Which inference approach is best?",
+ "options":["A. A real-time serving endpoint queried individually by each IoT device over HTTPS","B. A nightly batch job that processes the previous day's accumulated sensor readings","C. A Structured Streaming pipeline applying the model UDF to data as it arrives continuously","D. A manual inference notebook triggered by an analyst when anomalies are suspected"],"answer":2,
+ "explanation":"C. Streaming inference is purpose-built for continuous data arrival. It applies the model as data flows in, writing scored results to Delta with seconds of latency. Querying an endpoint per device (A) is impractical at 50K devices, nightly batch (B) is too slow for real-time dashboards, and manual triggering (D) defeats automation."},
+{"id":4,"subtopic":"",
+ "text":"Which of the following is a primary advantage of batch inference over real-time serving?",
+ "options":["A. Batch inference provides lower latency for individual prediction requests","B. Batch inference requires no always-on infrastructure, significantly reducing operational costs","C. Batch inference automatically routes traffic between multiple model versions","D. Batch inference supports interactive user-facing applications with sub-second responses"],"answer":1,
+ "explanation":"B. Batch inference runs as a scheduled job—once it finishes, no compute is active. This makes it the cheapest approach since there is no always-on endpoint cost. Real-time serving has lower per-request latency (A is wrong), traffic routing is a serving endpoint feature (C is wrong), and interactive apps need real-time serving (D is wrong)."},
+{"id":5,"subtopic":"",
+ "text":"A data scientist is evaluating model deployment options. Which statement correctly compares the three inference approaches in Databricks?",
+ "options":["A. Streaming inference provides the lowest latency of all three approaches at millisecond scale","B. Real-time inference requires a managed serving endpoint while batch and streaming do not","C. Batch inference can process continuously arriving data without any scheduling requirement","D. Streaming inference is simpler to implement than batch inference due to fewer components"],"answer":1,
+ "explanation":"B. Real-time inference requires a dedicated serving endpoint for REST API access. Batch uses spark_udf() or load_model() directly in a job, and streaming applies the UDF on a streaming DataFrame—neither needs an endpoint. Streaming has seconds-level latency not milliseconds (A), batch processes stored data on a schedule (C), and streaming is more complex due to checkpointing (D)."},
+{"id":6,"subtopic":"",
+ "text":"A healthcare company processes patient lab results that arrive every few seconds from hospital systems and needs risk scores available within 10 seconds for clinical alerts. Which approach fits?",
+ "options":["A. A nightly batch job that scores all lab results from the previous 24 hours at once","B. A real-time serving endpoint that each hospital system queries via REST per lab result","C. A Structured Streaming pipeline with a model UDF that scores each micro-batch of results","D. A manual notebook run by a clinician whenever they need to check a patient's risk score"],"answer":2,
+ "explanation":"C. Streaming inference processes data in micro-batches every few seconds, meeting the 10-second requirement. Batch (A) is too slow (hours), real-time (B) could work per-request but the scenario describes continuous arrival best suited to streaming, and manual notebooks (D) are not automated or timely."},
+{"id":7,"subtopic":"",
+ "text":"Which cost model correctly describes each inference approach?",
+ "options":["A. Batch: pay per job run | Real-time: pay for always-on endpoint | Streaming: pay for streaming cluster","B. Batch: pay for always-on endpoint | Real-time: pay per request only | Streaming: free with DLT","C. Batch: pay per request | Real-time: pay per job run | Streaming: pay for always-on endpoint","D. Batch: free on serverless | Real-time: pay per job run | Streaming: pay per micro-batch only"],"answer":0,
+ "explanation":"A. Batch costs are incurred only when the job runs (no idle cost). Real-time endpoints have always-on compute costs (even with scale-to-zero, there is a base cost when active). Streaming requires a continuously running cluster or DLT pipeline compute. Options B, C, and D misattribute cost models."},
+{"id":8,"subtopic":"",
+ "text":"A team needs predictions for a mobile app feature where users tap a button and expect results instantly. The model scores one user profile at a time. Which approach is correct?",
+ "options":["A. Schedule a Spark batch job to pre-compute predictions for all users every hour","B. Deploy the model to a Databricks Model Serving endpoint and query it per user tap","C. Use Structured Streaming to continuously score all user profiles as they change in Delta","D. Export the model to ONNX and embed it directly in the mobile application binary"],"answer":1,
+ "explanation":"B. Interactive, per-request predictions with instant response require a real-time serving endpoint. Pre-computing (A) may produce stale results and can't handle new users, streaming (C) doesn't respond to individual taps, and embedding in mobile (D) is outside Databricks deployment patterns and loses centralized model management."},
+{"id":9,"subtopic":"",
+ "text":"A streaming inference pipeline using Spark Structured Streaming has been running for several hours. A new version of the model is logged to MLflow. What happens to the running pipeline?",
+ "options":["A. The pipeline automatically picks up the new model version without any restart","B. The pipeline continues using the old model version until it is restarted or reconfigured","C. The pipeline crashes with a ModelVersionMismatchException and must be redeployed","D. The pipeline pauses, reloads the model from the registry, then resumes from the checkpoint"],"answer":1,
+ "explanation":"B. A running Structured Streaming pipeline loads the model UDF once at start. It does not auto-detect new model versions in the registry. The pipeline must be restarted (or use logic to reload) to pick up changes. It does not crash (C) or auto-pause (D) when a new version appears."},
+{"id":10,"subtopic":"",
+ "text":"Which statement about data freshness across inference approaches is correct?",
+ "options":["A. Batch predictions are always current because they are regenerated on every cluster restart","B. Streaming predictions are near real-time but may lag by seconds due to micro-batch processing","C. Real-time predictions are stale because the endpoint caches results for all previous requests","D. Streaming predictions are identical in freshness to real-time serving endpoint predictions"],"answer":1,
+ "explanation":"B. Streaming processes data in micro-batches (every few seconds), so predictions lag slightly behind data arrival. Batch predictions become stale between job runs (A is wrong), real-time predictions are computed fresh per request with no caching (C is wrong), and streaming has seconds of lag vs. milliseconds for real-time (D is wrong)."},
+
+
+# ============================================================
+# SUB-TOPIC 2: Deploy a custom model to a model endpoint
+# Questions 11–19
+# ============================================================
+{"id":11,"subtopic":"Sub-topic 2: Deploy a custom model to a model endpoint",
+ "text":"A machine learning engineer needs to deploy a model that applies custom text preprocessing before generating predictions. Which approach bundles the preprocessing with the model as a single deployable artifact?",
+ "options":["A. Log the scikit-learn model with mlflow.sklearn.log_model() and document preprocessing steps in a README","B. Create a class extending mlflow.pyfunc.PythonModel with load_context() and predict() methods that include preprocessing","C. Deploy the preprocessing pipeline as a separate upstream serving endpoint and chain the two endpoints together","D. Store the preprocessing code in a shared notebook and instruct endpoint consumers to call it before querying"],"answer":1,
+ "explanation":"B. A custom PyFunc model (mlflow.pyfunc.PythonModel) bundles preprocessing in load_context() and prediction in predict(), creating a single artifact deployable to an endpoint. Direct sklearn logging (A) excludes custom logic, chaining endpoints (C) adds latency and complexity, and notebooks (D) cannot serve real-time requests."},
+{"id":12,"subtopic":"",
+ "text":"When logging a model intended for deployment to a Databricks serving endpoint, which artifact is REQUIRED for the endpoint to validate incoming request payloads?",
+ "options":["A. A confusion matrix visualization logged as an artifact via mlflow.log_artifact()","B. The full training dataset stored as a parquet file alongside the model in the run","C. A model signature created with infer_signature() specifying input and output schemas","D. A pip requirements.txt listing all Python packages used during training"],"answer":2,
+ "explanation":"C. The model signature (created via infer_signature()) defines expected input column names/types and output schema. Model Serving uses it to validate payloads and auto-generate API docs. Confusion matrices (A) and training data (B) are optional logged artifacts, and pip requirements (D) are part of the conda environment, not request validation."},
+{"id":13,"subtopic":"",
+ "text":"Which code correctly infers a model signature and logs it with the model in MLflow?",
+ "options":["A. mlflow.log_param('input_schema', X_train.dtypes.to_dict())","B. signature = infer_signature(X_train, model.predict(X_train)); mlflow.sklearn.log_model(model, 'model', signature=signature)","C. mlflow.set_tag('model_signature', json.dumps(X_train.columns.tolist()))","D. mlflow.log_artifact(pd.io.json.build_table_schema(X_train), 'signature.json')"],"answer":1,
+ "explanation":"B. infer_signature(input_data, predictions) creates a proper ModelSignature object capturing column names, types, and output format. Passing it to log_model() persists it with the model. Options A and C log metadata as params/tags (not signatures), and D logs an artifact file that MLflow doesn't interpret as a signature."},
+{"id":14,"subtopic":"",
+ "text":"In a custom PyFunc model class, what is the purpose of the load_context(self, context) method?",
+ "options":["A. It generates predictions for each incoming request and returns the scored output","B. It loads serialized artifacts and initializes stateful resources once when the model is first loaded into memory","C. It defines and stores the model's hyperparameters as MLflow parameters for experiment tracking","D. It registers the model in the Unity Catalog model registry and assigns a version number"],"answer":1,
+ "explanation":"B. load_context() is invoked once when the model is loaded (e.g., at endpoint startup). It receives a context object containing paths to artifacts. Use it to deserialize preprocessors, load lookup tables, or initialize connections. predict() generates predictions (A), hyperparameters are logged via mlflow.log_param (C), and registration is a separate API call (D)."},
+{"id":15,"subtopic":"",
+ "text":"When creating a serving endpoint via the Databricks SDK, setting scale_to_zero_enabled=True on a ServedEntityInput means:",
+ "options":["A. The endpoint will never autoscale beyond a single compute instance regardless of traffic volume","B. The endpoint releases all compute during idle periods, eliminating cost but introducing cold-start latency on the next request","C. The registered model artifact is automatically deleted from Unity Catalog after a period of inactivity","D. The endpoint returns HTTP 503 Service Unavailable for all requests received during low-traffic periods"],"answer":1,
+ "explanation":"B. Scale-to-zero means the endpoint deallocates compute when idle (zero cost), but the first request after inactivity triggers a cold start (provisioning + model load). The model artifact remains in UC (C is wrong), requests are queued during scale-up not rejected (D is wrong), and autoscaling still applies when active (A is wrong)."},
+{"id":16,"subtopic":"",
+ "text":"A data scientist logs a model with mlflow.pyfunc.log_model() and specifies an artifacts dictionary containing a path to a custom tokenizer file. Where does this file become accessible during serving?",
+ "options":["A. In the predict() method via self.tokenizer after importing it at the module level","B. In the load_context() method via context.artifacts['tokenizer_key'] which provides the local file path","C. In the serving endpoint's environment variables under MLFLOW_ARTIFACT_TOKENIZER","D. In the Unity Catalog volume where all model artifacts are automatically copied during registration"],"answer":1,
+ "explanation":"B. Artifacts specified in the artifacts dict during log_model() are downloaded to local paths accessible via context.artifacts['key'] inside load_context(). This is the standard pattern for loading custom files (tokenizers, configs, lookup tables). They are not module-level imports (A), environment variables (C), or UC volumes (D)."},
+{"id":17,"subtopic":"",
+ "text":"What is the correct sequence of steps to deploy a custom PyFunc model to a Databricks serving endpoint?",
+ "options":["A. Create endpoint → Log PyFunc model to MLflow → Register model in Unity Catalog → Assign alias","B. Log PyFunc model with signature to MLflow → Register in Unity Catalog → Create serving endpoint pointing to the registered model","C. Register an empty model in Unity Catalog → Log the PyFunc class code as an artifact → Create endpoint","D. Create serving endpoint → Upload model binary directly to the endpoint → Configure scaling settings"],"answer":1,
+ "explanation":"B. The correct flow is: (1) Log the model to MLflow with signature and artifacts, (2) Register in Unity Catalog (or use registered_model_name during logging), (3) Create a serving endpoint referencing the UC model path and version. You cannot create an endpoint before a model exists (A/D), and you cannot register an empty model (C)."},
+{"id":18,"subtopic":"",
+ "text":"A serving endpoint is configured with workload_size='Small'. What does this parameter control?",
+ "options":["A. The maximum number of model versions that can be served simultaneously on the endpoint","B. The compute resources (CPU, memory) allocated to the endpoint for handling inference requests","C. The maximum size of the model artifact in megabytes that the endpoint can load","D. The maximum number of features allowed in each prediction request payload"],"answer":1,
+ "explanation":"B. workload_size (Small/Medium/Large) determines the compute resources allocated to the served entity. Larger sizes provide more CPU and memory for handling concurrent requests or larger models. It does not limit model versions (A), artifact size (C), or feature count (D)."},
+{"id":19,"subtopic":"",
+ "text":"An ML engineer wants to deploy a model that uses a custom Python package not included in the default serving environment. How should they handle this dependency?",
+ "options":["A. Install the package on the training cluster and assume the serving endpoint inherits the cluster's environment","B. Specify the package in the conda_env or pip_requirements parameter when calling mlflow.pyfunc.log_model()","C. Upload the package wheel file to a Unity Catalog volume and reference it in the endpoint configuration","D. Include an import statement in the predict() method and the endpoint will auto-install missing packages"],"answer":1,
+ "explanation":"B. When logging a PyFunc model, specify custom dependencies via conda_env or pip_requirements. MLflow bundles these with the model artifact, and the serving environment installs them during model loading. Serving endpoints do not inherit cluster envs (A), cannot reference volumes for deps (C), and do not auto-install imports (D)."},
+
+
+# ============================================================
+# SUB-TOPIC 3: Use pandas to perform batch inference
+# Questions 20–28
+# ============================================================
+{"id":20,"subtopic":"Sub-topic 3: Use pandas to perform batch inference",
+ "text":"A data scientist needs to score a 100-million-row Spark DataFrame stored in Delta. Which batch inference approach is most appropriate for this scale?",
+ "options":["A. Call spark_df.toPandas() to collect all rows to the driver, then invoke model.predict() on the pandas DataFrame","B. Use mlflow.pyfunc.spark_udf(spark, model_uri) to create a UDF and apply it via df.withColumn() for distributed scoring","C. Query a real-time serving endpoint row-by-row using a Python loop over the collected DataFrame","D. Export the DataFrame to a CSV file on DBFS and run a local Python script that loads and scores it"],"answer":1,
+ "explanation":"B. mlflow.pyfunc.spark_udf() creates a Spark UDF that distributes model inference across all cluster workers. For 100M rows, toPandas() (A) causes OOM on the driver, per-row endpoint calls (C) are extremely slow, and local CSV processing (D) doesn't scale beyond single-node memory."},
+{"id":21,"subtopic":"",
+ "text":"Which code correctly loads an MLflow model as a Spark UDF and applies it for batch inference on a DataFrame?",
+ "options":["A. predictions_df = mlflow.pyfunc.load_model(model_uri).predict(spark_df)","B. model_udf = mlflow.pyfunc.spark_udf(spark, model_uri); result_df = df.withColumn('prediction', model_udf(*feature_cols))","C. result_df = df.applyInPandas(mlflow.pyfunc.load_model(model_uri).predict, schema='prediction double')","D. result_df = spark.sql(f\"SELECT mlflow_predict('{model_uri}', *) FROM scoring_table\")"],"answer":1,
+ "explanation":"B. mlflow.pyfunc.spark_udf(spark, model_uri) creates a column-level UDF. You apply it with withColumn(), passing feature column references as arguments. load_model().predict() (A) expects pandas not Spark, applyInPandas (C) requires grouped DataFrames, and mlflow_predict (D) is not a built-in SQL function."},
+{"id":22,"subtopic":"",
+ "text":"When is it appropriate to use pandas-based single-node inference (mlflow.pyfunc.load_model + predict) instead of mlflow.pyfunc.spark_udf()?",
+ "options":["A. When the scoring dataset has billions of rows and requires distributed processing across workers","B. When the scoring dataset is small enough to fit entirely in memory on a single node for quick testing","C. When the model is deployed to a serving endpoint and predictions are consumed via REST API calls","D. When real-time per-request latency under 100 milliseconds is required for an interactive application"],"answer":1,
+ "explanation":"B. Pandas-based batch inference (load_model + predict on a pandas DataFrame) is appropriate for small datasets that fit in single-node memory. For large datasets (A), use spark_udf(). Serving endpoints (C) are for real-time serving, not batch pandas inference. Sub-100ms latency (D) requires endpoint serving."},
+{"id":23,"subtopic":"",
+ "text":"A model was trained using FeatureEngineeringClient with FeatureLookup definitions. What is the correct method to perform batch scoring that automatically joins features?",
+ "options":["A. Manually join all feature tables to the scoring DataFrame by key, then call mlflow.pyfunc.spark_udf()","B. Use fe.score_batch(model_uri=model_uri, df=keys_df) passing only the primary key columns in the DataFrame","C. Deploy the model to a serving endpoint with online feature lookup enabled and send batch REST requests","D. Re-train the model on the scoring data using the same FeatureLookup definitions to regenerate features"],"answer":1,
+ "explanation":"B. fe.score_batch() automatically performs feature joins using the FeatureLookup definitions stored with the model. You only provide a DataFrame with primary key columns. Manual joins (A) bypass Feature Store lineage, endpoints (C) are for real-time not batch, and re-training (D) is not a scoring operation."},
+{"id":24,"subtopic":"",
+ "text":"What does mlflow.pyfunc.load_model(model_uri) return, and what input type does its predict() method expect?",
+ "options":["A. A Spark DataFrame containing pre-computed predictions and it does not have a predict() method","B. A PyFuncModel wrapper with a predict() method that accepts pandas DataFrames or numpy arrays","C. A REST client object with a query() method that sends requests to a serving endpoint URL","D. A framework-specific estimator (e.g., sklearn) with fit() and transform() methods preserved"],"answer":1,
+ "explanation":"B. load_model() returns a generic PyFuncModel with a unified predict(data) interface accepting pandas DataFrames (or numpy arrays). It abstracts the underlying framework. It doesn't return predictions directly (A), REST clients (C), or expose framework-specific methods like fit() (D)."},
+{"id":25,"subtopic":"",
+ "text":"A data engineer writes the following code for batch inference. What is the issue?\n\npdf = spark.table('catalog.schema.large_table').toPandas()\nmodel = mlflow.pyfunc.load_model(model_uri)\npdf['pred'] = model.predict(pdf[features])",
+ "options":["A. The model_uri format is incorrect and should use the runs:/ prefix instead of models:/","B. Calling toPandas() on a large table collects all data to the driver, risking an out-of-memory error","C. The predict() method cannot accept a pandas DataFrame subset and requires the full DataFrame","D. The code is missing a with mlflow.start_run() context manager required for all prediction calls"],"answer":1,
+ "explanation":"B. toPandas() collects the entire table to the driver node's memory. For large tables, this causes OOM. The correct approach is mlflow.pyfunc.spark_udf() which distributes inference. model_uri can use models:/ (A is wrong), predict() accepts DataFrame subsets (C is wrong), and start_run() is for logging not predicting (D is wrong)."},
+{"id":26,"subtopic":"",
+ "text":"After running batch inference with spark_udf(), results need to be persisted. Which approach correctly saves predictions for downstream consumption?",
+ "options":["A. predictions_df.write.mode('overwrite').saveAsTable('catalog.schema.predictions') to write to a managed Delta table","B. predictions_df.toPandas().to_csv('/dbfs/predictions.csv') to export results as a CSV file for external systems","C. mlflow.log_artifact(predictions_df, 'batch_predictions') to store predictions as an MLflow run artifact","D. predictions_df.cache() to persist the results permanently in cluster memory for future queries"],"answer":0,
+ "explanation":"A. saveAsTable() persists predictions as a managed Delta table in Unity Catalog, making them available for downstream queries, dashboards, or pipelines. CSV export (B) loses schema and governance, log_artifact (C) is for MLflow tracking not production tables, and cache() (D) is ephemeral cluster memory cleared on restart."},
+{"id":27,"subtopic":"",
+ "text":"What is the model_uri format when referencing a model registered in Unity Catalog with a 'champion' alias for batch inference?",
+ "options":["A. runs:/<run_id>/model","B. models:/catalog.schema.model_name@champion","C. uc://catalog/schema/model_name/champion","D. dbfs:/models/catalog.schema.model_name/champion/model.pkl"],"answer":1,
+ "explanation":"B. Unity Catalog models use the format models:/<three-level-name>@<alias> (e.g., models:/catalog.schema.model@champion). runs:/ (A) references a specific run not a registered model, uc:// (C) is not a valid MLflow URI scheme, and dbfs:/ (D) is for file paths not model registry references."},
+{"id":28,"subtopic":"",
+ "text":"A team uses mlflow.pyfunc.spark_udf() for batch scoring. The model expects 5 numeric features. Which call correctly applies the UDF to a Spark DataFrame with columns f1 through f5?",
+ "options":["A. df.withColumn('pred', model_udf('f1', 'f2', 'f3', 'f4', 'f5'))","B. df.withColumn('pred', model_udf(struct('f1', 'f2', 'f3', 'f4', 'f5')))","C. df.select(model_udf(df.to_pandas()[['f1','f2','f3','f4','f5']]))","D. df.withColumn('pred', model_udf(array('f1', 'f2', 'f3', 'f4', 'f5')))"],"answer":0,
+ "explanation":"A. spark_udf() expects column names or Column objects as separate positional arguments. withColumn('pred', model_udf('f1','f2','f3','f4','f5')) passes each feature column to the UDF. struct() (B) wraps them into a single struct column which is not the expected input, to_pandas (C) defeats distributed inference, and array() (D) creates an array type not individual columns."},
+
+
+# ============================================================
+# SUB-TOPIC 4: Identify how streaming inference is performed
+# with Delta Live Tables
+# Questions 29–37
+# ============================================================
+{"id":29,"subtopic":"Sub-topic 4: Identify how streaming inference is performed with Delta Live Tables",
+ "text":"How is streaming inference typically implemented inside a Delta Live Tables pipeline?",
+ "options":["A. By deploying the model to a serving endpoint and having DLT query it via REST for each micro-batch","B. By defining a streaming table decorated with @dlt.table that applies mlflow.pyfunc.spark_udf() on dlt.read_stream()","C. By writing a custom Kafka consumer class inside the DLT notebook that calls model.predict() directly","D. By scheduling the DLT pipeline to run in triggered batch mode every one second using a cron expression"],"answer":1,
+ "explanation":"B. In DLT, streaming inference is done by loading the model as a spark_udf() and applying it inside a function decorated with @dlt.table that reads a streaming source via dlt.read_stream(). DLT manages checkpoints and retries. REST calls (A) add latency, custom Kafka consumers (C) bypass DLT's framework, and one-second batch triggers (D) are not true streaming."},
+{"id":30,"subtopic":"",
+ "text":"What is a primary advantage of using Delta Live Tables for streaming inference compared to writing raw Structured Streaming code?",
+ "options":["A. DLT provides significantly lower per-record latency than Structured Streaming for model predictions","B. DLT automatically handles checkpointing, failure retries, and built-in data quality monitoring via expectations","C. DLT supports a wider variety of ML model frameworks than what spark_udf() can wrap natively","D. DLT can automatically deploy updated model versions to serving endpoints when a new alias is set"],"answer":1,
+ "explanation":"B. DLT's primary advantage is operational simplicity: automatic checkpoint management, auto-retries on transient failures, and declarative data quality expectations (@dlt.expect). Latency is similar to raw streaming (A is wrong), spark_udf framework support is identical (C is wrong), and DLT doesn't manage serving endpoints (D is wrong)."},
+{"id":31,"subtopic":"",
+ "text":"In a DLT streaming inference pipeline, new records arrive while the model is still processing the current micro-batch. What happens to these new records?",
+ "options":["A. The new records are permanently lost because the pipeline only processes one batch at a time","B. The new records are tracked via Delta offsets and automatically included in the next micro-batch","C. The pipeline raises a ConcurrentAppendException and requires manual restart by the operator","D. The new records overwrite the predictions from the current micro-batch in the target table"],"answer":1,
+ "explanation":"B. Structured Streaming (which DLT is built upon) tracks progress via offsets/watermarks. New records arriving during processing are automatically queued and processed in subsequent micro-batches. No data is lost (A), no exception is raised (C), and results are appended not overwritten (D)."},
+{"id":32,"subtopic":"",
+ "text":"A data engineer wants to validate that model predictions in their DLT streaming pipeline fall within an expected range (0 to 1 for probability scores). Which DLT feature should they use?",
+ "options":["A. Add Python try/except blocks around the spark_udf() call to catch out-of-range predictions","B. Use DLT expectations such as @dlt.expect('valid_score', 'prediction BETWEEN 0 AND 1') on the table definition","C. Deploy a separate real-time monitoring service that queries the output table and raises alerts","D. Write custom logging code in the predict() method that records invalid scores to a log file"],"answer":1,
+ "explanation":"B. DLT expectations (@dlt.expect, @dlt.expect_or_drop, @dlt.expect_or_fail) provide declarative data quality validation integrated into the pipeline. They can validate prediction outputs as part of the table definition. try/except (A) doesn't prevent bad data from being written, separate services (C) add complexity, and custom logging (D) doesn't block invalid records."},
+{"id":33,"subtopic":"",
+ "text":"Which statement correctly describes the latency characteristics of streaming inference in DLT?",
+ "options":["A. Streaming inference provides millisecond-level latency identical to real-time model serving endpoints","B. Streaming inference processes micro-batches every few seconds, yielding seconds-level latency between data arrival and prediction","C. Streaming inference has higher latency than nightly batch jobs due to the overhead of checkpointing operations","D. Streaming and batch inference have identical latency since both process data in fixed-size partitions"],"answer":1,
+ "explanation":"B. Streaming processes data in micro-batches every few seconds (configurable trigger interval), providing near-real-time predictions. This is faster than batch (minutes/hours) but slower than endpoint serving (milliseconds). Checkpointing overhead is minimal (C is wrong), and streaming is definitionally faster than scheduled batch (D is wrong)."},
+{"id":34,"subtopic":"",
+ "text":"A DLT streaming inference pipeline needs to be updated to use a newer model version. What is the correct procedure?",
+ "options":["A. Update the model_uri in the pipeline code to reference the new version and redeploy the DLT pipeline","B. Set a new alias on the model in Unity Catalog and the running pipeline automatically picks it up","C. Delete the existing streaming table and recreate it with a fresh checkpoint pointing to the new model","D. Use the Model Registry UI to promote the new version, which sends a webhook to restart the pipeline"],"answer":0,
+ "explanation":"A. To use a new model version, update the model_uri in the DLT pipeline source code (or use an alias URI and update the alias). Then redeploy/restart the pipeline. Running pipelines do not auto-detect model changes (B is wrong), deleting tables (C) loses history unnecessarily, and there's no automatic webhook restart (D is wrong)."},
+{"id":35,"subtopic":"",
+ "text":"Which code pattern correctly implements streaming inference inside a Delta Live Tables pipeline?",
+ "options":["A. @dlt.table\ndef scored(): return spark.read.table('raw_events').withColumn('pred', model_udf(*cols))","B. @dlt.table\ndef scored(): return dlt.read_stream('raw_events').withColumn('pred', model_udf(*cols))","C. @dlt.table\ndef scored(): return dlt.read('raw_events').withColumn('pred', model_udf(*cols))","D. @dlt.view\ndef scored(): return dlt.read_stream('raw_events').withColumn('pred', model_udf(*cols))"],"answer":1,
+ "explanation":"B. Streaming inference in DLT requires: (1) @dlt.table decorator to define a streaming table, and (2) dlt.read_stream() to read from the source as a stream. spark.read.table (A) is batch, dlt.read() (C) is also batch mode within DLT, and @dlt.view (D) cannot be a streaming target for persistent scored results."},
+{"id":36,"subtopic":"",
+ "text":"What happens if the spark_udf() model raises an exception for a malformed input record during DLT streaming inference?",
+ "options":["A. The entire DLT pipeline fails permanently and must be manually restarted from scratch","B. DLT retries the failing micro-batch; if configured with expectations, invalid records can be dropped or quarantined","C. The exception is silently ignored and a NULL prediction is written for that record automatically","D. The malformed record is sent to the model serving endpoint as a fallback for error handling"],"answer":1,
+ "explanation":"B. DLT provides automatic retry for transient failures. For data quality issues, expectations (@dlt.expect_or_drop) can filter malformed records before they reach the model UDF. The pipeline doesn't permanently fail on a single record (A), NULLs aren't silently inserted (C), and serving endpoints aren't involved (D)."},
+{"id":37,"subtopic":"",
+ "text":"A team runs a DLT streaming inference pipeline that reads from a Delta table and scores records continuously. Which component does DLT manage automatically that the team would need to handle manually in raw Structured Streaming?",
+ "options":["A. The model training and hyperparameter tuning process that produces the scoring model","B. The checkpoint location, offset tracking, and pipeline recovery state for exactly-once processing","C. The Unity Catalog model registration and alias assignment for the model being used","D. The creation of the serving endpoint and traffic routing configuration for the scored results"],"answer":1,
+ "explanation":"B. DLT automatically manages checkpoints, offset tracking, and recovery state—things that raw Structured Streaming requires explicit checkpointLocation configuration for. Model training (A), UC registration (C), and serving endpoints (D) are all outside the scope of DLT's streaming management."},
+
+
+# ============================================================
+# SUB-TOPIC 5: Deploy and query a model for realtime inference
+# Questions 38–46
+# ============================================================
+{"id":38,"subtopic":"Sub-topic 5: Deploy and query a model for realtime inference",
+ "text":"Which request payload format is most commonly used when querying a Databricks Model Serving endpoint for real-time predictions?",
+ "options":["A. A CSV-formatted string passed in the request body with Content-Type text/csv","B. A JSON object with the key 'dataframe_records' containing a list of row dictionaries","C. A pickled pandas DataFrame serialized as binary and sent with Content-Type application/octet-stream","D. A Spark DataFrame object passed directly to the endpoint via the Databricks SDK"],"answer":1,
+ "explanation":"B. 'dataframe_records' is the standard format—a JSON list of dictionaries where each dict represents one input row. Model Serving does not accept CSV bodies (A), binary pickle (C) cannot be sent via REST, and Spark DataFrames (D) are not transferable over HTTP to serving endpoints."},
+{"id":39,"subtopic":"",
+ "text":"A client application needs to authenticate its requests to a Databricks Model Serving endpoint. Which mechanism is used?",
+ "options":["A. No authentication is needed because serving endpoints are publicly accessible by default","B. A Bearer token (PAT or service principal token) included in the HTTP Authorization header","C. The Unity Catalog password for the model's parent schema passed in the request body","D. An active SparkSession connection to the same cluster hosting the endpoint"],"answer":1,
+ "explanation":"B. Serving endpoints require a Bearer token (personal access token or service principal OAuth token) in the Authorization header. Endpoints are not public by default (A), there's no schema password concept (C), and serving endpoints are independent of Spark clusters (D)."},
+{"id":40,"subtopic":"",
+ "text":"An endpoint with scale_to_zero_enabled=True has been idle for 45 minutes. A new prediction request arrives. What behavior occurs?",
+ "options":["A. The request is immediately rejected with HTTP 503 Service Unavailable and the client must retry later","B. The endpoint provisions compute, loads the model into memory, then serves the request with elevated latency","C. The request is automatically rerouted to a pre-configured batch inference fallback job","D. The registered model is re-trained on recent data before the endpoint generates a fresh prediction"],"answer":1,
+ "explanation":"B. After scaling to zero, the first request triggers a cold start: compute is provisioned, the model artifact is loaded, and then the request is served. This adds latency to the first request but subsequent ones are fast. Requests are never rejected (A), not rerouted to batch (C), and no retraining occurs (D)."},
+{"id":41,"subtopic":"",
+ "text":"Which of the following is a valid method to programmatically query a Databricks Model Serving endpoint?",
+ "options":["A. spark.sql(\"SELECT * FROM ENDPOINT('my-endpoint') WHERE feature1 = 1.5\")","B. w.serving_endpoints.query(name='my-endpoint', dataframe_records=[{'feature1': 1.5, 'feature2': 'A'}])","C. mlflow.pyfunc.load_model('endpoints:/my-endpoint').predict(input_df)","D. fe.score_batch(model_uri='endpoints:/my-endpoint', df=scoring_df)"],"answer":1,
+ "explanation":"B. The Databricks SDK (WorkspaceClient) provides w.serving_endpoints.query() for programmatic endpoint access. There is no SQL ENDPOINT function (A), load_model doesn't accept endpoint URIs (C), and score_batch is for offline batch scoring not endpoint queries (D)."},
+{"id":42,"subtopic":"",
+ "text":"What is the correct end-to-end sequence of steps to deploy a model for real-time inference on Databricks?",
+ "options":["A. Create serving endpoint → Train model → Log model to MLflow → Register in Unity Catalog","B. Log model with signature to MLflow → Register in Unity Catalog → Create serving endpoint → Query endpoint","C. Register empty model in Unity Catalog → Train model in production → Deploy cluster → Query via Spark SQL","D. Create Feature Store table → Deploy online feature store → Create endpoint → Query features only"],"answer":1,
+ "explanation":"B. The correct sequence is: (1) Log model to MLflow with signature and input_example, (2) Register in Unity Catalog (or specify registered_model_name during logging), (3) Create a serving endpoint referencing the UC model, (4) Query via REST/SDK. You must have a logged model before creating an endpoint (A is backwards)."},
+{"id":43,"subtopic":"",
+ "text":"A serving endpoint returns predictions in JSON format. Which response structure does Databricks Model Serving use?",
+ "options":["A. {'status': 'success', 'data': {'rows': [[pred1], [pred2]]}}","B. {'predictions': [pred1, pred2, ...]} as a JSON object with a 'predictions' key","C. A plain-text string containing comma-separated prediction values","D. {'model_version': '3', 'results': {'dataframe': {'columns': [...], 'data': [[...]]}}}"],"answer":1,
+ "explanation":"B. Databricks Model Serving returns predictions in a JSON object with a 'predictions' key containing a list of prediction values. The format is simple and direct. Options A, C, and D do not match the actual Model Serving response schema."},
+{"id":44,"subtopic":"",
+ "text":"Which payload format sends input data as column-oriented (each key maps to a list of values for that column across all rows)?",
+ "options":["A. 'dataframe_records': [{'col1': v1, 'col2': v2}, {'col1': v3, 'col2': v4}]","B. 'dataframe_split': {'columns': ['col1', 'col2'], 'data': [[v1, v2], [v3, v4]]}","C. 'inputs': {'col1': [v1, v3], 'col2': [v2, v4]}","D. 'instances': [[v1, v2], [v3, v4]]"],"answer":2,
+ "explanation":"C. The 'inputs' format is column-oriented: each key is a column name and its value is a list of all row values for that column. 'dataframe_records' (A) is row-oriented (list of dicts), 'dataframe_split' (B) separates columns and row data, and 'instances' (D) is a list of row arrays without column names."},
+{"id":45,"subtopic":"",
+ "text":"An ML engineer queries their serving endpoint and receives HTTP 400 Bad Request with an error about schema mismatch. What is the most likely cause?",
+ "options":["A. The serving endpoint has exceeded its maximum concurrent request limit","B. The request payload columns or types do not match the model signature that was logged with the model","C. The model's registered alias has expired and needs to be refreshed in Unity Catalog","D. The endpoint's scale-to-zero setting has caused the model to be unloaded from memory"],"answer":1,
+ "explanation":"B. HTTP 400 indicates a client error—specifically, the request payload doesn't match the model's logged signature (wrong column names, missing features, or incorrect types). Concurrency limits (A) return 429, aliases don't expire (C), and scale-to-zero (D) causes latency not schema errors."},
+{"id":46,"subtopic":"",
+ "text":"What happens when you send a request with the 'dataframe_split' format to a serving endpoint?",
+ "options":["A. The endpoint splits the data across multiple model replicas for parallel processing then aggregates","B. The endpoint reconstructs a DataFrame from separate 'columns' and 'data' arrays then passes it to the model","C. The endpoint splits each row into individual requests and processes them sequentially for ordering guarantees","D. The endpoint creates a temporary Delta table from the split data and runs batch inference on it"],"answer":1,
+ "explanation":"B. 'dataframe_split' provides {'columns': [...], 'data': [[row1], [row2],...]} which the endpoint reconstructs into a tabular format before passing to the model's predict(). It doesn't split across replicas (A), process sequentially (C), or create Delta tables (D)."},
+
+
+# ============================================================
+# SUB-TOPIC 6: Split data between endpoints for realtime inference
+# Questions 47–50
+# ============================================================
+{"id":47,"subtopic":"Sub-topic 6: Split data between endpoints for realtime inference",
+ "text":"A team wants to test a new challenger model against the current champion in production. 10% of live traffic should go to the challenger. How is this configured in Databricks?",
+ "options":["A. Deploy two completely separate serving endpoints and configure the client application to randomly pick one","B. Add both model versions as served entities on one endpoint and configure traffic_config with 90%/10% routes","C. Register the challenger model with a 'canary' alias in Unity Catalog and it automatically receives 10% of traffic","D. Modify the champion model's predict() method to internally route 10% of inputs to the challenger logic"],"answer":1,
+ "explanation":"B. Traffic splitting is configured on a single endpoint via traffic_config with Route objects that assign traffic_percentage to each served entity. Separate endpoints (A) require client-side routing, aliases don't auto-split traffic (C), and model code doesn't handle request routing (D)."},
+{"id":48,"subtopic":"",
+ "text":"A serving endpoint is configured with a 70/30 traffic split between model version 3 (champion) and version 5 (challenger). What is true about how incoming requests are handled?",
+ "options":["A. The client application must include a header specifying which model version should handle each request","B. Each request is routed randomly based on the configured percentages and clients are completely unaware of the split","C. The first 70 requests are sent to version 3, then the next 30 are sent to version 5, in strict sequential order","D. Every request is sent to both model versions simultaneously and the endpoint returns an averaged response"],"answer":1,
+ "explanation":"B. Traffic splitting routes each request randomly based on configured percentages. Clients send to a single endpoint URL and have no knowledge of which served entity handles their request. Routing is not sequential (C), not client-controlled (A), and not ensemble-averaged (D)."},
+{"id":49,"subtopic":"",
+ "text":"An ML engineer configures a serving endpoint with three served entities at traffic percentages of 50%, 30%, and 15%. What happens when they attempt to apply this configuration?",
+ "options":["A. The configuration is accepted and the remaining 5% of requests are silently dropped without response","B. The configuration is rejected with a validation error because traffic percentages must sum to exactly 100%","C. The system automatically normalizes the three percentages proportionally so they sum to 100%","D. The third served entity is silently ignored because Databricks only supports two-way traffic splits"],"answer":1,
+ "explanation":"B. Databricks enforces that traffic percentages across all routes must sum to exactly 100%. A configuration totaling 95% is invalid and rejected at creation/update time. The system does not drop requests (A), auto-normalize (C), or limit to two entities (D)."},
+{"id":50,"subtopic":"",
+ "text":"Which deployment strategy gradually increases the percentage of production traffic sent to a new model version over multiple iterations to build confidence before full rollout?",
+ "options":["A. Blue/Green deployment where traffic is instantly switched from the old model to the new model at once","B. Shadow deployment where the new model receives traffic but its responses are not returned to clients","C. Canary deployment where the new model starts at 5% traffic and is progressively increased to 100% over time","D. Batch retraining where the model is periodically retrained on new data and the old version is overwritten"],"answer":2,
+ "explanation":"C. Canary deployment starts with a small traffic percentage (e.g., 5%) to the new model and gradually increases it (5%→10%→30%→100%) as metrics confirm it performs well. Blue/Green (A) is an instant full switch, shadow (B) runs both but doesn't serve the new model's results, and retraining (D) is not a deployment routing strategy."}
+]
+
+print(f"Loaded {len(questions)} questions across {len(set(q['subtopic'] for q in questions if q['subtopic']))} sub-topics.")
+
+# Safely encode questions as JSON for JavaScript
+questions_json = json.dumps(questions, ensure_ascii=True)
+
+html_page = f'''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background: #0d1117; color: #e6edf3; padding: 20px; line-height: 1.6; }}
+.header {{ text-align: center; padding: 30px 0; border-bottom: 2px solid #ff6b35; margin-bottom: 30px; }}
+.header h1 {{ color: #ff6b35; font-size: 1.8em; margin-bottom: 8px; }}
+.header p {{ color: #8b949e; font-size: 0.95em; }}
+.progress-bar {{ background: #21262d; border-radius: 8px; height: 12px; margin: 20px auto; max-width: 600px; overflow: hidden; }}
+.progress-fill {{ background: linear-gradient(90deg, #ff6b35, #ff8c42); height: 100%; width: 0%; transition: width 0.5s; border-radius: 8px; }}
+.score-display {{ text-align: center; font-size: 1.1em; color: #8b949e; margin: 10px 0 30px; }}
+.subtopic-header {{ background: linear-gradient(135deg, #1a1f2e, #21262d); border-left: 4px solid #ff6b35; padding: 12px 20px; margin: 30px 0 15px; border-radius: 0 8px 8px 0; font-size: 1.05em; color: #ff8c42; }}
+.question-card {{ background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 15px 0; transition: border-color 0.3s; }}
+.question-card.answered-correct {{ border-color: #238636; }}
+.question-card.answered-wrong {{ border-color: #da3633; }}
+.q-number {{ display: inline-block; background: #ff6b35; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }}
+.q-text {{ font-size: 1em; margin: 12px 0 16px; color: #e6edf3; }}
+.options {{ list-style: none; }}
+.options li {{ background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; margin: 8px 0; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 10px; }}
+.options li:hover {{ border-color: #ff6b35; background: #1a1f2e; }}
+.options li.correct {{ border-color: #238636; background: #0d2818; }}
+.options li.incorrect {{ border-color: #da3633; background: #2d1013; }}
+.options li .opt-letter {{ font-weight: bold; color: #ff6b35; min-width: 20px; }}
+.explanation {{ display: none; margin-top: 16px; padding: 16px; background: #1a2332; border: 1px solid rgba(31,111,235,0.2); border-radius: 8px; font-size: 0.9em; color: #b1bac4; }}
+.explanation.show {{ display: block; }}
+.explanation strong {{ color: #58a6ff; }}
+.btn-container {{ text-align: center; margin: 40px 0; }}
+.btn {{ background: #ff6b35; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: background 0.3s; margin: 5px; }}
+.btn:hover {{ background: #ff8c42; }}
+.btn-reset {{ background: #30363d; }}
+.summary {{ display: none; text-align: center; padding: 30px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin: 30px 0; }}
+.summary h2 {{ color: #ff6b35; margin-bottom: 15px; }}
+.summary .final-score {{ font-size: 2em; color: #58a6ff; margin: 10px 0; }}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Databricks ML Associate - Section 4: Model Deployment</h1>
+  <p>50 Exam-Standard Questions | Official Exam Guide (Mar 2025)</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="score-display" id="scoreDisplay">Score: 0 / 50 | Answered: 0 / 50</div>
+<div id="quizContainer"></div>
+<div class="btn-container">
+  <button class="btn" onclick="showAllAnswers()">Reveal All Answers</button>
+  <button class="btn btn-reset" onclick="resetQuiz()">Reset Quiz</button>
+</div>
+<div class="summary" id="summary">
+  <h2>Quiz Complete!</h2>
+  <div class="final-score" id="finalScore"></div>
+  <p id="finalMsg"></p>
+</div>
+<script>
+var questions = {questions_json};
+var answered = 0, correct = 0;
+
+function renderQuiz() {{
+  var container = document.getElementById("quizContainer");
+  var html = "";
+  var currentSubtopic = "";
+  for (var i = 0; i < questions.length; i++) {{
+    var q = questions[i];
+    if (q.subtopic && q.subtopic !== currentSubtopic) {{
+      currentSubtopic = q.subtopic;
+      html += '<div class="subtopic-header">' + currentSubtopic + '</div>';
+    }}
+    html += '<div class="question-card" id="qcard-' + i + '">';
+    html += '<span class="q-number">' + q.id + '</span>';
+    html += '<span class="q-text">' + q.text + '</span>';
+    html += '<ul class="options">';
+    for (var j = 0; j < q.options.length; j++) {{
+      html += '<li onclick="selectAnswer(' + i + ',' + j + ')" id="opt-' + i + '-' + j + '">';
+      html += '<span class="opt-letter">' + String.fromCharCode(65+j) + '.</span>';
+      html += '<span>' + q.options[j].substring(3) + '</span></li>';
+    }}
+    html += '</ul>';
+    html += '<div class="explanation" id="expl-' + i + '"><strong>Explanation:</strong> ' + q.explanation + '</div>';
+    html += '</div>';
+  }}
+  container.innerHTML = html;
+}}
+
+function selectAnswer(qi, oi) {{
+  var card = document.getElementById("qcard-" + qi);
+  if (card.classList.contains("answered-correct") || card.classList.contains("answered-wrong")) return;
+  var q = questions[qi];
+  var correctIdx = q.answer;
+  answered++;
+  if (oi === correctIdx) {{
+    correct++;
+    card.classList.add("answered-correct");
+    document.getElementById("opt-" + qi + "-" + oi).classList.add("correct");
+  }} else {{
+    card.classList.add("answered-wrong");
+    document.getElementById("opt-" + qi + "-" + oi).classList.add("incorrect");
+    document.getElementById("opt-" + qi + "-" + correctIdx).classList.add("correct");
+  }}
+  document.getElementById("expl-" + qi).classList.add("show");
+  updateProgress();
+}}
+
+function updateProgress() {{
+  var pct = (answered / questions.length) * 100;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("scoreDisplay").textContent = "Score: " + correct + " / " + questions.length + " | Answered: " + answered + " / " + questions.length;
+  if (answered === questions.length) {{
+    var summary = document.getElementById("summary");
+    summary.style.display = "block";
+    document.getElementById("finalScore").textContent = correct + " / " + questions.length + " (" + Math.round(correct/questions.length*100) + "%)";
+    var msg = correct >= 40 ? "Excellent! You're well prepared for the exam!" : correct >= 30 ? "Good progress! Review the topics you missed." : "Keep studying! Focus on the explanations for missed questions.";
+    document.getElementById("finalMsg").textContent = msg;
+  }}
+}}
+
+function showAllAnswers() {{
+  for (var i = 0; i < questions.length; i++) {{
+    var card = document.getElementById("qcard-" + i);
+    if (!card.classList.contains("answered-correct") && !card.classList.contains("answered-wrong")) {{
+      answered++;
+      card.classList.add("answered-correct");
+      document.getElementById("opt-" + i + "-" + questions[i].answer).classList.add("correct");
+      document.getElementById("expl-" + i).classList.add("show");
+    }}
+  }}
+  updateProgress();
+}}
+
+function resetQuiz() {{
+  answered = 0; correct = 0;
+  document.getElementById("summary").style.display = "none";
+  renderQuiz();
+  updateProgress();
+}}
+
+renderQuiz();
+</script>
+</body>
+</html>
+'''
+
+displayHTML(html_page)
