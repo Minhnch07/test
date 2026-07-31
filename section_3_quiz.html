@@ -1,0 +1,377 @@
+import json
+
+questions = [
+# Sub-topic 1: Use ML foundations to select the appropriate algorithm for a given model scenario
+{"id":1,"subtopic":"Sub-topic 1: Use ML foundations to select the appropriate algorithm for a given model scenario",
+ "text":"A data scientist needs to predict customer churn (binary outcome) on a large tabular dataset with 200 mixed-type features. Interpretability is not required and the team prioritizes predictive accuracy above all else. Which algorithm is most appropriate?",
+ "options":["A. K-Means Clustering with k=2 to partition customers into churn and no-churn groups based on distance","B. Linear Regression with L2 regularization to model the continuous probability of customer churning","C. Gradient Boosted Trees (XGBoost) to maximize classification accuracy on mixed tabular features","D. Principal Component Analysis (PCA) to identify the most important features contributing to churn"],"answer":2,
+ "explanation":"C. Gradient Boosted Trees (XGBoost/LightGBM) are state-of-the-art for tabular data with mixed feature types when accuracy is the priority. K-Means (A) is unsupervised clustering, not classification. Linear Regression (B) predicts continuous targets, not binary outcomes. PCA (D) is dimensionality reduction, not a predictive classification model."},
+{"id":2,"subtopic":"",
+ "text":"A healthcare organization needs a model that clinicians can explain to patients when predicting disease risk. The dataset has 10 numeric features with approximately linear relationships to the target. Which algorithm best fits these constraints?",
+ "options":["A. Logistic Regression with L1 regularization providing interpretable coefficients and feature selection","B. Random Forest with 500 trees providing high accuracy through ensemble averaging of decision trees","C. XGBoost with max_depth=15 providing non-linear feature interactions learned through boosting","D. Neural Network with 3 hidden layers providing flexible function approximation through backpropagation"],"answer":0,
+ "explanation":"A. Logistic Regression provides interpretable coefficients that clinicians can explain. L1 regularization also performs automatic feature selection, simplifying the model further. With linear relationships and an interpretability requirement, linear models are ideal. Random Forest (B), XGBoost (C), and Neural Networks (D) are black boxes."},
+{"id":3,"subtopic":"",
+ "text":"A team has a small dataset with only 150 samples and 80 features. They are concerned about overfitting and need reliable predictions. Which modeling approach best addresses their constraints?",
+ "options":["A. Random Forest with max_depth=None and no feature limit to let the ensemble capture all patterns","B. Gradient Boosted Trees with 2000 estimators and a high learning rate for fast convergence","C. Ridge Regression with strong regularization (high alpha) to constrain model complexity","D. Deep Neural Network with dropout layers to prevent overfitting through random neuron deactivation"],"answer":2,
+ "explanation":"C. With small datasets and many features, simpler models with strong regularization prevent overfitting. Ridge constrains coefficients, reducing effective model complexity. Deep RF (A) and high-estimator GBT (B) both have high variance on small data. Neural Networks (D) require large datasets to generalize well."},
+{"id":4,"subtopic":"",
+ "text":"A data scientist needs to predict house prices (continuous target) with a dataset containing both non-linear patterns and feature interactions. Training speed is acceptable up to several hours. Which algorithm should they select?",
+ "options":["A. Logistic Regression with elastic net regularization to balance L1 and L2 penalty terms","B. K-Nearest Neighbors Regressor with k=5 to predict based on the average of similar houses","C. Gradient Boosted Trees Regressor to capture non-linear relationships and feature interactions","D. K-Means Clustering with k=10 to group houses into price tiers based on feature similarity"],"answer":2,
+ "explanation":"C. Gradient Boosted Trees Regressor handles non-linear patterns and feature interactions naturally through sequential tree building. Logistic Regression (A) is for classification, not regression. KNN (B) suffers in high dimensions and is slow at inference. K-Means (D) is unsupervised clustering, not a regression algorithm."},
+{"id":5,"subtopic":"",
+ "text":"A model must be deployed to a resource-constrained edge device with strict latency requirements (<5ms inference). The dataset has 20 features with linear separability between classes. Which model type is most appropriate for deployment?",
+ "options":["A. Ensemble of 500 Gradient Boosted Trees providing high accuracy through sequential correction","B. Deep Neural Network with 10 layers providing flexible non-linear decision boundaries","C. Logistic Regression providing fast single matrix multiplication inference with linear boundaries","D. Random Forest with 1000 trees providing robust predictions through parallel tree voting"],"answer":2,
+ "explanation":"C. Logistic Regression has the fastest inference (single matrix multiplication), meets the latency requirement, and is ideal when data is linearly separable. GBT ensembles (A), deep networks (B), and large Random Forests (D) all require significantly more computation at inference time, making them unsuitable for strict latency constraints."},
+
+# Sub-topic 2: Identify methods to mitigate data imbalance in training data
+{"id":6,"subtopic":"Sub-topic 2: Identify methods to mitigate data imbalance in training data",
+ "text":"A fraud detection dataset contains 99.5% legitimate and 0.5% fraudulent transactions. A model trained on this data achieves 99.5% accuracy. Which statement best explains this result?",
+ "options":["A. The model has successfully learned the underlying patterns distinguishing fraud from legitimate transactions","B. The model is likely predicting the majority class for all inputs, achieving accuracy matching class frequency","C. The model has overfit to the training data and will perform poorly on the unseen validation set","D. The model requires additional feature engineering to improve its accuracy above the current baseline"],"answer":1,
+ "explanation":"B. With 99.5% class imbalance, a model can achieve 99.5% accuracy by always predicting the majority class (legitimate). This is why accuracy is misleading for imbalanced datasets — the model catches zero fraud cases while appearing highly accurate. Better metrics include precision, recall, F1, and ROC AUC."},
+{"id":7,"subtopic":"",
+ "text":"Which of the following correctly describes how SMOTE (Synthetic Minority Over-sampling Technique) addresses class imbalance in a training dataset?",
+ "options":["A. It duplicates existing minority class samples exactly to increase their count in the training set","B. It creates synthetic minority samples by interpolating between existing minority samples and their k-nearest neighbors","C. It removes majority class samples that are closest to the decision boundary to balance class frequencies","D. It adjusts the loss function to assign higher penalties when the model misclassifies minority samples"],"answer":1,
+ "explanation":"B. SMOTE creates synthetic (new, artificial) samples by interpolating between existing minority samples and their k-nearest neighbors. It does NOT duplicate exactly (A — that is simple oversampling). Removing majority samples (C) is undersampling. Adjusting the loss function (D) is class weighting — a separate technique."},
+{"id":8,"subtopic":"",
+ "text":"A data scientist applies SMOTE to their full dataset before performing a train-test split. What problem does this introduce into the model evaluation process?",
+ "options":["A. It causes class imbalance to worsen because synthetic samples dilute the minority signal in training","B. It introduces data leakage because synthetic samples generated from test-set points may appear in training","C. It reduces model accuracy because SMOTE only works when applied after the train-test split is complete","D. It causes underfitting because the synthetic samples add noise that prevents the model from learning patterns"],"answer":1,
+ "explanation":"B. Applying SMOTE before splitting causes data leakage — synthetic samples created from test-set minority points will leak test information into training. SMOTE must be applied ONLY to the training set after the train-test split to ensure evaluation integrity."},
+{"id":9,"subtopic":"",
+ "text":"A data scientist sets class_weight='balanced' in a scikit-learn LogisticRegression. Which of the following correctly describes the effect of this parameter?",
+ "options":["A. It oversamples the minority class using SMOTE internally before fitting the logistic regression model","B. It sets class weights inversely proportional to class frequencies, increasing the loss for minority misclassification","C. It undersamples the majority class by randomly removing samples until both classes have equal counts","D. It adjusts the classification decision threshold from 0.5 to a value that balances precision and recall"],"answer":1,
+ "explanation":"B. class_weight='balanced' sets weights inversely proportional to class frequencies (w_j = n_samples / (n_classes * n_samples_j)). This increases the loss penalty for misclassifying minority samples. It does NOT modify the data through resampling (A, C) or change the classification threshold (D)."},
+
+# Sub-topic 3: Compare estimators and transformers + Develop a training pipeline
+{"id":10,"subtopic":"Sub-topic 3: Compare estimators and transformers — Develop a training pipeline",
+ "text":"In the SparkML API, which statement correctly describes the relationship between an Estimator and a Transformer?",
+ "options":["A. An Estimator applies a fixed transformation via .transform(); a Transformer learns parameters via .fit()","B. An Estimator learns parameters from data via .fit() to produce a Transformer; a Transformer applies the learned logic via .transform()","C. Estimators are used only for supervised learning; Transformers are used only for unsupervised preprocessing","D. Estimators and Transformers are interchangeable terms for any SparkML stage that processes DataFrames"],"answer":1,
+ "explanation":"B. An Estimator implements .fit(df) which learns parameters from data and produces a Model (a Transformer). A Transformer implements .transform(df) to apply learned logic and produce a new DataFrame. The roles are NOT reversed (A), NOT limited to specific learning types (C), and NOT interchangeable (D)."},
+{"id":11,"subtopic":"",
+ "text":"Which of the following SparkML components is a Transformer that does NOT require calling .fit() before use?",
+ "options":["A. StringIndexer, which must learn category-to-index mappings from the training data distribution","B. StandardScaler, which must learn the mean and standard deviation from the training data statistics","C. VectorAssembler, which concatenates specified input columns into a single feature vector column","D. LogisticRegression, which must learn model weights by optimizing the loss on training data"],"answer":2,
+ "explanation":"C. VectorAssembler simply concatenates columns into a vector — no learning required, making it a Transformer. StringIndexer (A) must learn category mappings, StandardScaler (B) must learn mean/std, and LogisticRegression (D) must learn weights — all are Estimators requiring .fit()."},
+{"id":12,"subtopic":"",
+ "text":"A data scientist calls pipeline.fit(train_df) on a SparkML Pipeline. What type of object is returned and what can it do?",
+ "options":["A. A Pipeline object that must be fit again on test data before it can generate predictions","B. A PipelineModel (Transformer) that can call .transform() on new DataFrames to generate predictions","C. A DataFrame containing the predictions generated from the training data during the fitting process","D. A list of individually fitted stage models that must be applied sequentially by the user"],"answer":1,
+ "explanation":"B. pipeline.fit(train_df) returns a PipelineModel, which is a Transformer. All Estimator stages have been fit and converted to their Model (Transformer) form. You call pipeline_model.transform(test_df) to get predictions. It is not a Pipeline (A), not a DataFrame (C), and not a raw list (D)."},
+{"id":13,"subtopic":"",
+ "text":"A SparkML Pipeline has stages [StringIndexer, VectorAssembler, StandardScaler, RandomForestClassifier]. During pipeline.fit(train_df), which stages execute .fit() to learn parameters?",
+ "options":["A. All four stages execute .fit() because every Pipeline stage must learn parameters from training data","B. Only RandomForestClassifier executes .fit() because it is the only model stage in the pipeline","C. StringIndexer, StandardScaler, and RandomForestClassifier execute .fit(); VectorAssembler only transforms","D. StringIndexer and VectorAssembler execute .fit(); StandardScaler and RandomForestClassifier only transform"],"answer":2,
+ "explanation":"C. StringIndexer (learns category mappings), StandardScaler (learns mean/std), and RandomForestClassifier (learns decision trees) are all Estimators requiring .fit(). VectorAssembler is a Transformer — it only concatenates columns without learning anything from the data."},
+{"id":14,"subtopic":"",
+ "text":"Which of the following is the primary benefit of encapsulating preprocessing and model training within a single SparkML Pipeline object?",
+ "options":["A. It eliminates the need for a separate test dataset because the Pipeline validates internally","B. It ensures preprocessing is fit only on training data when used with CrossValidator, preventing data leakage","C. It automatically selects the best algorithm and hyperparameters through built-in AutoML capabilities","D. It distributes model training across multiple clusters for faster execution on large datasets"],"answer":1,
+ "explanation":"B. A Pipeline ensures that when used with CrossValidator, all preprocessing (scaling, encoding) is fit ONLY on training folds — not on validation folds. Without a pipeline, preprocessing might accidentally use validation data, causing data leakage. It does not eliminate test sets (A), include AutoML (C), or distribute across clusters (D)."},
+{"id":15,"subtopic":"",
+ "text":"A data scientist defines a scikit-learn Pipeline with stages [StandardScaler, PCA, LogisticRegression]. Which statement correctly describes the Pipeline's type and behavior?",
+ "options":["A. The Pipeline is a Transformer that applies all three stages sequentially without any fitting step","B. The Pipeline is an Estimator that calls .fit() on each stage sequentially using the output of the prior stage","C. The Pipeline is a Model that can only be used for prediction after each stage is fit individually","D. The Pipeline is a DAG executor that runs all three stages in parallel for maximum throughput"],"answer":1,
+ "explanation":"B. A Pipeline is an Estimator. Calling .fit() fits each stage sequentially — StandardScaler learns mean/std, PCA learns components, LogisticRegression learns weights — each using the transformed output of the previous stage. It is not a Transformer (A), not a pre-fit Model (C), and not parallel (D)."},
+
+# Sub-topic 4: Hyperopt fmin + Grid/Random/Bayesian search + Parallelize single-node models
+{"id":16,"subtopic":"Sub-topic 4: Use Hyperopt fmin, grid/random/Bayesian search, and parallelize hyperparameter tuning",
+ "text":"A data scientist wants to use Hyperopt to tune hyperparameters. Which statement correctly describes the behavior of the fmin() function?",
+ "options":["A. fmin() maximizes the objective function value and returns the parameters that produce the highest score","B. fmin() minimizes the objective function value and returns the parameters that produce the lowest loss","C. fmin() evaluates all possible parameter combinations exhaustively like a grid search over the space","D. fmin() randomly samples parameters without using information from previous trials to guide search"],"answer":1,
+ "explanation":"B. fmin() always MINIMIZES the return value of the objective function. To maximize a metric like accuracy, you must negate it (return -accuracy). fmin does NOT maximize (A), is NOT exhaustive like grid search (C), and uses Bayesian methods like TPE that DO leverage prior results (D)."},
+{"id":17,"subtopic":"",
+ "text":"A data scientist wants to maximize ROC AUC using Hyperopt's fmin. Which objective function return value is correct?",
+ "options":["A. return {'loss': roc_auc, 'status': STATUS_OK} — return the metric directly for fmin to maximize","B. return {'loss': -roc_auc, 'status': STATUS_OK} — negate the metric because fmin always minimizes","C. return {'gain': roc_auc, 'status': STATUS_OK} — use the 'gain' key to signal maximization to fmin","D. return {'loss': 1 - roc_auc, 'status': STATUS_MAXIMIZE} — use STATUS_MAXIMIZE for maximization"],"answer":1,
+ "explanation":"B. Since fmin always MINIMIZES loss, you must negate metrics you want to maximize. Returning -roc_auc means minimizing (negative AUC) = maximizing AUC. Returning the metric directly (A) would minimize it. 'gain' key (C) and STATUS_MAXIMIZE (D) do not exist in the Hyperopt API."},
+{"id":18,"subtopic":"",
+ "text":"Which Hyperopt search space function is most appropriate for a learning rate parameter that should be sampled between 0.0001 and 1.0 with equal probability across orders of magnitude?",
+ "options":["A. hp.uniform('learning_rate', 0.0001, 1.0) — samples uniformly between the two bounds","B. hp.loguniform('learning_rate', log(0.0001), log(1.0)) — samples uniformly in log-space across magnitudes","C. hp.quniform('learning_rate', 0.0001, 1.0, 0.0001) — samples in fixed increments of 0.0001","D. hp.choice('learning_rate', [0.0001, 0.001, 0.01, 0.1, 1.0]) — samples from a fixed discrete list"],"answer":1,
+ "explanation":"B. hp.loguniform samples uniformly in log-space, giving equal probability to each order of magnitude (0.0001-0.001, 0.001-0.01, etc.). hp.uniform (A) would oversample the high end. hp.quniform (C) creates 10,000 discrete steps unnecessarily. hp.choice (D) limits exploration to only 5 fixed values."},
+{"id":19,"subtopic":"",
+ "text":"After calling fmin() with hp.choice('activation', ['relu', 'tanh', 'sigmoid']), the returned best_params dictionary shows {'activation': 1}. What does this value represent?",
+ "options":["A. The best activation function is 'relu' because hp.choice uses 1-based indexing for selections","B. The best activation function is 'tanh' because hp.choice returns the 0-based index into the options list","C. The activation parameter should be set to the integer literal value 1 during model construction","D. Only one activation function was evaluated during the optimization because max_evals was set to 1"],"answer":1,
+ "explanation":"B. hp.choice returns the 0-based INDEX of the chosen option, not the value itself. Index 1 in ['relu', 'tanh', 'sigmoid'] corresponds to 'tanh'. To convert indices back to values, use hyperopt.space_eval(space, best_params). It is NOT 1-based (A), NOT a literal (C), and NOT a trial count (D)."},
+{"id":20,"subtopic":"",
+ "text":"Which Hyperopt search space function should be used for an integer hyperparameter like max_depth that should range from 3 to 15 inclusive?",
+ "options":["A. hp.uniform('max_depth', 3, 15) — samples continuous floats that must be cast to int in the objective","B. hp.quniform('max_depth', 3, 15, 1) — samples values rounded to the nearest integer by step size q=1","C. hp.randint('max_depth', 3, 15) — samples random integers uniformly but only supports range starting at 0","D. hp.choice('max_depth', list(range(3, 16))) — creates a categorical choice over each possible integer"],"answer":1,
+ "explanation":"B. hp.quniform('max_depth', 3, 15, 1) samples from a uniform distribution rounded to the nearest integer (q=1). Note: you still must cast to int() inside the objective. hp.uniform (A) returns floats without rounding. hp.randint (C) starts at 0. hp.choice (D) works but is less efficient and returns indices."},
+{"id":21,"subtopic":"",
+ "text":"A ParamGridBuilder in SparkML creates a grid with 4 values for regParam, 3 values for maxIter, and 2 values for elasticNetParam. How many total hyperparameter combinations will grid search evaluate?",
+ "options":["A. 9 combinations, calculated as the sum of all parameter values (4 + 3 + 2)","B. 24 combinations, calculated as the Cartesian product of all parameter values (4 × 3 × 2)","C. 12 combinations, calculated as the product of the two largest grids only (4 × 3)","D. 48 combinations, calculated as the product times a default 2-fold validation (4 × 3 × 2 × 2)"],"answer":1,
+ "explanation":"B. Grid search evaluates the Cartesian product of ALL parameter values: 4 × 3 × 2 = 24 combinations. Each unique combination of (regParam, maxIter, elasticNetParam) is trained and evaluated. It is NOT additive (A), NOT partial products (C), and does NOT multiply by fold count for the grid itself (D)."},
+{"id":22,"subtopic":"",
+ "text":"A data scientist has 8 hyperparameters to tune, each with 5 possible values. Which search strategy is most computationally feasible for this problem?",
+ "options":["A. Grid search, which guarantees finding the optimal combination by exhaustively evaluating all 5^8 = 390,625 models","B. Random search, which samples configurations randomly and is provably more efficient when few parameters matter","C. Manual tuning, which leverages domain expertise to select the single best configuration without computation","D. Nested grid search, which evaluates parameters one at a time in sequence to reduce the total model count"],"answer":1,
+ "explanation":"B. Random search is more efficient than grid search for high-dimensional spaces because it explores more unique values of each parameter. With 8 parameters, grid search requires 5^8 = 390,625 evaluations (A) — computationally prohibitive. Manual tuning (C) doesn't scale. Nested search (D) misses interactions."},
+{"id":23,"subtopic":"",
+ "text":"What is the key advantage of Bayesian optimization (Tree-structured Parzen Estimators / TPE) over random search for hyperparameter tuning?",
+ "options":["A. TPE evaluates all parameter combinations in parallel without sequential dependencies between trials","B. TPE builds a probabilistic model from prior trials to focus future searches on promising parameter regions","C. TPE guarantees finding the global optimum in fewer iterations than any other search strategy","D. TPE eliminates the need to define a search space because it discovers parameter ranges automatically"],"answer":1,
+ "explanation":"B. TPE (Bayesian optimization) builds a probabilistic model of the objective function using results from previous evaluations, then selects the next trial from regions most likely to improve. It does NOT evaluate all combinations (A), does NOT guarantee global optimum (C), and still requires a defined search space (D)."},
+{"id":24,"subtopic":"",
+ "text":"What is the purpose of SparkTrials in Hyperopt, and when should it be used instead of the default Trials object?",
+ "options":["A. SparkTrials distributes SparkML model training across workers for faster distributed gradient computation","B. SparkTrials distributes single-node model training (sklearn, XGBoost) across Spark workers for parallel trials","C. SparkTrials stores trial results in a Spark Delta table for persistent tracking across notebook sessions","D. SparkTrials converts the Hyperopt search from Bayesian to a distributed random search for scalability"],"answer":1,
+ "explanation":"B. SparkTrials distributes single-node model training across Spark cluster workers — each worker trains one model with one set of hyperparameters. It should NOT be used with SparkML models (A) which already distribute internally. It does NOT store results in Delta (C) or change the search algorithm (D)."},
+{"id":25,"subtopic":"",
+ "text":"A cluster has 8 workers and a data scientist runs Hyperopt with SparkTrials(parallelism=8) and max_evals=8. What is the effective search behavior?",
+ "options":["A. Fully Bayesian — each of the 8 trials is informed by all previous results for maximum search efficiency","B. Effectively random search — all 8 trials start simultaneously without prior results to guide the Bayesian model","C. Hybrid search — the first 4 trials run randomly, then the last 4 use Bayesian optimization on those results","D. Sequential search — despite parallelism=8, trials run one at a time to preserve Bayesian optimization quality"],"answer":1,
+ "explanation":"B. When parallelism equals max_evals, ALL trials launch simultaneously without any completed results to inform the Bayesian model. This eliminates sequential learning, making it equivalent to random search. For Bayesian benefit, parallelism should be much less than max_evals."},
+
+# Sub-topic 5: Cross-validation — benefits/downsides, perform CV, calculate model count
+{"id":26,"subtopic":"Sub-topic 5: Cross-validation — benefits, downsides, implementation, and model count",
+ "text":"Which statement correctly describes a key advantage of k-fold cross-validation over a single train-validation split for model evaluation?",
+ "options":["A. Cross-validation requires training fewer total models, significantly reducing overall computational cost","B. Cross-validation provides a more robust performance estimate by averaging metrics across k different validation folds","C. Cross-validation completely eliminates the need for a held-out test set in the model evaluation workflow","D. Cross-validation guarantees finding a better-performing model compared to using a single validation split"],"answer":1,
+ "explanation":"B. K-fold CV averages performance over K different validation splits, giving a more robust (lower variance) estimate of model performance. It trains MORE models, not fewer (A). It still needs a final test set (C). It improves the estimate, not the model itself (D)."},
+{"id":27,"subtopic":"",
+ "text":"When is a simple train-validation split preferred over k-fold cross-validation for hyperparameter tuning?",
+ "options":["A. When the dataset is very small (fewer than 500 samples) and every data point matters for training","B. When the dataset is very large and the computational cost of training K models per configuration is prohibitive","C. When maximum reliability of the performance estimate is required for a high-stakes model deployment","D. When the model has many hyperparameters that require an exhaustive grid search evaluation strategy"],"answer":1,
+ "explanation":"B. With very large datasets, a single validation split already provides a reliable performance estimate (low variance due to large sample size), and training K models per hyperparameter set would be unnecessarily expensive. Small datasets (A) actually NEED CV. High reliability (C) favors CV. Many hyperparameters (D) is orthogonal to the split strategy."},
+{"id":28,"subtopic":"",
+ "text":"Which statement correctly describes a downside of using k-fold cross-validation compared to a single train-validation split?",
+ "options":["A. Cross-validation produces a biased performance estimate because training data overlaps across different folds","B. Cross-validation requires K times more model training, increasing computational cost proportionally to K","C. Cross-validation cannot be used with Pipeline objects because stages cannot be fit on partial datasets","D. Cross-validation always leads to overfitting because the model sees all data points during the K rounds"],"answer":1,
+ "explanation":"B. The primary downside of K-fold CV is computational cost — it trains K models per hyperparameter configuration instead of 1. The estimate is LESS biased, not more (A). Pipelines work fine with CV (C). The model used for final predictions is retrained once on full training data, so it does NOT overfit to folds (D)."},
+{"id":29,"subtopic":"",
+ "text":"Which code correctly configures a SparkML CrossValidator for a pipeline with 5 folds and an AUC evaluator?",
+ "options":["A. CrossValidator(estimator=pipeline, estimatorParamMaps=param_grid, evaluator=BinaryClassificationEvaluator(), numFolds=5)","B. CrossValidator(model=pipeline, paramGrid=param_grid, metric='areaUnderROC', folds=5)","C. CrossValidator(pipeline=pipeline, params=param_grid, scoring='auc', cv=5)","D. CrossValidator(estimator=pipeline, grid=param_grid, evaluator='binary', numFolds=5)"],"answer":0,
+ "explanation":"A. The correct SparkML CrossValidator parameters are: estimator (the pipeline/model), estimatorParamMaps (from ParamGridBuilder), evaluator (an Evaluator object), and numFolds. Options B, C, and D use non-existent parameter names (paramGrid, folds, scoring, cv, grid)."},
+{"id":30,"subtopic":"",
+ "text":"After a SparkML CrossValidator finishes, what does cv_model.bestModel return?",
+ "options":["A. The model trained only on the single best-performing fold from the cross-validation process","B. The model retrained on the ENTIRE training dataset using the best hyperparameters found by CV","C. An ensemble that averages predictions from all K models trained during the best configuration's folds","D. The hyperparameter dictionary only, which the user must use to manually retrain a final model"],"answer":1,
+ "explanation":"B. After identifying the best hyperparameters via CV averaging, CrossValidator retrains a single final model on the ENTIRE training dataset using those optimal parameters. This gives the final model maximum training data. It is NOT from a single fold (A), NOT an ensemble (C), and NOT just hyperparameters (D)."},
+{"id":31,"subtopic":"",
+ "text":"In 5-fold cross-validation, what fraction of the total training data is used for training versus validation in each individual fold iteration?",
+ "options":["A. 50% training and 50% validation, splitting the data evenly into two equal halves each fold","B. 60% training and 40% validation, using three-fifths of data for training in each fold iteration","C. 80% training and 20% validation, using four-fifths of data for training in each fold iteration","D. 90% training and 10% validation, using nine-tenths of data for training in each fold iteration"],"answer":2,
+ "explanation":"C. In 5-fold CV, each fold uses 4/5 = 80% of the data for training and 1/5 = 20% for validation. Over all 5 folds, every data point serves as validation exactly once and as training exactly four times."},
+{"id":32,"subtopic":"",
+ "text":"A CrossValidator uses numFolds=5 and a ParamGrid with 3 values for regParam and 4 values for maxIter. How many total model training operations are performed during the CV process?",
+ "options":["A. 12 models — one for each of the 12 unique hyperparameter combinations in the grid","B. 17 models — the sum of parameter combinations and fold count (12 + 5)","C. 60 models — each of the 12 combinations trained 5 times across the folds (12 × 5)","D. 65 models — the 60 fold trainings plus 5 final models retrained on the full dataset"],"answer":2,
+ "explanation":"C. Total models = (parameter combinations) × (number of folds) = (3 × 4) × 5 = 12 × 5 = 60. Each of the 12 hyperparameter sets is trained and evaluated on all 5 folds. The final best model retrained on full data (D) is one additional model, not 5, and is typically not counted in the CV cost."},
+{"id":33,"subtopic":"",
+ "text":"A CrossValidator uses numFolds=3 and a ParamGrid with 2 values for maxDepth, 3 values for numTrees, and 2 values for learningRate. How many total model training operations occur?",
+ "options":["A. 7 models — the sum of all parameter values plus the number of folds (2 + 3 + 2)","B. 12 models — the total parameter combinations without considering folds (2 × 3 × 2)","C. 21 models — the product of max grid size and fold count (7 × 3)","D. 36 models — all parameter combinations times all folds (2 × 3 × 2 × 3)"],"answer":3,
+ "explanation":"D. Total = (grid combinations) × (folds) = (2 × 3 × 2) × 3 = 12 × 3 = 36 models. Grid search creates the Cartesian product (12 combinations), and each is trained on every fold (3 folds). It is NOT additive (A), NOT without folds (B), and 7 × 3 (C) miscalculates the grid size."},
+
+# Sub-topic 6: Classification and regression metrics + choosing appropriate metrics
+{"id":34,"subtopic":"Sub-topic 6: Use classification metrics, regression metrics, and choose the appropriate metric for a scenario",
+ "text":"A hospital builds a model to screen patients for a rare disease. Missing a positive case (false negative) could be life-threatening. Which metric should the team prioritize when evaluating the model?",
+ "options":["A. Precision — to ensure that patients flagged as positive are truly positive before expensive follow-up testing","B. Recall — to ensure that all actual positive cases are identified even if some false positives occur","C. Accuracy — to ensure the model is correct on the largest possible proportion of all patient screenings","D. Specificity — to ensure that healthy patients are not incorrectly flagged as positive for the disease"],"answer":1,
+ "explanation":"B. Recall = TP / (TP + FN) measures the proportion of actual positives correctly identified. When missing positives is life-threatening, maximizing recall ensures the model catches as many true cases as possible. Precision (A) reduces false positives but risks missing cases. Accuracy (C) is misleading with rare diseases. Specificity (D) focuses on true negatives."},
+{"id":35,"subtopic":"",
+ "text":"An email provider's spam filter is incorrectly sending important business emails to the spam folder. Users are complaining about missing legitimate messages. Which metric should be optimized to address this?",
+ "options":["A. Recall — to catch all actual spam emails even if some legitimate emails are incorrectly flagged as spam","B. Precision — to ensure that emails classified as spam are truly spam, reducing false positive rate","C. F1 Score — to balance the precision and recall metrics equally regardless of the business impact","D. Log Loss — to improve the probability calibration of the spam classification confidence scores"],"answer":1,
+ "explanation":"B. Precision = TP / (TP + FP) measures what fraction of predicted spam is actually spam. Maximizing precision reduces false positives — legitimate emails incorrectly flagged as spam. Recall (A) would catch more spam but risk more false positives. F1 (C) doesn't prioritize the specific problem. Log Loss (D) addresses calibration, not the false positive issue."},
+{"id":36,"subtopic":"",
+ "text":"What does an ROC AUC value of 0.5 indicate about the discrimination ability of a binary classification model?",
+ "options":["A. The model achieves perfect discrimination between positive and negative classes at all thresholds","B. The model's discrimination ability is no better than random guessing across all classification thresholds","C. The model correctly classifies exactly 50% of all samples regardless of the classification threshold","D. The model has a 50% false positive rate at every possible operating point on the ROC curve"],"answer":1,
+ "explanation":"B. ROC AUC = 0.5 means the model cannot distinguish between classes any better than random chance (the ROC curve follows the diagonal). AUC = 1.0 is perfect, AUC < 0.5 means predictions are inverted. It does NOT mean 50% accuracy (C) or 50% FPR everywhere (D)."},
+{"id":37,"subtopic":"",
+ "text":"Which metric is most appropriate when classes are imbalanced and the team needs a single number that penalizes models favoring either precision or recall exclusively?",
+ "options":["A. Accuracy — provides a single overall correctness score regardless of class distribution in the dataset","B. F1 Score — the harmonic mean of precision and recall that penalizes extreme imbalance between them","C. ROC AUC — measures the area under the receiver operating characteristic curve across all thresholds","D. Log Loss — measures the negative log-likelihood of predicted probability distributions versus actual labels"],"answer":1,
+ "explanation":"B. F1 Score is the harmonic mean of precision and recall. Unlike the arithmetic mean, the harmonic mean penalizes extreme values — if either precision or recall is very low, F1 drops significantly. Accuracy (A) is misleading with imbalance. ROC AUC (C) is threshold-independent. Log Loss (D) measures probability calibration."},
+{"id":38,"subtopic":"",
+ "text":"A model outputs probability estimates (e.g., 0.87, 0.12, 0.95). Which metric specifically evaluates how well-calibrated these probability predictions are against actual outcomes?",
+ "options":["A. ROC AUC — measures discrimination ability by plotting true positive rate against false positive rate","B. F1 Score — measures the harmonic mean of precision and recall at a specific classification threshold","C. Log Loss — penalizes confident incorrect predictions more heavily than uncertain incorrect predictions","D. Precision — measures what fraction of predicted positive samples are actually positive samples"],"answer":2,
+ "explanation":"C. Log Loss (binary cross-entropy) directly evaluates probability quality — it heavily penalizes confident wrong predictions (e.g., predicting 0.99 when true label is 0). ROC AUC (A) evaluates ranking, F1 (B) uses hard predictions, and Precision (D) doesn't evaluate probability calibration."},
+{"id":39,"subtopic":"",
+ "text":"A model predicts housing prices. One prediction is off by $500,000 while most others are off by $10,000-$20,000. Which metric is MOST sensitive to this single large prediction error?",
+ "options":["A. MAE (Mean Absolute Error) — averages absolute errors giving equal linear weight to each prediction","B. RMSE (Root Mean Squared Error) — squares errors before averaging, amplifying the impact of large outliers","C. R-squared — measures the proportion of variance explained regardless of individual error magnitudes","D. Median Absolute Error — reports the middle error value which is robust to any single outlier prediction"],"answer":1,
+ "explanation":"B. RMSE squares errors before averaging, so the $500K error becomes ($500K)² = $250B which disproportionately dominates the metric. MAE (A) treats it linearly — large but not squared. R-squared (C) normalizes by total variance. Median Absolute Error (D) is specifically designed to be robust to outliers."},
+{"id":40,"subtopic":"",
+ "text":"A regression model produces an R² value of -0.15. Which statement correctly interprets this result?",
+ "options":["A. The model explains 15% of the variance in the target variable but in the wrong direction","B. The model performs worse than simply predicting the mean of the target for all inputs","C. The result indicates a calculation error because R² values cannot be negative by definition","D. The model has 15% error rate and requires additional features to achieve positive performance"],"answer":1,
+ "explanation":"B. R² = 1 - (SS_res / SS_tot). When R² < 0, the model's residual error exceeds the total variance — meaning it performs WORSE than the trivial baseline of predicting the mean for every observation. R² CAN be negative (C is wrong). It is not a percentage of explained variance in a direction (A) or an error rate (D)."},
+{"id":41,"subtopic":"",
+ "text":"A team needs to compare regression models trained on different target variables with different units and scales. Which metric allows a fair scale-independent comparison?",
+ "options":["A. RMSE — because it reports error in the same units as the target variable for interpretability","B. MAE — because it reports the average absolute error in the original target variable units","C. R² — because it normalizes performance between negative infinity and 1, regardless of target scale","D. MSE — because squaring errors removes the effect of different measurement units and scales"],"answer":2,
+ "explanation":"C. R² is scale-independent because it normalizes residual error by total variance, producing a unitless metric (range -∞ to 1). RMSE (A) and MAE (B) are in target units, making cross-scale comparison meaningless. MSE (D) squares units, making them even less comparable across scales."},
+{"id":42,"subtopic":"",
+ "text":"A data scientist building a delivery time prediction model wants a metric that is robust to occasional extreme outlier predictions. Which metric best fits this requirement?",
+ "options":["A. MSE — because squaring emphasizes large errors to help identify and fix outlier predictions","B. RMSE — because taking the square root after squaring partially mitigates outlier sensitivity","C. MAE — because it uses absolute values without squaring, weighting all errors linearly and equally","D. R² — because normalization by total variance automatically adjusts for outlier impact"],"answer":2,
+ "explanation":"C. MAE (Mean Absolute Error) treats all errors linearly — a $100 error contributes exactly 10× more than a $10 error, not 100× as with MSE/RMSE. Since squaring amplifies large errors, MSE (A) and RMSE (B) are most sensitive to outliers. R² (D) is still affected by outliers in the residual sum of squares."},
+{"id":43,"subtopic":"",
+ "text":"A manufacturing company builds a model to predict equipment failure. An undetected failure costs $100,000 while a false alarm costs only $500. Which metric optimization strategy aligns with minimizing total business cost?",
+ "options":["A. Maximize precision to reduce false alarms, because each alarm triggers an expensive inspection protocol","B. Maximize recall to catch all potential failures, accepting more false alarms at $500 each as acceptable cost","C. Maximize accuracy to ensure the highest proportion of all predictions are correct across both classes","D. Minimize log loss to ensure the model's predicted failure probabilities are well-calibrated to true rates"],"answer":1,
+ "explanation":"B. Since false negatives ($100K) are 200× more expensive than false positives ($500), the priority is catching every potential failure (high recall). The cheap false alarms are acceptable trade-offs. Precision (A) would reduce cheap alarms but risk missing expensive failures. Accuracy (C) ignores cost asymmetry. Log loss (D) optimizes calibration, not business cost."},
+
+# Sub-topic 7: Exponentiate log-transformed variables
+{"id":44,"subtopic":"Sub-topic 7: Identify the need to exponentiate log-transformed variables before calculating metrics",
+ "text":"A model was trained to predict log(house_price). For a new house, the model outputs a prediction of 12.2. What must be done before reporting this value to business stakeholders?",
+ "options":["A. Report 12.2 directly as the predicted price because the model outputs are already in interpretable units","B. Apply np.exp(12.2) to convert the log-space prediction back to the original dollar price scale","C. Apply np.log(12.2) to further transform the prediction into a more interpretable logarithmic scale","D. Multiply 12.2 by the standard deviation of house prices to rescale the standardized prediction"],"answer":1,
+ "explanation":"B. Since the model was trained on log(price), predictions are in log-space. Exponentiating (np.exp(12.2) ≈ $198,000) converts back to the original dollar scale that stakeholders understand. Reporting raw log-space values (A) is not meaningful to business users. Logging again (C) double-transforms. Standard deviation scaling (D) is unrelated to log transforms."},
+{"id":45,"subtopic":"",
+ "text":"A data scientist trains a model on log-transformed targets and calculates RMSE by comparing log-space predictions against log-space actuals. Why is this problematic for business interpretation?",
+ "options":["A. The log-space RMSE is mathematically invalid because RMSE can only be computed on original-scale values","B. The log-space RMSE is not interpretable in original units and errors translate non-linearly to the original scale","C. The log-space RMSE will always be artificially lower than original-scale RMSE, creating false confidence","D. The log-space RMSE penalizes large errors more heavily than original-scale RMSE due to log compression"],"answer":1,
+ "explanation":"B. While mathematically valid, log-space RMSE is not interpretable in business units (dollars). Moreover, errors in log-space translate non-linearly to original space — a 0.1 error in log-space means different dollar amounts depending on the price level. Evaluation metrics should be computed on exponentiated predictions versus original targets for meaningful business reporting."},
+{"id":46,"subtopic":"",
+ "text":"A model predicts log(sales). The following code computes RMSE: rmse = sqrt(mean((log(y_test) - y_pred_log)**2)). What correction is needed for proper evaluation?",
+ "options":["A. No correction needed — comparing predictions and actuals in the same log-space produces valid metrics","B. Exponentiate predictions first: rmse = sqrt(mean((y_test - np.exp(y_pred_log))**2)) to evaluate in original scale","C. Take the log of RMSE: corrected_rmse = np.log(rmse) to convert the metric itself into log-space","D. Square the predictions: rmse = sqrt(mean((y_test - y_pred_log**2)**2)) to reverse the log compression"],"answer":1,
+ "explanation":"B. For business-meaningful evaluation, exponentiate predictions back to original scale and compare against original-scale actuals: RMSE = sqrt(mean((y_test - exp(y_pred_log))²)). Log-space metrics (A) are technically valid but not business-interpretable. Logging the RMSE (C) or squaring predictions (D) are mathematically incorrect transformations."},
+
+# Sub-topic 8: Bias-variance tradeoff and model complexity
+{"id":47,"subtopic":"Sub-topic 8: Assess the impact of model complexity and the bias-variance tradeoff on model performance",
+ "text":"A model achieves 97% accuracy on training data but only 62% accuracy on the test set. Which diagnosis and recommended action are most appropriate?",
+ "options":["A. High bias (underfitting) — increase model complexity by adding more features or removing regularization","B. High variance (overfitting) — reduce model complexity through regularization, pruning, or more training data","C. High irreducible error — collect cleaner data because the noise in the dataset prevents better performance","D. Distribution shift — resample the test set because it does not represent the same population as training"],"answer":1,
+ "explanation":"B. A large gap between training accuracy (97%) and test accuracy (62%) is the classic signature of overfitting (high variance). The model memorized training patterns but fails to generalize. Fixes include regularization, pruning, early stopping, or collecting more training data. High bias (A) shows poor performance on BOTH sets."},
+{"id":48,"subtopic":"",
+ "text":"A decision tree with max_depth=1 (decision stump) achieves 58% accuracy on both training and test data for a complex multi-class classification task. What is the correct diagnosis?",
+ "options":["A. High variance — the model is overfitting to noise in the training data and needs stronger regularization","B. High bias — the model is too simple to capture the underlying patterns and needs increased complexity","C. Good generalization — equal train and test performance indicates the model is optimally fit to the data","D. Data quality issue — the equal performance indicates the features have no predictive signal for the target"],"answer":1,
+ "explanation":"B. Low accuracy on BOTH training and test data (58% on a multi-class task) with no gap between them indicates underfitting (high bias). The decision stump is too simple to capture the complex patterns. The fix is to increase complexity: deeper trees, ensembles, or more features. Equal performance does NOT mean optimal fit (C) when both are poor."},
+{"id":49,"subtopic":"",
+ "text":"A data scientist increases max_depth from 3 to 30 in a decision tree classifier. How does this change affect the bias-variance tradeoff of the model?",
+ "options":["A. Both bias and variance decrease because deeper trees learn better representations of the data","B. Bias decreases (model can fit more complex patterns) but variance increases (model becomes more sensitive to training data)","C. Bias increases because deeper trees overfit; variance decreases because they capture more general patterns","D. Neither bias nor variance changes because tree depth only affects training speed, not model quality"],"answer":1,
+ "explanation":"B. Increasing depth allows the tree to fit more complex patterns (lower bias) but makes it increasingly sensitive to the specific training data (higher variance). This is the fundamental bias-variance tradeoff: reducing one typically increases the other. Both do NOT decrease together (A). Depth directly affects model quality (D)."},
+{"id":50,"subtopic":"",
+ "text":"A data scientist applies L2 regularization (Ridge) with a very high alpha parameter to a logistic regression model. What is the expected effect on the bias-variance tradeoff?",
+ "options":["A. Bias decreases and variance decreases because regularization improves the model in all aspects","B. Bias increases and variance increases because strong regularization destabilizes coefficient estimation","C. Bias increases (coefficients shrink toward zero, underfitting) and variance decreases (model becomes more stable)","D. Bias is unchanged and variance decreases because regularization only affects prediction stability not accuracy"],"answer":2,
+ "explanation":"C. Strong L2 regularization shrinks coefficients toward zero, making the model simpler (higher bias, potential underfitting) but more stable across different training samples (lower variance). This is the classic regularization tradeoff. It does NOT improve both (A), does NOT increase variance (B), and it DOES affect bias (D)."}
+]
+
+print(f"Loaded {len(questions)} questions across {len(set(q['subtopic'] for q in questions if q['subtopic']))} sub-topics.")
+
+# Safely encode questions as JSON for JavaScript
+questions_json = json.dumps(questions, ensure_ascii=True)
+
+html_page = f'''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background: #0d1117; color: #e6edf3; padding: 20px; line-height: 1.6; }}
+.header {{ text-align: center; padding: 30px 0; border-bottom: 2px solid #ff6b35; margin-bottom: 30px; }}
+.header h1 {{ color: #ff6b35; font-size: 1.8em; margin-bottom: 8px; }}
+.header p {{ color: #8b949e; font-size: 0.95em; }}
+.progress-bar {{ background: #21262d; border-radius: 8px; height: 12px; margin: 20px auto; max-width: 600px; overflow: hidden; }}
+.progress-fill {{ background: linear-gradient(90deg, #ff6b35, #ff8c42); height: 100%; width: 0%; transition: width 0.5s; border-radius: 8px; }}
+.score-display {{ text-align: center; font-size: 1.1em; color: #8b949e; margin: 10px 0 30px; }}
+.subtopic-header {{ background: linear-gradient(135deg, #1a1f2e, #21262d); border-left: 4px solid #ff6b35; padding: 12px 20px; margin: 30px 0 15px; border-radius: 0 8px 8px 0; font-size: 1.05em; color: #ff8c42; }}
+.question-card {{ background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 15px 0; transition: border-color 0.3s; }}
+.question-card.answered-correct {{ border-color: #238636; }}
+.question-card.answered-wrong {{ border-color: #da3633; }}
+.q-number {{ display: inline-block; background: #ff6b35; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }}
+.q-text {{ font-size: 1em; margin: 12px 0 16px; color: #e6edf3; }}
+.options {{ list-style: none; }}
+.options li {{ background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; margin: 8px 0; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 10px; }}
+.options li:hover {{ border-color: #ff6b35; background: #1a1f2e; }}
+.options li.correct {{ border-color: #238636; background: #0d2818; }}
+.options li.incorrect {{ border-color: #da3633; background: #2d1013; }}
+.options li .opt-letter {{ font-weight: bold; color: #ff6b35; min-width: 20px; }}
+.explanation {{ display: none; margin-top: 16px; padding: 16px; background: #1a2332; border: 1px solid rgba(31,111,235,0.2); border-radius: 8px; font-size: 0.9em; color: #b1bac4; }}
+.explanation.show {{ display: block; }}
+.explanation strong {{ color: #58a6ff; }}
+.btn-container {{ text-align: center; margin: 40px 0; }}
+.btn {{ background: #ff6b35; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: background 0.3s; margin: 5px; }}
+.btn:hover {{ background: #ff8c42; }}
+.btn-reset {{ background: #30363d; }}
+.summary {{ display: none; text-align: center; padding: 30px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin: 30px 0; }}
+.summary h2 {{ color: #ff6b35; margin-bottom: 15px; }}
+.summary .final-score {{ font-size: 2em; color: #58a6ff; margin: 10px 0; }}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Databricks ML Associate - Section 3: Model Development</h1>
+  <p>50 Exam-Standard Questions | Official Exam Guide (Mar 2025)</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="score-display" id="scoreDisplay">Score: 0 / 50 | Answered: 0 / 50</div>
+<div id="quizContainer"></div>
+<div class="btn-container">
+  <button class="btn" onclick="showAllAnswers()">Reveal All Answers</button>
+  <button class="btn btn-reset" onclick="resetQuiz()">Reset Quiz</button>
+</div>
+<div class="summary" id="summary">
+  <h2>Quiz Complete!</h2>
+  <div class="final-score" id="finalScore"></div>
+  <p id="finalMsg"></p>
+</div>
+<script>
+var questions = {questions_json};
+var answered = 0, correct = 0;
+
+function renderQuiz() {{
+  var container = document.getElementById("quizContainer");
+  var html = "";
+  var currentSubtopic = "";
+  for (var i = 0; i < questions.length; i++) {{
+    var q = questions[i];
+    if (q.subtopic && q.subtopic !== currentSubtopic) {{
+      currentSubtopic = q.subtopic;
+      html += "<div class=\\"subtopic-header\\">" + currentSubtopic + "</div>";
+    }}
+    html += "<div class=\\"question-card\\" id=\\"qcard-" + q.id + "\\">";
+    html += "<span class=\\"q-number\\">" + q.id + "</span>";
+    html += "<span style=\\"color:#8b949e;font-size:0.85em;\\">Question " + q.id + " of 50</span>";
+    html += "<div class=\\"q-text\\">" + q.text + "</div>";
+    html += "<ul class=\\"options\\" id=\\"opts-" + q.id + "\\">";
+    for (var j = 0; j < q.options.length; j++) {{
+      html += "<li onclick=\\"selectAnswer(" + q.id + "," + j + ")\\" id=\\"opt-" + q.id + "-" + j + "\\">";
+      html += "<span class=\\"opt-letter\\">" + q.options[j].charAt(0) + ".</span>";
+      html += "<span>" + q.options[j].substring(3) + "</span></li>";
+    }}
+    html += "</ul>";
+    html += "<div class=\\"explanation\\" id=\\"exp-" + q.id + "\\"><strong>Explanation:</strong> " + q.explanation + "</div>";
+    html += "</div>";
+  }}
+  container.innerHTML = html;
+}}
+
+function selectAnswer(qid, selected) {{
+  var q = null;
+  for (var i = 0; i < questions.length; i++) {{ if (questions[i].id === qid) {{ q = questions[i]; break; }} }}
+  var opts = document.querySelectorAll("#opts-" + qid + " li");
+  var alreadyAnswered = false;
+  for (var k = 0; k < opts.length; k++) {{
+    if (opts[k].classList.contains("correct") || opts[k].classList.contains("incorrect")) {{ alreadyAnswered = true; break; }}
+  }}
+  if (alreadyAnswered) return;
+  answered++;
+  for (var k = 0; k < opts.length; k++) {{ opts[k].style.pointerEvents = "none"; }}
+  if (selected === q.answer) {{
+    correct++;
+    opts[selected].classList.add("correct");
+    document.getElementById("qcard-" + qid).classList.add("answered-correct");
+  }} else {{
+    opts[selected].classList.add("incorrect");
+    opts[q.answer].classList.add("correct");
+    document.getElementById("qcard-" + qid).classList.add("answered-wrong");
+  }}
+  document.getElementById("exp-" + qid).classList.add("show");
+  updateProgress();
+}}
+
+function updateProgress() {{
+  document.getElementById("progressFill").style.width = (answered / 50 * 100) + "%";
+  document.getElementById("scoreDisplay").textContent = "Score: " + correct + " / " + answered + " | Answered: " + answered + " / 50";
+  if (answered === 50) {{
+    document.getElementById("summary").style.display = "block";
+    document.getElementById("finalScore").textContent = correct + " / 50 (" + Math.round(correct / 50 * 100) + "%)";
+    var msg = correct >= 40 ? "Excellent! You are well-prepared for this section!" : correct >= 30 ? "Good progress! Review the explanations for missed questions." : "Keep studying! Focus on the sub-topics you missed.";
+    document.getElementById("finalMsg").textContent = msg;
+  }}
+}}
+
+function showAllAnswers() {{
+  for (var i = 0; i < questions.length; i++) {{
+    var q = questions[i];
+    var opts = document.querySelectorAll("#opts-" + q.id + " li");
+    if (!opts[q.answer].classList.contains("correct")) {{
+      opts[q.answer].classList.add("correct");
+      for (var k = 0; k < opts.length; k++) {{ opts[k].style.pointerEvents = "none"; }}
+      document.getElementById("exp-" + q.id).classList.add("show");
+      var card = document.getElementById("qcard-" + q.id);
+      if (!card.classList.contains("answered-correct") && !card.classList.contains("answered-wrong")) {{
+        answered++;
+      }}
+    }}
+  }}
+  updateProgress();
+}}
+
+function resetQuiz() {{
+  answered = 0; correct = 0;
+  renderQuiz();
+  updateProgress();
+  document.getElementById("summary").style.display = "none";
+}}
+
+renderQuiz();
+</script>
+</body>
+</html>
+'''
+
+displayHTML(html_page)
