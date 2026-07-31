@@ -1,0 +1,379 @@
+import json
+
+questions = [
+# Sub-topic 1: Compute summary statistics
+{"id":1,"subtopic":"Sub-topic 1: Compute summary statistics on a Spark DataFrame using .summary() or dbutils data summaries",
+ "text":"A data scientist wants to compute the count, mean, standard deviation, min, and max for all numeric columns of a Spark DataFrame df. Which method will return these statistics as a new DataFrame?",
+ "options":["A. df.summary()","B. df.describe()","C. df.stats()","D. df.agg()"],"answer":1,
+ "explanation":"B. df.describe() returns count, mean, stddev, min, and max for numeric/string columns as a DataFrame. .summary() is similar but also includes percentiles (25%, 50%, 75%) by default. .stats() does not exist in PySpark. .agg() requires explicit aggregation functions."},
+{"id":2,"subtopic":"",
+ "text":"Which of the following statistics are included by default when calling df.summary() on a Spark DataFrame but NOT when calling df.describe()?",
+ "options":["A. count, mean, stddev, min, max","B. 25th percentile, 50th percentile, 75th percentile","C. skewness, kurtosis, variance","D. mode, median, interquartile range"],"answer":1,
+ "explanation":"B. .summary() includes all statistics from .describe() (count, mean, stddev, min, max) PLUS the 25%, 50%, and 75% percentiles. Skewness, kurtosis, mode, and IQR are not included in either method by default."},
+{"id":3,"subtopic":"",
+ "text":"A data scientist runs df.summary('count', 'mean', '50%'). What will this return?",
+ "options":["A. A Python dictionary containing count, mean, and median values for each column","B. A new Spark DataFrame with rows for count, mean, and the 50th percentile only","C. A pandas DataFrame with summary statistics filtered to those three metrics","D. An error because .summary() does not accept string arguments"],"answer":1,
+ "explanation":"B. The .summary() method accepts specific statistic names as string arguments and returns a Spark DataFrame with only the requested statistics as rows. It does not return a dictionary or pandas DataFrame, and it does accept string arguments."},
+{"id":4,"subtopic":"",
+ "text":"A machine learning engineer wants to quickly understand the data types, null counts, and basic statistics of a large Spark DataFrame in a Databricks notebook. Which approach provides a comprehensive profile with minimal code?",
+ "options":["A. Call df.printSchema() followed by df.describe().show()","B. Use dbutils.data.summarize(df) to generate an interactive data profile","C. Call df.toPandas().info() to leverage pandas profiling capabilities","D. Use df.summary().collect() and manually format the output"],"answer":1,
+ "explanation":"B. dbutils.data.summarize(df) generates a rich, interactive HTML data profile directly in the notebook output, showing data types, null counts, distributions, and summary statistics with minimal effort. Option A gives partial info. Option C collects all data to driver (dangerous for large DataFrames). Option D requires manual formatting."},
+{"id":5,"subtopic":"",
+ "text":"Which statement about dbutils.data.summarize(df) is correct?",
+ "options":["A. It modifies the original DataFrame by adding statistical columns","B. It returns a new Spark DataFrame containing the computed statistics","C. It renders an interactive HTML visualization in the notebook output cell","D. It requires specifying which columns to profile as a mandatory argument"],"answer":2,
+ "explanation":"C. dbutils.data.summarize(df) does not modify or return a DataFrame. It renders an interactive HTML summary directly in the cell output. It profiles all columns by default without requiring column specification."},
+{"id":6,"subtopic":"",
+ "text":"A data scientist calls df.describe() on a DataFrame with both numeric and string columns. What happens to the string columns in the output?",
+ "options":["A. String columns are excluded entirely from the output DataFrame","B. String columns show count, min, and max only (alphabetical comparison)","C. String columns show count, mean, stddev, min, and max with nulls for non-applicable metrics","D. An error is raised because describe() only works on numeric columns"],"answer":1,
+ "explanation":"B. When .describe() encounters string columns, it returns count, min, and max (using lexicographic ordering). Mean and stddev are not computed for strings and appear as null in the output. It does not raise an error or exclude string columns."},
+
+# Sub-topic 2: Remove outliers
+{"id":7,"subtopic":"Sub-topic 2: Remove outliers from a Spark DataFrame based on standard deviation or IQR",
+ "text":"A data scientist wants to remove outliers from a numeric column price using the IQR method. They compute Q1 = 100 and Q3 = 400. Using a multiplier of 1.5, what is the upper bound for outlier detection?",
+ "options":["A. 700","B. 850","C. 550","D. 1000"],"answer":1,
+ "explanation":"B. IQR = Q3 - Q1 = 400 - 100 = 300. Upper bound = Q3 + 1.5 * IQR = 400 + 1.5 * 300 = 400 + 450 = 850. Values above 850 are considered outliers."},
+{"id":8,"subtopic":"",
+ "text":"Which PySpark code correctly computes the 25th and 75th percentiles of column salary for IQR-based outlier removal?",
+ "options":["A. df.approxQuantile('salary', [0.25, 0.75], 0.01)","B. df.quantile('salary', [0.25, 0.75])","C. df.stat.percentile('salary', [25, 75])","D. df.agg(percentile_approx('salary', [0.25, 0.75]))"],"answer":0,
+ "explanation":"A. df.approxQuantile(col, probabilities, relativeError) is the correct PySpark method for computing quantiles. It returns a list of values. The third argument is the relative error tolerance. Options B and C use methods that do not exist in PySpark DataFrame API. Option D uses a SQL function not directly available this way."},
+{"id":9,"subtopic":"",
+ "text":"A data scientist removes outliers using the standard deviation method, keeping only values within 3 standard deviations of the mean. Given mean = 50 and stddev = 10, which filter expression is correct?",
+ "options":["A. df.filter((col('value') > 20) & (col('value') < 80))","B. df.filter((col('value') >= 20) & (col('value') <= 80))","C. df.filter((col('value') > 30) & (col('value') < 70))","D. df.filter((col('value') >= -30) & (col('value') <= 130))"],"answer":1,
+ "explanation":"B. With mean=50, stddev=10, and 3 standard deviations: lower = 50 - 3*10 = 20, upper = 50 + 3*10 = 80. The correct filter keeps values where 20 <= value <= 80. Option A excludes the boundaries. Option C uses 2 standard deviations. Option D calculates incorrectly."},
+{"id":10,"subtopic":"",
+ "text":"Which statement about IQR-based vs standard deviation-based outlier removal is correct?",
+ "options":["A. IQR-based removal assumes the data follows a normal distribution","B. Standard deviation-based removal is more robust to extreme outliers than IQR","C. IQR-based removal is more robust because it uses percentiles unaffected by extreme values","D. Both methods produce identical results regardless of the data distribution"],"answer":2,
+ "explanation":"C. IQR-based outlier detection is more robust to extreme values because Q1 and Q3 (percentiles) are not influenced by extreme outliers. Standard deviation is pulled by outliers since mean and stddev are both sensitive to extreme values."},
+{"id":11,"subtopic":"",
+ "text":"After computing IQR bounds, which PySpark operation correctly removes outliers from column age with lower_bound = 5 and upper_bound = 95?",
+ "options":["A. df.where((col('age') >= 5) & (col('age') <= 95))","B. df.drop(col('age') < 5 | col('age') > 95)","C. df.filter(col('age').between(5, 95)).drop('age')","D. df.select(col('age')).where(col('age') > 5, col('age') < 95)"],"answer":0,
+ "explanation":"A. df.where() (alias for df.filter()) with a compound condition retains rows within the acceptable range. Option B uses incorrect syntax. Option C filters correctly but then drops the column. Option D uses incorrect .where() syntax with two separate arguments."},
+{"id":12,"subtopic":"",
+ "text":"A data scientist notices that removing outliers using 2 standard deviations eliminates 8% of the data, while using 3 standard deviations removes only 1%. Which approach is most appropriate for a model that is sensitive to extreme values but needs a large training set?",
+ "options":["A. Use 2 standard deviations to aggressively remove all potential outliers","B. Use 3 standard deviations to balance outlier removal with data preservation","C. Use 1 standard deviation for maximum outlier removal effectiveness","D. Do not remove any outliers since the model should learn from all data points"],"answer":1,
+ "explanation":"B. Using 3 standard deviations removes only the most extreme outliers while preserving most of the data. This balances the need to handle extreme values (model sensitivity) while retaining sufficient training data."},
+
+# Sub-topic 3: Create visualizations
+{"id":13,"subtopic":"Sub-topic 3: Create visualizations for categorical or continuous features",
+ "text":"Which visualization type is most appropriate for showing the frequency distribution of a categorical feature with 8 distinct values?",
+ "options":["A. Histogram with 8 bins","B. Bar chart with one bar per category","C. Box plot grouped by category","D. Scatter plot with category on the x-axis"],"answer":1,
+ "explanation":"B. A bar chart is the standard visualization for showing the frequency (count) of each category in a categorical feature. Histograms are for continuous data distributions. Box plots show summary statistics, not frequencies. Scatter plots are for relationships between two variables."},
+{"id":14,"subtopic":"",
+ "text":"A data scientist wants to visualize the distribution of a continuous feature income to check for skewness. Which visualization is most appropriate?",
+ "options":["A. A pie chart showing income ranges as proportions","B. A histogram or kernel density estimate (KDE) plot","C. A bar chart with income values on the x-axis","D. A stacked area chart showing cumulative income"],"answer":1,
+ "explanation":"B. Histograms and KDE plots are the standard visualizations for examining the shape, spread, and skewness of continuous distributions. Pie charts are for categorical proportions. Bar charts are for categorical data. Stacked area charts are for time series."},
+{"id":15,"subtopic":"",
+ "text":"Which visualization would best display both the central tendency and spread (including potential outliers) of a continuous feature temperature across four seasons?",
+ "options":["A. Four overlaid histograms, one per season","B. A grouped box plot with one box per season","C. A single scatter plot with season on the x-axis and temperature on the y-axis","D. A line chart connecting mean temperatures across seasons"],"answer":1,
+ "explanation":"B. A grouped box plot shows the median, quartiles, range, and outliers for each group simultaneously, making it ideal for comparing distributions across categories."},
+{"id":16,"subtopic":"",
+ "text":"A data scientist wants to visualize the proportion of each category in a feature with exactly 3 classes (low, medium, high). Which visualization is acceptable for this scenario?",
+ "options":["A. A pie chart showing the proportion of each class","B. A histogram with 3 bins","C. A violin plot for the three classes","D. A Q-Q plot comparing the three distributions"],"answer":0,
+ "explanation":"A. A pie chart is acceptable when showing proportions of a categorical variable with a small number of classes (3 is ideal). Histograms are for continuous data. Violin plots need a continuous variable to display density. Q-Q plots compare distributions against a theoretical distribution."},
+{"id":17,"subtopic":"",
+ "text":"Which Python library and function combination is commonly used in Databricks notebooks to create a histogram for a Spark DataFrame column age?",
+ "options":["A. display(df.select('age')) and then use the built-in visualization options","B. df.select('age').plot.hist() using PySpark native plotting API","C. spark.plot(df, x='age', kind='histogram')","D. dbutils.visualize(df.select('age'), chart='histogram')"],"answer":0,
+ "explanation":"A. In Databricks notebooks, calling display(df) renders an interactive table with built-in visualization options (including histograms, bar charts, etc.) that can be configured in the UI. PySpark does not have a native .plot.hist(). spark.plot() and dbutils.visualize() do not exist."},
+
+# Sub-topic 4: Compare features
+{"id":18,"subtopic":"Sub-topic 4: Compare two categorical or two continuous features using the appropriate method",
+ "text":"A data scientist wants to test whether there is a statistically significant association between two categorical features: gender (male/female) and purchase_type (online/in-store). Which test is most appropriate?",
+ "options":["A. Pearson correlation coefficient","B. Chi-squared test of independence","C. Two-sample t-test","D. ANOVA F-test"],"answer":1,
+ "explanation":"B. The Chi-squared test of independence is the standard method for testing association between two categorical variables. Pearson correlation is for two continuous variables. T-tests compare means of continuous variables between groups. ANOVA compares means across multiple groups."},
+{"id":19,"subtopic":"",
+ "text":"Which metric is most appropriate for measuring the linear relationship between two continuous features height and weight?",
+ "options":["A. Chi-squared statistic","B. Cramer V coefficient","C. Pearson correlation coefficient","D. Mutual information score"],"answer":2,
+ "explanation":"C. The Pearson correlation coefficient measures the strength and direction of the linear relationship between two continuous variables (-1 to +1). Chi-squared and Cramer V are for categorical variables. Mutual information captures any dependency but does not specifically measure linear relationships."},
+{"id":20,"subtopic":"",
+ "text":"A data scientist computes a Pearson correlation of 0.02 between two continuous features. What does this indicate?",
+ "options":["A. A strong positive linear relationship between the features","B. The features have no relationship of any kind","C. A weak or negligible linear relationship between the features","D. The features are perfectly independent"],"answer":2,
+ "explanation":"C. A Pearson correlation near 0 indicates a weak or negligible LINEAR relationship. However, it does NOT mean there is no relationship at all. There could be a strong non-linear relationship. Pearson only measures linear association."},
+{"id":21,"subtopic":"",
+ "text":"Which visualization is most appropriate for comparing the relationship between two continuous features to identify potential non-linear patterns?",
+ "options":["A. A grouped bar chart of binned values","B. A scatter plot with a trend line","C. Two separate histograms side by side","D. A contingency table heatmap"],"answer":1,
+ "explanation":"B. A scatter plot is the standard visualization for exploring relationships between two continuous variables, and adding a trend line helps identify linear vs non-linear patterns. Bar charts and histograms show individual distributions. Contingency tables are for categorical data."},
+{"id":22,"subtopic":"",
+ "text":"A data scientist wants to compare the association between two categorical features: region (4 levels) and product_category (5 levels). After running a chi-squared test, they want a normalized measure of association strength. Which metric should they use?",
+ "options":["A. Pearson r to normalize the chi-squared value","B. Cramer V to get a value between 0 and 1","C. Spearman rank correlation for ordinal comparison","D. Point-biserial correlation for mixed variable types"],"answer":1,
+ "explanation":"B. Cramer V normalizes the chi-squared statistic to produce a value between 0 (no association) and 1 (perfect association), making it ideal for measuring the strength of association between two categorical variables regardless of table dimensions."},
+
+# Sub-topic 5: Compare imputation strategies
+{"id":23,"subtopic":"Sub-topic 5: Compare and contrast imputing missing values with the mean or median or mode value",
+ "text":"A continuous feature has a heavily right-skewed distribution with several extreme high values. Which imputation strategy is most appropriate for missing values?",
+ "options":["A. Mean imputation, because it accounts for all values in the distribution","B. Median imputation, because it is robust to the influence of extreme values","C. Mode imputation, because it uses the most frequent value in the distribution","D. Maximum value imputation, because it preserves the skewed nature of the data"],"answer":1,
+ "explanation":"B. For skewed distributions, the median is preferred because it represents the central value without being pulled by extreme outliers. The mean would be inflated by right-skewed extreme values. Mode is typically used for categorical features."},
+{"id":24,"subtopic":"",
+ "text":"Which statement correctly describes a disadvantage of mean imputation for continuous features?",
+ "options":["A. It always increases the variance of the imputed feature","B. It reduces the variance of the feature and can distort relationships between variables","C. It is computationally more expensive than median imputation","D. It cannot be used when the feature contains negative values"],"answer":1,
+ "explanation":"B. Mean imputation reduces variance because all missing values become the same (mean) value, pulling the distribution toward the center. This artificial reduction in spread can distort correlations with other features."},
+{"id":25,"subtopic":"",
+ "text":"For which type of feature is mode imputation the most appropriate default strategy?",
+ "options":["A. Continuous features with a symmetric distribution","B. Categorical features where the most frequent value is a reasonable replacement","C. Continuous features with a bimodal distribution","D. Ordinal features with evenly distributed ranks"],"answer":1,
+ "explanation":"B. Mode imputation replaces missing values with the most frequently occurring value, which is the natural choice for categorical features (where mean and median are not defined). For continuous data, mean or median is preferred."},
+{"id":26,"subtopic":"",
+ "text":"A data scientist has a normally distributed continuous feature with 5% missing values. Which imputation method will best preserve the original distribution shape?",
+ "options":["A. Mode imputation, because normal distributions have a well-defined mode","B. Median imputation, because it is always more robust than the mean","C. Mean imputation, because for normal distributions the mean equals the median","D. Random sampling from the existing distribution values"],"answer":2,
+ "explanation":"C. For normally distributed data, mean = median = mode. Mean imputation is appropriate here because the distribution is symmetric, so the mean accurately represents the center. Among the standard imputation methods listed, mean is the appropriate choice for symmetric/normal data."},
+{"id":27,"subtopic":"",
+ "text":"Which scenario makes median imputation clearly preferable over mean imputation?",
+ "options":["A. A feature with values uniformly distributed between 0 and 100","B. A feature representing house prices in a market with luxury outliers","C. A feature with exactly zero missing values","D. A binary feature encoded as 0 and 1"],"answer":1,
+ "explanation":"B. House prices are typically right-skewed with luxury outliers pulling the mean upward. The median is robust to these outliers and better represents the typical value. Uniform distributions do not have outlier issues. Binary features should use mode."},
+{"id":28,"subtopic":"",
+ "text":"A dataset has a categorical feature color with values [red: 45%, blue: 30%, green: 20%, null: 5%]. What will mode imputation replace the null values with?",
+ "options":["A. A proportional random sample of red, blue, and green","B. The value red for all missing entries","C. The value unknown as a new category","D. An equal split between red, blue, and green"],"answer":1,
+ "explanation":"B. Mode imputation replaces ALL missing values with the single most frequent value (the mode). Since red has the highest frequency (45%), all nulls become red. It does not randomly sample, create new categories, or distribute evenly."},
+
+# Sub-topic 6: Impute missing values (implementation)
+{"id":29,"subtopic":"Sub-topic 6: Impute missing values with the mode, mean, or median value",
+ "text":"Which scikit-learn class is used to impute missing values with the mean, median, or most frequent (mode) strategy?",
+ "options":["A. sklearn.impute.SimpleImputer","B. sklearn.preprocessing.Imputer","C. sklearn.impute.MissingIndicator","D. sklearn.preprocessing.FillNa"],"answer":0,
+ "explanation":"A. sklearn.impute.SimpleImputer is the current class for basic imputation strategies (mean, median, most_frequent, constant). sklearn.preprocessing.Imputer was deprecated and removed. MissingIndicator only flags missing values. FillNa does not exist in sklearn."},
+{"id":30,"subtopic":"",
+ "text":"A data scientist uses PySpark ML Imputer with fit() and transform(). What does the fit() step accomplish?",
+ "options":["A. It fills in the missing values in the DataFrame immediately","B. It computes the statistic (mean/median/mode) of non-null values to be used during transformation","C. It creates a new column with imputed values appended to the DataFrame","D. It validates that the column contains missing values before processing"],"answer":1,
+ "explanation":"B. In Spark ML Estimator/Transformer pattern, fit() learns parameters from the data, in this case computing the statistic of non-null values. The actual imputation happens in transform(), which applies the learned value to fill missing values."},
+{"id":31,"subtopic":"",
+ "text":"Which PySpark code correctly fills missing values in column revenue with the median value without using Spark ML Imputer?",
+ "options":["A. df.fillna(df.select(median('revenue')).collect()[0][0], subset=['revenue'])","B. df.na.fill(strategy='median', subset=['revenue'])","C. df.replace(None, df.agg(median('revenue')).first()[0], subset=['revenue'])","D. df.withColumn('revenue', coalesce(col('revenue'), median('revenue')))"],"answer":0,
+ "explanation":"A. This computes the median using an aggregate, collects the scalar value, then uses fillna() to replace nulls. Option B has invalid syntax (fillna does not accept strategy). Option C replace works differently. Option D incorrectly uses median as a column expression without over()."},
+{"id":32,"subtopic":"",
+ "text":"What is the correct strategy parameter value for scikit-learn SimpleImputer to impute with the mode?",
+ "options":["A. strategy='mode'","B. strategy='most_frequent'","C. strategy='frequent'","D. strategy='categorical'"],"answer":1,
+ "explanation":"B. In scikit-learn SimpleImputer, the mode imputation strategy is specified as strategy='most_frequent'. The valid strategies are: mean, median, most_frequent, and constant. mode, frequent, and categorical are not valid parameter values."},
+{"id":33,"subtopic":"",
+ "text":"A data scientist wants to impute missing values differently for numeric and categorical columns in a single pipeline. Which approach is correct?",
+ "options":["A. Use one SimpleImputer with strategy='mean' as it automatically detects column types","B. Create separate SimpleImputer instances with different strategies and combine them using ColumnTransformer","C. Use SimpleImputer with strategy='most_frequent' which works optimally for both types","D. Use Spark ML Imputer class which handles both numeric and categorical columns simultaneously"],"answer":1,
+ "explanation":"B. ColumnTransformer allows applying different transformers to different column subsets. You can use SimpleImputer(strategy='mean') for numeric columns and SimpleImputer(strategy='most_frequent') for categorical columns. A single imputer cannot apply different strategies. Spark Imputer only handles numeric columns."},
+{"id":34,"subtopic":"",
+ "text":"Which Spark ML Imputer strategy parameter value replaces missing values with the median of the column?",
+ "options":["A. imputer.setStrategy('med')","B. imputer.setStrategy('median')","C. imputer.setStrategy('50%')","D. imputer.setStrategy('percentile_50')"],"answer":1,
+ "explanation":"B. PySpark ML Imputer supports three strategies: mean, median, and mode. The correct parameter value is the full word median. Abbreviations like med or percentile notations like 50% are not valid."},
+
+# Sub-topic 7: One-hot encoding
+{"id":35,"subtopic":"Sub-topic 7: Use one-hot encoding for categorical features",
+ "text":"A data scientist needs to one-hot encode a categorical column color with values ['red','blue','green'] using PySpark ML. Which sequence of transformers is required?",
+ "options":["A. OneHotEncoder directly on the string column","B. StringIndexer followed by OneHotEncoder","C. VectorAssembler followed by OneHotEncoder","D. Tokenizer followed by CountVectorizer"],"answer":1,
+ "explanation":"B. In PySpark ML, OneHotEncoder requires numeric input (indices). You must first use StringIndexer to convert string categories to numeric indices, then apply OneHotEncoder to create the binary vector representation."},
+{"id":36,"subtopic":"",
+ "text":"After applying OneHotEncoder in PySpark ML to a feature with 5 categories, how many dimensions does the resulting vector have by default?",
+ "options":["A. 5 dimensions, one for each category","B. 4 dimensions, dropping the last category","C. 6 dimensions, including an intercept term","D. 3 dimensions, using binary encoding"],"answer":1,
+ "explanation":"B. By default, PySpark OneHotEncoder uses dropLast=True, producing N-1 dimensions for N categories. This avoids the dummy variable trap (multicollinearity) in linear models. With 5 categories, the output is a 4-dimensional sparse vector."},
+{"id":37,"subtopic":"",
+ "text":"Which pandas method creates one-hot encoded columns from a categorical feature in a pandas DataFrame?",
+ "options":["A. pd.get_dummies(df, columns=['category'])","B. pd.one_hot_encode(df['category'])","C. df['category'].factorize()","D. pd.Categorical(df['category']).codes"],"answer":0,
+ "explanation":"A. pd.get_dummies() is the pandas function for one-hot encoding categorical columns into binary indicator columns. one_hot_encode does not exist. factorize() converts to integer codes (label encoding). .codes also produces integer codes, not one-hot vectors."},
+{"id":38,"subtopic":"",
+ "text":"A data scientist uses scikit-learn OneHotEncoder on a feature with categories ['small', 'medium', 'large']. By default, what is the output shape for a single sample?",
+ "options":["A. A dense array of shape (1, 2) due to drop='first' default","B. A sparse matrix of shape (1, 3) with one non-zero entry","C. A dense array of shape (1, 3) with one element equal to 1","D. A sparse matrix of shape (1, 4) including an unknown category column"],"answer":1,
+ "explanation":"B. By default, scikit-learn OneHotEncoder produces a sparse matrix with N columns for N categories (one non-zero entry per sample). The default is drop=None (keep all categories) and sparse_output=True. So 3 categories produce a (1, 3) sparse matrix."},
+{"id":39,"subtopic":"",
+ "text":"What is the purpose of setting dropLast=True (the default) in PySpark OneHotEncoder?",
+ "options":["A. To remove the last row of the DataFrame during encoding","B. To drop the original categorical column after encoding","C. To avoid multicollinearity by representing N categories with N-1 binary features","D. To exclude the least frequent category from the encoding process"],"answer":2,
+ "explanation":"C. dropLast=True drops one category from the encoding (the last indexed one), producing N-1 binary features for N categories. This prevents perfect multicollinearity where one feature is perfectly predictable from the others, which causes issues in linear models."},
+
+# Sub-topic 8: OHE appropriateness
+{"id":40,"subtopic":"Sub-topic 8: Identify and explain the model types or data sets for which one-hot encoding is or is not appropriate",
+ "text":"For which model type is one-hot encoding of categorical features most necessary?",
+ "options":["A. Decision tree-based models like Random Forest and Gradient Boosted Trees","B. Linear models like Logistic Regression and Linear Regression","C. Nearest neighbor models like KNN with Euclidean distance","D. Both B and C"],"answer":3,
+ "explanation":"D. Linear models require numeric input and cannot handle categorical strings directly. OHE provides appropriate numeric representation without implying ordinal relationships. KNN with Euclidean distance also needs OHE because label-encoded categories would imply false distance relationships. Tree-based models can handle label-encoded categories natively."},
+{"id":41,"subtopic":"",
+ "text":"Why is one-hot encoding generally NOT recommended for tree-based models like XGBoost or LightGBM?",
+ "options":["A. Tree-based models cannot process sparse vectors","B. One-hot encoding creates many sparse features that dilute split effectiveness and increase memory","C. Tree-based models require features to be normalized between 0 and 1","D. One-hot encoding causes gradient computation errors in boosting algorithms"],"answer":1,
+ "explanation":"B. Tree-based models split on individual features. OHE creates many binary columns that each carry limited information, requiring more splits to capture the same pattern. This dilutes feature importance, increases memory usage, and can slow training."},
+{"id":42,"subtopic":"",
+ "text":"A categorical feature zip_code has 10,000 unique values. Why is standard one-hot encoding problematic for this feature?",
+ "options":["A. One-hot encoding only supports features with fewer than 256 categories","B. It creates a 10,000-dimensional sparse vector, causing memory issues and the curse of dimensionality","C. It violates the assumption of independence required by all machine learning models","D. It is impossible to compute one-hot encoding for features with more than 1,000 categories"],"answer":1,
+ "explanation":"B. High-cardinality features produce extremely wide sparse representations when one-hot encoded. With 10,000 categories, each sample gets a 10,000-dimensional vector (mostly zeros), causing memory issues, slow training, and the curse of dimensionality. Alternatives include target encoding, hashing, or embeddings."},
+{"id":43,"subtopic":"",
+ "text":"A feature education_level has ordered values: ['high_school', 'bachelors', 'masters', 'phd']. Which encoding approach preserves the ordinal relationship?",
+ "options":["A. One-hot encoding with dropLast=True","B. Label encoding with values mapped to 0, 1, 2, 3 in order","C. Binary encoding using log2(4) = 2 bits","D. Frequency encoding based on the count of each category"],"answer":1,
+ "explanation":"B. For ordinal features with a meaningful order, label (ordinal) encoding with values that reflect the natural ordering (0 < 1 < 2 < 3) preserves the ordinal relationship. One-hot encoding destroys ordinal information by treating all categories as equidistant."},
+{"id":44,"subtopic":"",
+ "text":"Which statement about one-hot encoding and neural networks is correct?",
+ "options":["A. Neural networks cannot process one-hot encoded features","B. One-hot encoding is valid for neural networks but embeddings are preferred for high-cardinality features","C. Neural networks require one-hot encoding for all categorical inputs without exception","D. One-hot encoding causes vanishing gradients in neural network training"],"answer":1,
+ "explanation":"B. Neural networks can process OHE inputs, but for high-cardinality features, learned embeddings are preferred. They produce dense, lower-dimensional representations that capture semantic relationships between categories."},
+{"id":45,"subtopic":"",
+ "text":"A data scientist is building a Logistic Regression model with a nominal categorical feature department (HR, Engineering, Sales, Marketing). What happens if they use label encoding (0, 1, 2, 3) instead of one-hot encoding?",
+ "options":["A. The model will perform identically since both encodings contain the same information","B. The model will incorrectly assume an ordinal relationship where Engineering > HR and Sales > Engineering","C. The model will fail to converge during training","D. The model will automatically detect that the feature is nominal and ignore the ordering"],"answer":1,
+ "explanation":"B. Linear models interpret numeric features as having meaningful magnitude and order. Label encoding (0,1,2,3) implies HR < Engineering < Sales < Marketing, and that the difference between adjacent categories is equal. Neither is true for a nominal feature. OHE avoids this by creating independent binary features."},
+
+# Sub-topic 9: Log scale transformation
+{"id":46,"subtopic":"Sub-topic 9: Identify scenarios where log scale transformation is appropriate",
+ "text":"Which scenario is most appropriate for applying a log transformation to a feature?",
+ "options":["A. A feature with a symmetric normal distribution centered at zero","B. A feature representing income with a strong right-skew and values ranging from $20K to $10M","C. A binary categorical feature encoded as 0 and 1","D. A feature with uniformly distributed values between -100 and 100"],"answer":1,
+ "explanation":"B. Log transformation is most appropriate for right-skewed continuous features with a wide range of positive values. It compresses the long right tail and pulls extreme values closer to the bulk, making the distribution more symmetric. It cannot be applied to zero/negative values (without adjustment)."},
+{"id":47,"subtopic":"",
+ "text":"A data scientist applies log(price) during feature engineering and trains a regression model. When generating predictions for end users, what must they remember to do?",
+ "options":["A. Apply log transformation to the predictions as well","B. Exponentiate (apply exp) the predictions to convert them back to the original scale","C. Subtract the log mean from predictions to remove the transformation bias","D. No additional steps are needed since the model automatically reverses the transformation"],"answer":1,
+ "explanation":"B. When a target variable is log-transformed before training, the model predicts log-scale values. To get predictions in the original scale, you must apply the inverse transformation: exp(prediction). The model does not automatically reverse this."},
+{"id":48,"subtopic":"",
+ "text":"Why might a data scientist apply log1p(x) (equivalent to log(1 + x)) instead of log(x) when transforming a feature?",
+ "options":["A. log1p is computationally faster than log for large datasets","B. log1p handles zero values gracefully since log(1+0) = 0 instead of undefined","C. log1p produces a wider range of values than log for better model performance","D. log1p is required for features with values greater than 1000"],"answer":1,
+ "explanation":"B. log(0) is undefined (negative infinity), which breaks computations. log1p(0) = log(1) = 0, which is well-defined. This makes log1p ideal for features that contain zeros (like count data). It preserves the same distributional benefits as log while being safe for zero values."},
+{"id":49,"subtopic":"",
+ "text":"A feature contains values: [0.001, 0.5, 1, 10, 100, 1000, 100000]. After log10 transformation, which property is achieved?",
+ "options":["A. All values become negative","B. The values are compressed to a smaller, more uniform range","C. The values are normalized to have mean = 0 and standard deviation = 1","D. The values are bounded between 0 and 1"],"answer":1,
+ "explanation":"B. Log10 transforms [0.001, 0.5, 1, 10, 100, 1000, 100000] to approximately [-3, -0.3, 0, 1, 2, 3, 5]. The original 8-order-of-magnitude range is compressed to about 8 units. This is not standardization (mean=0, std=1), values are not all negative, and they are not bounded [0,1]."},
+{"id":50,"subtopic":"",
+ "text":"For which type of model does log transformation of skewed features provide the LEAST benefit?",
+ "options":["A. Linear Regression, which assumes normally distributed residuals","B. Logistic Regression, which uses a linear decision boundary","C. Decision Trees, which make splits based on threshold comparisons","D. K-Nearest Neighbors, which relies on distance calculations"],"answer":2,
+ "explanation":"C. Decision trees split on feature thresholds and are invariant to monotonic transformations like log. The same splits would be made regardless of whether the feature is log-transformed or not, since the relative ordering is preserved. Linear models, logistic regression, and KNN all benefit from more symmetric distributions."}
+]
+
+print(f"Loaded {len(questions)} questions across 9 sub-topics.")
+
+# Safely encode questions as JSON for JavaScript
+questions_json = json.dumps(questions, ensure_ascii=True)
+
+html_page = f'''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background: #0d1117; color: #e6edf3; padding: 20px; line-height: 1.6; }}
+.header {{ text-align: center; padding: 30px 0; border-bottom: 2px solid #ff6b35; margin-bottom: 30px; }}
+.header h1 {{ color: #ff6b35; font-size: 1.8em; margin-bottom: 8px; }}
+.header p {{ color: #8b949e; font-size: 0.95em; }}
+.progress-bar {{ background: #21262d; border-radius: 8px; height: 12px; margin: 20px auto; max-width: 600px; overflow: hidden; }}
+.progress-fill {{ background: linear-gradient(90deg, #ff6b35, #ff8c42); height: 100%; width: 0%; transition: width 0.5s; border-radius: 8px; }}
+.score-display {{ text-align: center; font-size: 1.1em; color: #8b949e; margin: 10px 0 30px; }}
+.subtopic-header {{ background: linear-gradient(135deg, #1a1f2e, #21262d); border-left: 4px solid #ff6b35; padding: 12px 20px; margin: 30px 0 15px; border-radius: 0 8px 8px 0; font-size: 1.05em; color: #ff8c42; }}
+.question-card {{ background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 15px 0; transition: border-color 0.3s; }}
+.question-card.answered-correct {{ border-color: #238636; }}
+.question-card.answered-wrong {{ border-color: #da3633; }}
+.q-number {{ display: inline-block; background: #ff6b35; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }}
+.q-text {{ font-size: 1em; margin: 12px 0 16px; color: #e6edf3; }}
+.options {{ list-style: none; }}
+.options li {{ background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; margin: 8px 0; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 10px; }}
+.options li:hover {{ border-color: #ff6b35; background: #1a1f2e; }}
+.options li.correct {{ border-color: #238636; background: #0d2818; }}
+.options li.incorrect {{ border-color: #da3633; background: #2d1013; }}
+.options li .opt-letter {{ font-weight: bold; color: #ff6b35; min-width: 20px; }}
+.explanation {{ display: none; margin-top: 16px; padding: 16px; background: #1a2332; border: 1px solid rgba(31,111,235,0.2); border-radius: 8px; font-size: 0.9em; color: #b1bac4; }}
+.explanation.show {{ display: block; }}
+.explanation strong {{ color: #58a6ff; }}
+.btn-container {{ text-align: center; margin: 40px 0; }}
+.btn {{ background: #ff6b35; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: background 0.3s; margin: 5px; }}
+.btn:hover {{ background: #ff8c42; }}
+.btn-reset {{ background: #30363d; }}
+.summary {{ display: none; text-align: center; padding: 30px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin: 30px 0; }}
+.summary h2 {{ color: #ff6b35; margin-bottom: 15px; }}
+.summary .final-score {{ font-size: 2em; color: #58a6ff; margin: 10px 0; }}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Databricks ML Associate - Section 2: Data Processing</h1>
+  <p>50 Exam-Standard Questions | Official Exam Guide (Mar 2025)</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="score-display" id="scoreDisplay">Score: 0 / 50 | Answered: 0 / 50</div>
+<div id="quizContainer"></div>
+<div class="btn-container">
+  <button class="btn" onclick="showAllAnswers()">Reveal All Answers</button>
+  <button class="btn btn-reset" onclick="resetQuiz()">Reset Quiz</button>
+</div>
+<div class="summary" id="summary">
+  <h2>Quiz Complete!</h2>
+  <div class="final-score" id="finalScore"></div>
+  <p id="finalMsg"></p>
+</div>
+<script>
+var questions = {questions_json};
+var answered = 0, correct = 0;
+
+function renderQuiz() {{
+  var container = document.getElementById("quizContainer");
+  var html = "";
+  var currentSubtopic = "";
+  for (var i = 0; i < questions.length; i++) {{
+    var q = questions[i];
+    if (q.subtopic && q.subtopic !== currentSubtopic) {{
+      currentSubtopic = q.subtopic;
+      html += "<div class=\\"subtopic-header\\">" + currentSubtopic + "</div>";
+    }}
+    html += "<div class=\\"question-card\\" id=\\"qcard-" + q.id + "\\">";
+    html += "<span class=\\"q-number\\">" + q.id + "</span>";
+    html += "<span style=\\"color:#8b949e;font-size:0.85em;\\">Question " + q.id + " of 50</span>";
+    html += "<div class=\\"q-text\\">" + q.text + "</div>";
+    html += "<ul class=\\"options\\" id=\\"opts-" + q.id + "\\">";
+    for (var j = 0; j < q.options.length; j++) {{
+      html += "<li onclick=\\"selectAnswer(" + q.id + "," + j + ")\\" id=\\"opt-" + q.id + "-" + j + "\\">";
+      html += "<span class=\\"opt-letter\\">" + q.options[j].charAt(0) + ".</span>";
+      html += "<span>" + q.options[j].substring(3) + "</span></li>";
+    }}
+    html += "</ul>";
+    html += "<div class=\\"explanation\\" id=\\"exp-" + q.id + "\\"><strong>Explanation:</strong> " + q.explanation + "</div>";
+    html += "</div>";
+  }}
+  container.innerHTML = html;
+}}
+
+function selectAnswer(qid, selected) {{
+  var q = null;
+  for (var i = 0; i < questions.length; i++) {{ if (questions[i].id === qid) {{ q = questions[i]; break; }} }}
+  var opts = document.querySelectorAll("#opts-" + qid + " li");
+  var alreadyAnswered = false;
+  for (var k = 0; k < opts.length; k++) {{
+    if (opts[k].classList.contains("correct") || opts[k].classList.contains("incorrect")) {{ alreadyAnswered = true; break; }}
+  }}
+  if (alreadyAnswered) return;
+  answered++;
+  for (var k = 0; k < opts.length; k++) {{ opts[k].style.pointerEvents = "none"; }}
+  if (selected === q.answer) {{
+    correct++;
+    opts[selected].classList.add("correct");
+    document.getElementById("qcard-" + qid).classList.add("answered-correct");
+  }} else {{
+    opts[selected].classList.add("incorrect");
+    opts[q.answer].classList.add("correct");
+    document.getElementById("qcard-" + qid).classList.add("answered-wrong");
+  }}
+  document.getElementById("exp-" + qid).classList.add("show");
+  updateProgress();
+}}
+
+function updateProgress() {{
+  document.getElementById("progressFill").style.width = (answered / 50 * 100) + "%";
+  document.getElementById("scoreDisplay").textContent = "Score: " + correct + " / " + answered + " | Answered: " + answered + " / 50";
+  if (answered === 50) {{
+    document.getElementById("summary").style.display = "block";
+    document.getElementById("finalScore").textContent = correct + " / 50 (" + Math.round(correct / 50 * 100) + "%)";
+    var msg = correct >= 40 ? "Excellent! You are well-prepared!" : correct >= 30 ? "Good progress! Review the explanations for missed questions." : "Keep studying! Focus on the topics you missed.";
+    document.getElementById("finalMsg").textContent = msg;
+  }}
+}}
+
+function showAllAnswers() {{
+  for (var i = 0; i < questions.length; i++) {{
+    var q = questions[i];
+    var opts = document.querySelectorAll("#opts-" + q.id + " li");
+    if (!opts[q.answer].classList.contains("correct")) {{
+      opts[q.answer].classList.add("correct");
+      for (var k = 0; k < opts.length; k++) {{ opts[k].style.pointerEvents = "none"; }}
+      document.getElementById("exp-" + q.id).classList.add("show");
+      var card = document.getElementById("qcard-" + q.id);
+      if (!card.classList.contains("answered-correct") && !card.classList.contains("answered-wrong")) {{
+        answered++;
+      }}
+    }}
+  }}
+  updateProgress();
+}}
+
+function resetQuiz() {{
+  answered = 0; correct = 0;
+  renderQuiz();
+  updateProgress();
+  document.getElementById("summary").style.display = "none";
+}}
+
+renderQuiz();
+</script>
+</body>
+</html>
+'''
+
+displayHTML(html_page)
