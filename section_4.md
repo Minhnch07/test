@@ -240,7 +240,7 @@ predictions = fe.score_batch(
 | Pandas `model.predict()` | Small datasets, single-node, quick testing |
 | `fe.score_batch()` | Model was trained with Feature Store lookups |
 
-> **Exam tip**: `mlflow.pyfunc.spark_udf()` is the standard way to perform scalable batch inference on Spark DataFrames. For Feature Store models, always use `score_batch()` — it handles feature joins automatically.
+> **Exam tip**: `mlflow.pyfunc.spark_udf()` is the standard way to perform scalable batch inference on Spark DataFrames. For Feature Store models, always use `score_batch()` — it handles featur[...]
 
 ---
 
@@ -253,6 +253,60 @@ Streaming inference applies a model to data as it arrives — rather than waitin
 1. Reading a **streaming source** (Delta table, Kafka, Auto Loader)
 2. Applying the model as a **UDF** on the streaming DataFrame
 3. Writing results to a **streaming sink** (Delta table)
+
+### Data Expectations (added)
+
+When building streaming inference pipelines (especially with Delta Live Tables), define and enforce data expectations up front. This ensures the model receives the correct schema, types, and data quality before scoring.
+
+- Schema
+  - Define an explicit schema for the streaming source (column names, types). Avoid relying on schema inference in production.
+  - Ensure the feature columns required by the model are present and typed correctly (e.g., numeric features as DoubleType/IntegerType, categorical as StringType).
+- Timestamp and Ordering
+  - Include a canonical event timestamp column (e.g., `event_time`) used for watermarking and late data handling.
+  - Ensure timestamps are in a consistent timezone/format (UTC recommended).
+- Nulls and Missing Values
+  - Specify how to handle nulls: drop, impute, or route to a dead-letter table. Use DLT expectations to detect excessive null rates.
+  - For features that cannot be null, add an expectation to fail the row or send it to a quarantine path.
+- Validation and Types
+  - Use Data Quality Expectations (DLT `expect_*`) to validate ranges, allowed categories, and numeric bounds (e.g., `expect_between`, `expect_in_set`).
+  - Coerce types where safe and log or quarantine rows that cannot be coerced.
+- Late / Out-of-order Data
+  - Define watermarking and allowed lateness based on business SLAs so streaming joins and aggregations remain correct.
+  - For critical features arriving late, consider buffering or enriching with lookups before scoring.
+- Cardinality and Duplicates
+  - Monitor cardinality of keys and categorical features; unexpected spikes may indicate data issues.
+  - Deduplicate events when possible (use unique event IDs) to prevent double-scoring.
+- Example DLT expectations snippet
+
+```python
+import dlt
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType, DoubleType
+
+schema = StructType([
+    StructField('event_id', StringType(), False),
+    StructField('event_time', TimestampType(), False),
+    StructField('feature1', DoubleType(), True),
+    StructField('feature2', StringType(), True),
+])
+
+@dlt.table(
+    comment='Raw events with schema and expectations'
+)
+def raw_events():
+    return (
+        dlt.read_stream('incoming_events')
+        .withColumn('event_time', dlt.parse_timestamp('event_time'))
+        .expect('has_event_id', "event_id IS NOT NULL")
+        .expect('event_time_not_null', "event_time IS NOT NULL")
+        .expect('feature1_range', 'feature1 BETWEEN 0.0 AND 1000.0')
+    )
+```
+
+- Monitoring and Alerting
+  - Emit metrics for expectation failures, row volumes, and late-arriving data.
+  - Configure alerts on SLA breaches (e.g., sustained high failure rates or low throughput).
+
+> Practical tip: Treat expectations as first-class artifacts — document them alongside your model so operators and data engineers know the contract the model relies on.
 
 ### Streaming Inference with Structured Streaming
 
@@ -501,3 +555,4 @@ w.serving_endpoints.update_config_and_wait(
 12. **A/B testing = traffic split** — clients don't know which model they hit; the endpoint routes randomly
 13. **Streaming inference latency** is seconds (not milliseconds like real-time serving)
 14. **Batch is cheapest** — no always-on infrastructure; just a scheduled job
+
