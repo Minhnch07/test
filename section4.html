@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Databricks ML Associate - Section 4: Model Deployment</title>
+<style>
+  :root { --primary: #ff3621; --secondary: #1a2b3c; --bg: #f9fafb; --card: #ffffff; --border: #e5e7eb; --text: #374151; --btn: #00529b; --btn-hover: #003f7a; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; margin: 0; padding: 20px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: var(--primary); text-align: center; font-size: 2em; margin-bottom: 10px; }
+  .header-desc { text-align: center; font-size: 1.1em; color: var(--secondary); margin-bottom: 40px; }
+  h2 { color: var(--secondary); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 50px; font-size: 1.5em; }
+  .q-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+  .q-title { font-weight: 700; font-size: 1.1em; margin-bottom: 15px; color: var(--secondary); }
+  .options { list-style-type: upper-alpha; padding-left: 20px; margin: 0; }
+  .options li { background: var(--bg); margin-bottom: 10px; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border); }
+  .btn { background: var(--btn); color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 0.95em; margin-top: 15px; font-weight: 600; transition: background 0.2s; }
+  .btn:hover { background: var(--btn-hover); }
+  .exp { display: none; margin-top: 20px; padding: 18px; background: #f0f7ff; border-left: 5px solid var(--btn); border-radius: 4px; }
+  .correct-ans { font-weight: bold; color: var(--btn); margin-bottom: 8px; display: block; }
+</style>
+<script>
+  function t(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display === 'block') ? 'none' : 'block';
+  }
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>Databricks Machine Learning Associate</h1>
+  <div class="header-desc">Section 4: Model Deployment Practice Exam (50 Questions)</div>
+
+  <!-- Subtopic 1: Differences and advantages of model serving approaches -->
+  <h2>Identify the differences and advantages of model serving approaches</h2>
+
+  <div class="q-card">
+    <div class="q-title">1. You need to generate daily revenue forecasts for thousands of retail stores every night at 2 AM. Which serving approach provides the most operational efficiency?</div>
+    <ul class="options">
+      <li>Schedule a batch inference job using Databricks Workflows to process data offline.</li>
+      <li>Provision a real-time endpoint using Databricks Serving to process data instantly.</li>
+      <li>Configure a streaming pipeline using Delta Live Tables to process data continuously.</li>
+      <li>Initialize a standard cluster using Databricks Interactive to process data manually.</li>
+    </ul>
+    <button class="btn" onclick="t('e1')">Show Explanation</button>
+    <div class="exp" id="e1">
+      <span class="correct-ans">Correct Answer: A</span>
+      Batch inference using Databricks Workflows is the most cost-effective and efficient method for scoring large datasets offline on a scheduled cadence (e.g., nightly). Real-time and streaming endpoints are unnecessary when low-latency responses are not required.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">2. A retail web application requires user-specific product recommendations within 50 milliseconds of a page load. Which serving approach meets this strict latency requirement?</div>
+    <ul class="options">
+      <li>Deploy a model serving endpoint to evaluate user interactions with minimal latency.</li>
+      <li>Execute a scheduled batch script to evaluate large datasets with maximum throughput.</li>
+      <li>Configure a continuous stream job to evaluate incoming events with micro-batching.</li>
+      <li>Trigger an external web service to evaluate data chunks with asynchronous calls.</li>
+    </ul>
+    <button class="btn" onclick="t('e2')">Show Explanation</button>
+    <div class="exp" id="e2">
+      <span class="correct-ans">Correct Answer: A</span>
+      Databricks Model Serving provides highly available, low-latency REST API endpoints optimized for synchronous, real-time requests initiated directly by user interactions on web applications.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">3. What is the primary operational advantage of streaming inference over traditional batch inference for financial fraud detection systems?</div>
+    <ul class="options">
+      <li>Streaming inference processes data continuously as it arrives into the system architecture.</li>
+      <li>Streaming inference processes data historically as it expires from the system architecture.</li>
+      <li>Streaming inference processes data synchronously as it requests from the system architecture.</li>
+      <li>Streaming inference processes data manually as it exports from the system architecture.</li>
+    </ul>
+    <button class="btn" onclick="t('e3')">Show Explanation</button>
+    <div class="exp" id="e3">
+      <span class="correct-ans">Correct Answer: A</span>
+      Streaming inference evaluates unbounded streams of incoming data continuously, enabling rapid anomaly or fraud detection without waiting for scheduled batch processing intervals.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">4. Which statement accurately describes the core infrastructure benefit of utilizing Databricks Batch Inference for historical datasets?</div>
+    <ul class="options">
+      <li>Batch inference maximizes cluster resource utilization by scaling dynamically during offline processing.</li>
+      <li>Batch inference minimizes prediction delivery latency by scaling dynamically during online processing.</li>
+      <li>Batch inference optimizes streaming state management by scaling dynamically during continuous processing.</li>
+      <li>Batch inference eliminates cluster spin-up delays by scaling dynamically during synchronous processing.</li>
+    </ul>
+    <button class="btn" onclick="t('e4')">Show Explanation</button>
+    <div class="exp" id="e4">
+      <span class="correct-ans">Correct Answer: A</span>
+      Batch inference spins up ephemeral compute clusters specifically for the job duration, allowing it to efficiently process large historical datasets in parallel and scale resources appropriately before terminating.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">5. When evaluating a hybrid architectural deployment, which constraint applies exclusively to streaming inference pipelines?</div>
+    <ul class="options">
+      <li>Streaming inference requires maintaining state management across continuous operational pipelines.</li>
+      <li>Streaming inference requires exposing endpoints directly across accessible web interfaces.</li>
+      <li>Streaming inference requires triggering workflows manually across scheduled batch intervals.</li>
+      <li>Streaming inference requires partitioning data physically across isolated storage containers.</li>
+    </ul>
+    <button class="btn" onclick="t('e5')">Show Explanation</button>
+    <div class="exp" id="e5">
+      <span class="correct-ans">Correct Answer: A</span>
+      Unlike batch or real-time inference which treat queries independently, streaming inference (via Structured Streaming or DLT) inherently involves checkpointing and state management to guarantee fault tolerance and exactly-once processing guarantees.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">6. Which inference scenario most strongly justifies migrating from a batch architecture to a real-time serving architecture?</div>
+    <ul class="options">
+      <li>The application requires immediate model predictions for synchronous transactional requests.</li>
+      <li>The application requires massive computational efficiency for persistent historical datasets.</li>
+      <li>The application requires automatic state management for unbounded continuous streams.</li>
+      <li>The application requires lowest operational costs for scheduled automated workflows.</li>
+    </ul>
+    <button class="btn" onclick="t('e6')">Show Explanation</button>
+    <div class="exp" id="e6">
+      <span class="correct-ans">Correct Answer: A</span>
+      Real-time serving is strictly necessary when an application (like a point-of-sale system or chatbot) requires synchronous, immediate responses to process single transactions or user events as they happen.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">7. How does data availability generally dictate the choice between batch inference and streaming inference methodologies?</div>
+    <ul class="options">
+      <li>Batch is optimized for static historical tables; streaming is optimized for continuous event topics.</li>
+      <li>Batch is optimized for continuous event topics; streaming is optimized for static historical tables.</li>
+      <li>Batch is optimized for online immediate requests; streaming is optimized for offline scheduled tasks.</li>
+      <li>Batch is optimized for offline scheduled tasks; streaming is optimized for online immediate requests.</li>
+    </ul>
+    <button class="btn" onclick="t('e7')">Show Explanation</button>
+    <div class="exp" id="e7">
+      <span class="correct-ans">Correct Answer: A</span>
+      Batch inference is best applied to complete, static datasets available at a single point in time, while streaming inference is designed for data continuously appending to event buses like Kafka or Delta streams.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">8. In terms of cluster compute expenditure, which statement correctly compares Serverless Model Serving with Scheduled Batch Inference?</div>
+    <ul class="options">
+      <li>Batch serving typically incurs lower costs due to ephemeral cluster provisioning for transient job runs.</li>
+      <li>Batch serving typically incurs higher costs due to persistent endpoint maintenance for continuous usage.</li>
+      <li>Batch serving typically incurs lower costs due to real-time load balancer deployment for synchronous API calls.</li>
+      <li>Batch serving typically incurs higher costs due to continuous streaming overhead for unbounded data ingestion.</li>
+    </ul>
+    <button class="btn" onclick="t('e8')">Show Explanation</button>
+    <div class="exp" id="e8">
+      <span class="correct-ans">Correct Answer: A</span>
+      Batch inference is cheaper per prediction because it relies on transient clusters that only bill during the execution of a scheduled job, whereas model serving endpoints (even when scaling to zero) are optimized for availability over cost.
+    </div>
+  </div>
+
+  <!-- Subtopic 2: Deploy a custom model to a model endpoint -->
+  <h2>Deploy a custom model to a model endpoint</h2>
+
+  <div class="q-card">
+    <div class="q-title">9. You need to deploy a custom algorithm that utilizes unsupported libraries. How do you implement this logic in MLflow?</div>
+    <ul class="options">
+      <li>Define a custom Python class inheriting from mlflow.pyfunc.PythonModel to implement the logic.</li>
+      <li>Define a custom Scala script inheriting from mlflow.spark.SparkModel to implement the logic.</li>
+      <li>Define a custom SQL query inheriting from mlflow.sklearn.SklearnModel to implement the logic.</li>
+      <li>Define a custom Java object inheriting from mlflow.keras.KerasModel to implement the logic.</li>
+    </ul>
+    <button class="btn" onclick="t('e9')">Show Explanation</button>
+    <div class="exp" id="e9">
+      <span class="correct-ans">Correct Answer: A</span>
+      To create custom models containing proprietary logic or unsupported libraries in MLflow, you must define a Python class that inherits from `mlflow.pyfunc.PythonModel` and overrides its core methods.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">10. When defining a custom PyFunc model class, what is the required input and output behavior of the overridden predict method?</div>
+    <ul class="options">
+      <li>The predict method must process a pandas DataFrame and return a pandas Series or DataFrame.</li>
+      <li>The predict method must process a Spark DataFrame and return a Spark Column or DataFrame.</li>
+      <li>The predict method must process a Python dictionary and return a Python string or dictionary.</li>
+      <li>The predict method must process a Delta table path and return a Delta table location or path.</li>
+    </ul>
+    <button class="btn" onclick="t('e10')">Show Explanation</button>
+    <div class="exp" id="e10">
+      <span class="correct-ans">Correct Answer: A</span>
+      The `predict` method of an `mlflow.pyfunc.PythonModel` must accept a `model_input` (typically a pandas DataFrame or numpy array) and return a pandas DataFrame, pandas Series, or numpy array.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">11. How are system-level environment dependencies automatically captured and managed when logging a custom MLflow model for endpoint deployment?</div>
+    <ul class="options">
+      <li>Dependencies are captured in the conda.yaml environment file during the model logging process.</li>
+      <li>Dependencies are captured in the cluster.json configuration file during the model serving process.</li>
+      <li>Dependencies are captured in the requirements.txt runtime file during the model scoring process.</li>
+      <li>Dependencies are captured in the spark-defaults.conf system file during the model training process.</li>
+    </ul>
+    <button class="btn" onclick="t('e11')">Show Explanation</button>
+    <div class="exp" id="e11">
+      <span class="correct-ans">Correct Answer: A</span>
+      MLflow automatically infers and saves environment dependencies in a `conda.yaml` (or `requirements.txt`) artifact within the model folder when `mlflow.<flavor>.log_model` is called. The serving endpoint reconstructs this environment.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">12. What is the primary purpose of overriding the load_context method within a custom MLflow PyFunc model class?</div>
+    <ul class="options">
+      <li>Use the load_context method to initialize external artifacts before processing prediction requests.</li>
+      <li>Use the load_context method to partition input datasets before launching distributed deployments.</li>
+      <li>Use the load_context method to evaluate model accuracy before returning historical batch results.</li>
+      <li>Use the load_context method to register model schemas before writing continuous stream outputs.</li>
+    </ul>
+    <button class="btn" onclick="t('e12')">Show Explanation</button>
+    <div class="exp" id="e12">
+      <span class="correct-ans">Correct Answer: A</span>
+      The `load_context` method is executed only once when the model is loaded into memory. It is utilized to load large artifacts, configurations, or external data dictionaries required by the `predict` method.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">13. In the Databricks UI, what is the prerequisite registry location for a custom model before it can be seamlessly attached to a Serverless serving endpoint?</div>
+    <ul class="options">
+      <li>Register the model in the Unity Catalog to seamlessly transition it to a serving endpoint.</li>
+      <li>Register the model in the Workspace Files to seamlessly transition it to a serving endpoint.</li>
+      <li>Register the model in the Delta Storage to seamlessly transition it to a serving endpoint.</li>
+      <li>Register the model in the Github Repository to seamlessly transition it to a serving endpoint.</li>
+    </ul>
+    <button class="btn" onclick="t('e13')">Show Explanation</button>
+    <div class="exp" id="e13">
+      <span class="correct-ans">Correct Answer: A</span>
+      Modern Databricks Model Serving requires the model to be securely registered in the Unity Catalog (or the legacy Workspace Model Registry) to be directly referenced by an endpoint configuration.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">14. When logging a custom Python model utilizing external lookup tables, how do you correctly bundle the external tables with the model?</div>
+    <ul class="options">
+      <li>Provide artifacts via the artifacts parameter when calling mlflow.pyfunc.log_model.</li>
+      <li>Provide artifacts via the datasets parameter when calling mlflow.sklearn.log_model.</li>
+      <li>Provide artifacts via the features parameter when calling mlflow.xgboost.log_model.</li>
+      <li>Provide artifacts via the metadata parameter when calling mlflow.spark.log_model.</li>
+    </ul>
+    <button class="btn" onclick="t('e14')">Show Explanation</button>
+    <div class="exp" id="e14">
+      <span class="correct-ans">Correct Answer: A</span>
+      When calling `mlflow.pyfunc.log_model`, you pass a dictionary to the `artifacts` parameter containing the local file paths of external data. These are then accessible via the `context.artifacts` map inside `load_context`.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">15. What type of computing infrastructure executes the deployed custom models behind Databricks Model Serving endpoints?</div>
+    <ul class="options">
+      <li>Model Serving utilizes Serverless compute resources managed automatically by Databricks.</li>
+      <li>Model Serving utilizes Classic compute resources managed manually by administrators.</li>
+      <li>Model Serving utilizes All-Purpose compute resources provisioned directly by developers.</li>
+      <li>Model Serving utilizes Job compute resources configured independently by orchestrators.</li>
+    </ul>
+    <button class="btn" onclick="t('e15')">Show Explanation</button>
+    <div class="exp" id="e15">
+      <span class="correct-ans">Correct Answer: A</span>
+      Databricks Model Serving operates exclusively on Serverless compute. This allows it to autoscale seamlessly behind a unified REST interface without requiring users to configure or manage cluster nodes manually.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">16. Why is it considered a best practice to provide an input_example parameter when logging a custom model via MLflow?</div>
+    <ul class="options">
+      <li>Including an input example when logging ensures the serving endpoint defines the correct API schema.</li>
+      <li>Including an input example when logging ensures the training cluster defines the correct data format.</li>
+      <li>Including an input example when logging ensures the experiment tracker defines the correct UI layout.</li>
+      <li>Including an input example when logging ensures the feature store defines the correct table structure.</li>
+    </ul>
+    <button class="btn" onclick="t('e16')">Show Explanation</button>
+    <div class="exp" id="e16">
+      <span class="correct-ans">Correct Answer: A</span>
+      Providing `input_example` to `log_model` automatically infers the model's signature. Model Serving relies on this signature to enforce strict schema validation for incoming JSON API payloads.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">17. Which interface allows automated programmatic deployment of a Unity Catalog registered model to a Model Serving endpoint?</div>
+    <ul class="options">
+      <li>Deploy the custom model by executing the Databricks Serving REST API configuration script.</li>
+      <li>Deploy the custom model by executing the Databricks SQL Warehouse configuration script.</li>
+      <li>Deploy the custom model by executing the Databricks Delta Live Tables configuration script.</li>
+      <li>Deploy the custom model by executing the Databricks Model Tracking Server configuration script.</li>
+    </ul>
+    <button class="btn" onclick="t('e17')">Show Explanation</button>
+    <div class="exp" id="e17">
+      <span class="correct-ans">Correct Answer: A</span>
+      To automate deployments, users utilize the Databricks Serving REST API (or Databricks SDK/Terraform) to programmatically create or update endpoint configurations targeting specific model versions in the registry.
+    </div>
+  </div>
+
+  <!-- Subtopic 3: Use pandas to perform batch inference -->
+  <h2>Use pandas to perform batch inference</h2>
+
+  <div class="q-card">
+    <div class="q-title">18. You need to apply a scikit-learn model over a 500GB Spark DataFrame. Which API command correctly wraps the MLflow model for distributed processing?</div>
+    <ul class="options">
+      <li>Use mlflow.pyfunc.spark_udf to broadcast the model to workers for distributed batch inference.</li>
+      <li>Use mlflow.pyfunc.predict to transmit the model to workers for distributed batch inference.</li>
+      <li>Use mlflow.sklearn.load_model to serialize the model to workers for distributed batch inference.</li>
+      <li>Use mlflow.spark.apply_model to partition the model to workers for distributed batch inference.</li>
+    </ul>
+    <button class="btn" onclick="t('e18')">Show Explanation</button>
+    <div class="exp" id="e18">
+      <span class="correct-ans">Correct Answer: A</span>
+      `mlflow.pyfunc.spark_udf()` takes a registered MLflow model and returns a Spark UDF capable of evaluating the model concurrently across multiple distributed worker nodes using the pandas API on Spark.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">19. What specific programmatic object does the mlflow.pyfunc.spark_udf function return to the developer environment?</div>
+    <ul class="options">
+      <li>The spark_udf function returns a Spark user-defined function for DataFrame column transformations.</li>
+      <li>The spark_udf function returns a Pandas user-defined function for Series index aggregations.</li>
+      <li>The spark_udf function returns a Python standard library function for Dictionary key evaluations.</li>
+      <li>The spark_udf function returns a Databricks native SQL function for Table row modifications.</li>
+    </ul>
+    <button class="btn" onclick="t('e19')">Show Explanation</button>
+    <div class="exp" id="e19">
+      <span class="correct-ans">Correct Answer: A</span>
+      The function explicitly returns a PySpark User Defined Function (UDF). This UDF can be passed directly into Spark DataFrame `.withColumn()` or `.select()` methods to apply inference on spark columns.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">20. By default, the MLflow Spark UDF infers the return type as a String. How can you force the output predictions to return as DoubleType?</div>
+    <ul class="options">
+      <li>Provide the result_type parameter to explicitly define the schema of the returned predictions.</li>
+      <li>Provide the return_type parameter to automatically infer the schema of the generated predictions.</li>
+      <li>Provide the output_type parameter to dynamically cast the schema of the requested predictions.</li>
+      <li>Provide the schema_type parameter to inherently map the schema of the processed predictions.</li>
+    </ul>
+    <button class="btn" onclick="t('e20')">Show Explanation</button>
+    <div class="exp" id="e20">
+      <span class="correct-ans">Correct Answer: A</span>
+      When calling `mlflow.pyfunc.spark_udf`, passing `result_type=DoubleType()` enforces that the output predictions are formatted as a numeric Double type rather than defaulting to a string representation.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">21. To optimize the serialization performance between the Java Virtual Machine (JVM) and Python execution environments, which underlying technology must be enabled?</div>
+    <ul class="options">
+      <li>Set spark.sql.execution.arrow.pyspark.enabled to true to optimize data transfer for the UDF.</li>
+      <li>Set spark.sql.execution.pandas.udf.enabled to true to bypass data transfer for the UDF.</li>
+      <li>Set spark.sql.execution.arrow.maxRecordsPerBatch to zero to disable data transfer for the UDF.</li>
+      <li>Set spark.sql.execution.pandas.fallback.enabled to zero to enforce data transfer for the UDF.</li>
+    </ul>
+    <button class="btn" onclick="t('e21')">Show Explanation</button>
+    <div class="exp" id="e21">
+      <span class="correct-ans">Correct Answer: A</span>
+      Apache Arrow provides zero-copy columnar data transfers. Enabling `spark.sql.execution.arrow.pyspark.enabled` allows Pandas UDFs to execute inference vastly faster by eliminating row-by-row serialization overhead.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">22. Once you have defined the variable `predict_udf = mlflow.pyfunc.spark_udf(...)`, what is the correct syntax to apply it to a Spark DataFrame named `df`?</div>
+    <ul class="options">
+      <li>Apply the UDF by passing the required DataFrame columns via the withColumn method syntax.</li>
+      <li>Apply the UDF by mapping the required DataFrame columns via the selectExpr method syntax.</li>
+      <li>Apply the UDF by iterating the required DataFrame columns via the foreachBatch method syntax.</li>
+      <li>Apply the UDF by aggregating the required DataFrame columns via the groupBy method syntax.</li>
+    </ul>
+    <button class="btn" onclick="t('e22')">Show Explanation</button>
+    <div class="exp" id="e22">
+      <span class="correct-ans">Correct Answer: A</span>
+      The standard application method is `df.withColumn("predictions", predict_udf(*feature_columns))`. This evaluates the UDF across the specified columns and appends the resulting predictions as a new column.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">23. When evaluating batch inference performance, why do Pandas UDFs vastly outperform standard Python UDFs?</div>
+    <ul class="options">
+      <li>Pandas UDFs process data in optimized vectorized batches rather than individual scalar rows.</li>
+      <li>Pandas UDFs process data in distributed memory partitions rather than centralized disk caches.</li>
+      <li>Pandas UDFs process data in serialized JSON payloads rather than optimized binary formats.</li>
+      <li>Pandas UDFs process data in synchronized thread pools rather than isolated process forks.</li>
+    </ul>
+    <button class="btn" onclick="t('e23')">Show Explanation</button>
+    <div class="exp" id="e23">
+      <span class="correct-ans">Correct Answer: A</span>
+      Pandas UDFs (vectorized UDFs) execute on Arrow-formatted blocks of data, passing entire pandas Series to the model's predict method at once, whereas standard Python UDFs incur the overhead of invoking the function for every single row.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">24. What is the fundamental requirement for the environment when loading a Python-based model to perform batch inference on Spark workers?</div>
+    <ul class="options">
+      <li>Specify env_manager='virtualenv' to ensure the correct dependencies are isolated on workers.</li>
+      <li>Specify env_manager='conda' to ensure the correct dependencies are shared across clusters.</li>
+      <li>Specify env_manager='local' to ensure the correct dependencies are installed on drivers.</li>
+      <li>Specify env_manager='docker' to ensure the correct dependencies are built on containers.</li>
+    </ul>
+    <button class="btn" onclick="t('e24')">Show Explanation</button>
+    <div class="exp" id="e24">
+      <span class="correct-ans">Correct Answer: A</span>
+      When loading the UDF (`mlflow.pyfunc.spark_udf`), setting `env_manager='virtualenv'` allows MLflow to automatically recreate the model's exact execution environment on the executor nodes before performing inference.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">25. You want to apply a registered Unity Catalog model as a UDF. Which URL schema correctly references a Unity Catalog model named `churn_model` in the `prod` catalog and `sales` schema?</div>
+    <ul class="options">
+      <li>The correct syntax utilizes the models:/prod.sales.churn_model/1 namespace identifier format.</li>
+      <li>The correct syntax utilizes the unity:/prod.sales.churn_model/1 namespace identifier format.</li>
+      <li>The correct syntax utilizes the catalog:/prod.sales.churn_model/1 namespace identifier format.</li>
+      <li>The correct syntax utilizes the mlflow:/prod.sales.churn_model/1 namespace identifier format.</li>
+    </ul>
+    <button class="btn" onclick="t('e25')">Show Explanation</button>
+    <div class="exp" id="e25">
+      <span class="correct-ans">Correct Answer: A</span>
+      MLflow continues to use the `models:/` scheme to retrieve models. To target a Unity Catalog model, you use the standard three-level namespace: `models:/<catalog>.<schema>.<model_name>/<version>`.
+    </div>
+  </div>
+
+  <!-- Subtopic 4: Identify how streaming inference is performed with Delta Live Tables -->
+  <h2>Identify how streaming inference is performed with Delta Live Tables</h2>
+
+  <div class="q-card">
+    <div class="q-title">26. You are constructing a Delta Live Tables (DLT) pipeline to perform inference continuously. Which decorator correctly defines the target output table?</div>
+    <ul class="options">
+      <li>Apply the @dlt.table decorator to define a streaming pipeline dataset for model inference.</li>
+      <li>Apply the @dlt.view decorator to construct a materialized query dataset for model inference.</li>
+      <li>Apply the @dlt.stream decorator to configure a continuous ingest dataset for model inference.</li>
+      <li>Apply the @dlt.model decorator to register a predictive algorithm dataset for model inference.</li>
+    </ul>
+    <button class="btn" onclick="t('e26')">Show Explanation</button>
+    <div class="exp" id="e26">
+      <span class="correct-ans">Correct Answer: A</span>
+      The `@dlt.table` decorator is used in Delta Live Tables to materialize the results of the Python function as a streaming or materialized table that can be queried downstream.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">27. Inside a Python DLT pipeline function, how is an MLflow model deployed to score the incoming streaming dataframe?</div>
+    <ul class="options">
+      <li>Invoke the mlflow.pyfunc.spark_udf within the DLT table function to score streaming records.</li>
+      <li>Invoke the mlflow.pyfunc.predict within the DLT table function to score streaming records.</li>
+      <li>Invoke the mlflow.sklearn.load within the DLT table function to score streaming records.</li>
+      <li>Invoke the mlflow.keras.evaluate within the DLT table function to score streaming records.</li>
+    </ul>
+    <button class="btn" onclick="t('e27')">Show Explanation</button>
+    <div class="exp" id="e27">
+      <span class="correct-ans">Correct Answer: A</span>
+      Because DLT operates natively on PySpark DataFrames, you use `mlflow.pyfunc.spark_udf` to wrap the registered model as a Spark UDF and apply it seamlessly via `.withColumn()` within the DLT logic.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">28. Which DLT-specific syntax is required inside the pipeline function to continuously ingest data from an upstream table for inference?</div>
+    <ul class="options">
+      <li>Use dlt.read_stream to continuously consume input data for the DLT inference pipeline.</li>
+      <li>Use dlt.read_batch to periodically consume input data for the DLT inference pipeline.</li>
+      <li>Use spark.loadStream to dynamically consume input data for the DLT inference pipeline.</li>
+      <li>Use spark.fetchBatch to manually consume input data for the DLT inference pipeline.</li>
+    </ul>
+    <button class="btn" onclick="t('e28')">Show Explanation</button>
+    <div class="exp" id="e28">
+      <span class="correct-ans">Correct Answer: A</span>
+      In DLT Python syntax, `dlt.read_stream("upstream_table_name")` is strictly required to treat the source table as a streaming source, enabling incremental micro-batch processing of new records.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">29. When streaming inference encounters anomalous data formats that break the model, how can DLT securely handle these bad records without failing the stream?</div>
+    <ul class="options">
+      <li>Use @dlt.expect_or_drop to monitor prediction anomalies without halting the streaming pipeline.</li>
+      <li>Use @dlt.assert_or_fail to monitor prediction anomalies without halting the streaming pipeline.</li>
+      <li>Use @dlt.verify_or_skip to monitor prediction anomalies without halting the streaming pipeline.</li>
+      <li>Use @dlt.check_or_pass to monitor prediction anomalies without halting the streaming pipeline.</li>
+    </ul>
+    <button class="btn" onclick="t('e29')">Show Explanation</button>
+    <div class="exp" id="e29">
+      <span class="correct-ans">Correct Answer: A</span>
+      DLT data quality expectations like `@dlt.expect_or_drop` allow developers to filter out malformed data (e.g., null features) before inference occurs, ensuring the pipeline runs continuously while logging the dropped records.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">30. How does a Continuous DLT pipeline update the model if a new version is registered to the Unity Catalog endpoint?</div>
+    <ul class="options">
+      <li>Restart the DLT pipeline to load the newly registered model version from the Unity Catalog.</li>
+      <li>Suspend the DLT pipeline to purge the previously cached model version from the worker nodes.</li>
+      <li>Trigger the DLT pipeline to sync the externally deployed model version from the serving layer.</li>
+      <li>Branch the DLT pipeline to test the concurrently updated model version from the staging tier.</li>
+    </ul>
+    <button class="btn" onclick="t('e30')">Show Explanation</button>
+    <div class="exp" id="e30">
+      <span class="correct-ans">Correct Answer: A</span>
+      DLT caches the `spark_udf` model in memory for performance. To pull down a newly registered model version, the DLT cluster executing the continuous stream must be restarted to trigger a new environment initialization.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">31. What is the fundamental difference in execution architecture between DLT streaming inference and Model Serving endpoints?</div>
+    <ul class="options">
+      <li>The Spark UDF executes model inference distributedly across all available DLT worker nodes.</li>
+      <li>The Spark UDF executes model inference centrally across the primary DLT driver instance.</li>
+      <li>The Spark UDF executes model inference synchronously across all attached DLT serving endpoints.</li>
+      <li>The Spark UDF executes model inference asynchronously across the external DLT API gateways.</li>
+    </ul>
+    <button class="btn" onclick="t('e31')">Show Explanation</button>
+    <div class="exp" id="e31">
+      <span class="correct-ans">Correct Answer: A</span>
+      DLT streaming applies the PySpark UDF in parallel across distributed Spark executor nodes, processing large micro-batches concurrently. Model Serving uses isolated serverless nodes behind a REST API load balancer.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">32. Which underlying Spark mechanism is responsible for tracking which records have already been scored by the DLT streaming pipeline?</div>
+    <ul class="options">
+      <li>Micro-batching in DLT processes streaming data incrementally utilizing managed Checkpoint directories.</li>
+      <li>Micro-batching in DLT processes streaming data simultaneously utilizing managed Memory directories.</li>
+      <li>Micro-batching in DLT processes streaming data recursively utilizing managed Index directories.</li>
+      <li>Micro-batching in DLT processes streaming data randomly utilizing managed Network directories.</li>
+    </ul>
+    <button class="btn" onclick="t('e32')">Show Explanation</button>
+    <div class="exp" id="e32">
+      <span class="correct-ans">Correct Answer: A</span>
+      Delta Live Tables abstracts and manages Structured Streaming checkpoint directories. This checkpointing tracks the exact offsets of the Delta log, ensuring each newly arriving record is processed exactly once by the inference UDF.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">33. To execute DLT inference optimally using Python, which native API paradigm is utilized exclusively within the pipeline definition?</div>
+    <ul class="options">
+      <li>DLT streaming pipelines support PySpark DataFrame transformations for applying inference UDFs.</li>
+      <li>DLT streaming pipelines support Pandas DataFrame transformations for applying inference UDFs.</li>
+      <li>DLT streaming pipelines support Koalas DataFrame transformations for applying inference UDFs.</li>
+      <li>DLT streaming pipelines support Modin DataFrame transformations for applying inference UDFs.</li>
+    </ul>
+    <button class="btn" onclick="t('e33')">Show Explanation</button>
+    <div class="exp" id="e33">
+      <span class="correct-ans">Correct Answer: A</span>
+      While you use pandas UDFs under the hood via MLflow, the actual coding paradigm inside a DLT `@dlt.table` function strictly utilizes the PySpark DataFrame API (`df.withColumn`, `df.select`) to define the transformations.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">34. A streaming pipeline needs to apply inference every 5 minutes rather than continuously. How is this configured in Databricks DLT?</div>
+    <ul class="options">
+      <li>Configure the pipeline to operate in Triggered mode to process available data periodically.</li>
+      <li>Configure the pipeline to operate in Continuous mode to process available data periodically.</li>
+      <li>Configure the pipeline to operate in Interactive mode to process available data periodically.</li>
+      <li>Configure the pipeline to operate in Orchestrated mode to process available data periodically.</li>
+    </ul>
+    <button class="btn" onclick="t('e34')">Show Explanation</button>
+    <div class="exp" id="e34">
+      <span class="correct-ans">Correct Answer: A</span>
+      Setting a DLT pipeline to "Triggered" mode starts a cluster, processes all new data since the last run as a single micro-batch through the inference model, and then spins down the cluster, saving significant costs over "Continuous" mode.
+    </div>
+  </div>
+
+  <!-- Subtopic 5: Deploy and query a model for realtime inference -->
+  <h2>Deploy and query a model for realtime inference</h2>
+
+  <div class="q-card">
+    <div class="q-title">35. When querying a Databricks real-time serving endpoint via an external HTTP request, what security configuration is strictly required?</div>
+    <ul class="options">
+      <li>Requests must include a valid Databricks Personal Access Token in the Authorization header.</li>
+      <li>Requests must include a valid Databricks Service Principal Secret in the Configuration payload.</li>
+      <li>Requests must include a valid Databricks Workspace Admin Password in the Authentication URL.</li>
+      <li>Requests must include a valid Databricks Session Cookie Key in the Environment variable.</li>
+    </ul>
+    <button class="btn" onclick="t('e35')">Show Explanation</button>
+    <div class="exp" id="e35">
+      <span class="correct-ans">Correct Answer: A</span>
+      All external REST API calls to a Databricks serving endpoint require authentication via an HTTP header formatted as `Authorization: Bearer <DATABRICKS_TOKEN>`, typically generated using a Service Principal or a Personal Access Token.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">36. Which JSON payload structure strictly adheres to the standard format required for querying Databricks Model Serving endpoints?</div>
+    <ul class="options">
+      <li>Format the input data as a JSON dictionary utilizing the standard "dataframe_split" structure.</li>
+      <li>Format the input data as a CSV document utilizing the standard "dataframe_records" structure.</li>
+      <li>Format the input data as a XML payload utilizing the standard "dataframe_columns" structure.</li>
+      <li>Format the input data as a YAML payload utilizing the standard "dataframe_objects" structure.</li>
+    </ul>
+    <button class="btn" onclick="t('e36')">Show Explanation</button>
+    <div class="exp" id="e36">
+      <span class="correct-ans">Correct Answer: A</span>
+      Databricks Model Serving natively expects payloads formatted as MLflow deployment JSON, typically leveraging `dataframe_split` or `dataframe_records` formatting encapsulated in a standard JSON dictionary.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">37. What is the precise URL path pattern required to send a POST request to a deployed Databricks Serving endpoint?</div>
+    <ul class="options">
+      <li>The endpoint URL targets the /serving-endpoints/ path followed by the endpoint name and /invocations.</li>
+      <li>The endpoint URL targets the /model-registry/ path followed by the endpoint name and /predictions.</li>
+      <li>The endpoint URL targets the /machine-learning/ path followed by the endpoint name and /evaluations.</li>
+      <li>The endpoint URL targets the /workspace-models/ path followed by the endpoint name and /executions.</li>
+    </ul>
+    <button class="btn" onclick="t('e37')">Show Explanation</button>
+    <div class="exp" id="e37">
+      <span class="correct-ans">Correct Answer: A</span>
+      The standard REST API path structure for querying a model is `https://<workspace-url>/serving-endpoints/<endpoint-name>/invocations`.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">38. How does Databricks Model Serving automatically manage compute capacity during periods of zero inference requests?</div>
+    <ul class="options">
+      <li>Serverless serving endpoints automatically scale compute nodes down to zero during idle periods.</li>
+      <li>Serverless serving endpoints automatically scale compute nodes up to infinity during peak periods.</li>
+      <li>Serverless serving endpoints manually scale compute nodes down to zero during idle periods.</li>
+      <li>Serverless serving endpoints manually scale compute nodes up to infinity during peak periods.</li>
+    </ul>
+    <button class="btn" onclick="t('e38')">Show Explanation</button>
+    <div class="exp" id="e38">
+      <span class="correct-ans">Correct Answer: A</span>
+      Databricks allows endpoints to be configured to "Scale to Zero." This reduces the active nodes to zero during extended idle periods to save costs, though the first subsequent request will experience a "cold start" delay.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">39. If a developer wishes to manually test a newly deployed serving endpoint without writing code, what Databricks workspace feature is available?</div>
+    <ul class="options">
+      <li>The Serving UI provides an embedded interface to submit JSON payloads directly to the model.</li>
+      <li>The Serving UI provides an embedded workspace to submit Python scripts directly to the model.</li>
+      <li>The Serving UI provides an embedded dashboard to submit SQL queries directly to the model.</li>
+      <li>The Serving UI provides an embedded notebook to submit Scala functions directly to the model.</li>
+    </ul>
+    <button class="btn" onclick="t('e39')">Show Explanation</button>
+    <div class="exp" id="e39">
+      <span class="correct-ans">Correct Answer: A</span>
+      The Databricks Serving Endpoint UI features a built-in querying interface where developers can paste a JSON payload, hit submit, and immediately view the model's response and latency metrics.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">40. To avoid connection hanging, what constraint exists on individual synchronous requests sent to real-time serving endpoints?</div>
+    <ul class="options">
+      <li>Real-time serving endpoints enforce a strict timeout limit to prevent long-running inference requests.</li>
+      <li>Real-time serving endpoints bypass all timeout configurations to support long-running inference requests.</li>
+      <li>Real-time serving endpoints require a manual timeout parameter to handle long-running inference requests.</li>
+      <li>Real-time serving endpoints ignore the global timeout settings to manage long-running inference requests.</li>
+    </ul>
+    <button class="btn" onclick="t('e40')">Show Explanation</button>
+    <div class="exp" id="e40">
+      <span class="correct-ans">Correct Answer: A</span>
+      Serving endpoints are optimized for latency, not long-running computation. Therefore, they enforce a hard REST API timeout (usually around 60 seconds). Inference taking longer than this will fail, indicating a batch approach is more suitable.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">41. When formatting an inference payload using the "dataframe_split" standard, which distinct JSON arrays must be present?</div>
+    <ul class="options">
+      <li>The "dataframe_split" format requires separate "columns" and "data" lists within the JSON payload.</li>
+      <li>The "dataframe_split" format requires separate "schema" and "values" lists within the JSON payload.</li>
+      <li>The "dataframe_split" format requires separate "features" and "labels" lists within the JSON payload.</li>
+      <li>The "dataframe_split" format requires separate "inputs" and "outputs" lists within the JSON payload.</li>
+    </ul>
+    <button class="btn" onclick="t('e41')">Show Explanation</button>
+    <div class="exp" id="e41">
+      <span class="correct-ans">Correct Answer: A</span>
+      The `dataframe_split` format expects a dictionary with a `columns` array (listing feature names) and a `data` array (listing a 2D array of the corresponding values). Example: `{"dataframe_split": {"columns": ["Age"], "data": [[25]]}}`.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">42. Once an external application successfully queries the serving endpoint, how are the resulting predictions structured in the returned JSON object?</div>
+    <ul class="options">
+      <li>The JSON response contains a "predictions" key holding the list of returned model outputs.</li>
+      <li>The JSON response contains a "results" key holding the list of returned model outputs.</li>
+      <li>The JSON response contains a "forecasts" key holding the list of returned model outputs.</li>
+      <li>The JSON response contains a "values" key holding the list of returned model outputs.</li>
+    </ul>
+    <button class="btn" onclick="t('e42')">Show Explanation</button>
+    <div class="exp" id="e42">
+      <span class="correct-ans">Correct Answer: A</span>
+      A successful HTTP 200 response from a Databricks Serving endpoint returns a JSON payload containing a top-level key named `"predictions"`, which maps to a list or array of the computed inference results.
+    </div>
+  </div>
+
+  <!-- Subtopic 6: Split data between endpoints for realtime inference -->
+  <h2>Split data between endpoints for realtime inference</h2>
+
+  <div class="q-card">
+    <div class="q-title">43. What architectural capability allows Databricks Model Serving to execute traffic splitting for A/B testing?</div>
+    <ul class="options">
+      <li>Multiple model versions can be assigned to a single endpoint with configured traffic percentages.</li>
+      <li>Multiple model versions can be assigned to a separate workspace with configured traffic percentages.</li>
+      <li>Multiple model versions can be assigned to a single cluster with configured traffic percentages.</li>
+      <li>Multiple model versions can be assigned to a separate notebook with configured traffic percentages.</li>
+    </ul>
+    <button class="btn" onclick="t('e43')">Show Explanation</button>
+    <div class="exp" id="e43">
+      <span class="correct-ans">Correct Answer: A</span>
+      A single Model Serving endpoint acts as a load balancer that can natively route incoming inference requests to multiple registered model versions simultaneously based on user-defined integer weight percentages.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">44. A data scientist wants to test a newer model against the production model without impacting the majority of users. What split is appropriate?</div>
+    <ul class="options">
+      <li>Route 90% of traffic to the champion version and 10% to the challenger version simultaneously.</li>
+      <li>Route 90% of traffic to the offline version and 10% to the online version simultaneously.</li>
+      <li>Route 90% of traffic to the registry version and 10% to the workspace version simultaneously.</li>
+      <li>Route 90% of traffic to the staging version and 10% to the production version simultaneously.</li>
+    </ul>
+    <button class="btn" onclick="t('e44')">Show Explanation</button>
+    <div class="exp" id="e44">
+      <span class="correct-ans">Correct Answer: A</span>
+      This describes a Canary deployment or A/B test. The reliable production model (champion) handles the vast majority of requests, while the experimental model (challenger) handles a small slice (10%) to test stability and performance safely.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">45. What happens to active inference requests when the traffic split percentages are updated on a live Databricks serving endpoint?</div>
+    <ul class="options">
+      <li>Modifying the traffic split percentages updates the serving routing without endpoint downtime.</li>
+      <li>Modifying the traffic split percentages restarts the serving infrastructure with endpoint downtime.</li>
+      <li>Modifying the traffic split percentages rebuilds the container instances with endpoint downtime.</li>
+      <li>Modifying the traffic split percentages flushes the active connections with endpoint downtime.</li>
+    </ul>
+    <button class="btn" onclick="t('e45')">Show Explanation</button>
+    <div class="exp" id="e45">
+      <span class="correct-ans">Correct Answer: A</span>
+      Databricks executes a seamless, zero-downtime update. The internal load balancer updates its routing configuration without tearing down the existing containers, ensuring no incoming REST API requests are dropped.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">46. What strict mathematical constraint governs the routing configuration when deploying multiple models to a single split endpoint?</div>
+    <ul class="options">
+      <li>The sum of all traffic routing percentages configured on a serving endpoint must equal exactly 100.</li>
+      <li>The sum of all traffic routing percentages configured on a serving endpoint must exceed exactly 100.</li>
+      <li>The sum of all traffic routing percentages configured on a serving endpoint must equal exactly 50.</li>
+      <li>The sum of all traffic routing percentages configured on a serving endpoint must exceed exactly 50.</li>
+    </ul>
+    <button class="btn" onclick="t('e46')">Show Explanation</button>
+    <div class="exp" id="e46">
+      <span class="correct-ans">Correct Answer: A</span>
+      The load balancer utilizes percentages to route requests. If a configuration specifies 80% to Model A and 10% to Model B (summing to 90), Databricks Serving will throw a configuration error. It must equal 100.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">47. When an endpoint is processing a 50/50 split between two models, how does the system observe and track the performance differences?</div>
+    <ul class="options">
+      <li>Databricks Serving automatically logs inference metrics separately for each routed model version.</li>
+      <li>Databricks Serving automatically logs inference metrics combined for every routed model version.</li>
+      <li>Databricks Serving automatically logs training metrics separately for each routed model version.</li>
+      <li>Databricks Serving automatically logs training metrics combined for every routed model version.</li>
+    </ul>
+    <button class="btn" onclick="t('e47')">Show Explanation</button>
+    <div class="exp" id="e47">
+      <span class="correct-ans">Correct Answer: A</span>
+      In the Serving UI (and underlying metric tables), throughput, latency, and error rates are tracked independently for each served entity (model version), allowing data scientists to definitively compare A vs. B.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">48. Which statement best defines a "gradual rollout" deployment strategy utilizing Databricks Model Serving?</div>
+    <ul class="options">
+      <li>A gradual rollout strategy incrementally increases traffic percentage to a newly deployed model.</li>
+      <li>A gradual rollout strategy immediately forces traffic redirection to a newly deployed model.</li>
+      <li>A gradual rollout strategy permanently splits traffic distribution to a newly deployed model.</li>
+      <li>A gradual rollout strategy randomly drops traffic requests to a newly deployed model.</li>
+    </ul>
+    <button class="btn" onclick="t('e48')">Show Explanation</button>
+    <div class="exp" id="e48">
+      <span class="correct-ans">Correct Answer: A</span>
+      A gradual rollout begins with a small split (e.g., 5% to the new model). Over hours or days, an automated MLOps script updates the configuration (10%, 25%, 50%, 100%) until the new model entirely replaces the old one.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">49. To programmatically update the traffic split of an existing endpoint via the REST API, which HTTP method is utilized?</div>
+    <ul class="options">
+      <li>Send a PUT request to the endpoint configuration API to modify the traffic routing configuration.</li>
+      <li>Send a GET request to the endpoint configuration API to modify the traffic routing configuration.</li>
+      <li>Send a POST request to the endpoint configuration API to modify the traffic routing configuration.</li>
+      <li>Send a DELETE request to the endpoint configuration API to modify the traffic routing configuration.</li>
+    </ul>
+    <button class="btn" onclick="t('e49')">Show Explanation</button>
+    <div class="exp" id="e49">
+      <span class="correct-ans">Correct Answer: A</span>
+      According to the Databricks API documentation, updating an existing endpoint's configuration (such as shifting traffic split percentages) requires sending a `PUT` request to `/api/2.0/serving-endpoints/<endpoint-name>/config`.
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-title">50. How does the internal router actually distribute incoming inference requests in a 70/30 split scenario?</div>
+    <ul class="options">
+      <li>The endpoint load balancer randomly distributes individual requests based on assigned percentages.</li>
+      <li>The endpoint load balancer strictly distributes individual requests based on sequential ordering.</li>
+      <li>The endpoint load balancer actively distributes individual requests based on client latency.</li>
+      <li>The endpoint load balancer passively distributes individual requests based on payload size.</li>
+    </ul>
+    <button class="btn" onclick="t('e50')">Show Explanation</button>
+    <div class="exp" id="e50">
+      <span class="correct-ans">Correct Answer: A</span>
+      The system does not process 7 requests sequentially for A, then 3 for B. Instead, it utilizes random probabilistic routing based on the configured percentages, guaranteeing that statistically over time, 70% of calls land on Model A.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

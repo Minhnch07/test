@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks ML Associate Practice: Section 2</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #FF3621; text-align: center; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        h2 { color: #1B5162; margin-top: 40px; background: #e3eff3; padding: 10px; border-radius: 5px; }
+        .question-card { background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .sub-topic { font-size: 0.85em; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 10px; }
+        .question-text { font-weight: 600; font-size: 1.1em; margin-bottom: 15px; color: #111; }
+        .options { list-style-type: none; padding-left: 0; }
+        .options li { padding: 10px 15px; margin-bottom: 8px; background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 5px; }
+        details { margin-top: 15px; background: #f8fbfb; padding: 12px; border-left: 5px solid #1B5162; border-radius: 4px; }
+        summary { font-weight: bold; cursor: pointer; color: #1B5162; outline: none; }
+        .explanation { margin-top: 10px; font-size: 0.95em; }
+        .correct { color: #0d8a43; font-weight: bold; }
+        code { background: #eee; padding: 2px 4px; border-radius: 3px; font-family: monospace; color: #d63200; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Databricks ML Associate: Section 2 Practice (Data Processing)</h1>
+        
+        <h2>Subdomain 2.1: Compute summary statistics</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 1</div>
+            <div class="question-text">Which DataFrame method generates exact percentiles alongside count, mean, and standard deviation for numeric columns?</div>
+            <ul class="options">
+                <li>A) The <code>.describe()</code> method computes summary statistics including the standard deviation but excludes the exact percentiles.</li>
+                <li>B) The <code>.summary()</code> method computes summary statistics including the standard deviation and includes the exact percentiles.</li>
+                <li>C) The <code>dbutils.data.summarize()</code> method computes summary statistics including the standard deviation but excludes the exact percentiles.</li>
+                <li>D) The <code>df.stat.crosstab()</code> method computes summary statistics including the standard deviation and includes the exact percentiles.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> In PySpark, <code>df.describe()</code> provides basic stats (count, mean, stddev, min, max) but lacks exact quartile calculations. <code>df.summary()</code> extends this functionality by calculating exact percentiles (25%, 50%, 75%) alongside the basic statistics, returning the result as a Spark DataFrame.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 2</div>
+            <div class="question-text">What is the primary difference in output format between <code>df.summary()</code> and <code>dbutils.data.summarize(df)</code>?</div>
+            <ul class="options">
+                <li>A) <code>df.summary()</code> explicitly returns a PySpark DataFrame; <code>dbutils.data.summarize(df)</code> implicitly renders a visual profile in the UI.</li>
+                <li>B) <code>df.summary()</code> explicitly renders a visual profile in the UI; <code>dbutils.data.summarize(df)</code> implicitly returns a PySpark DataFrame.</li>
+                <li>C) <code>df.summary()</code> explicitly returns a Python dictionary; <code>dbutils.data.summarize(df)</code> implicitly renders a graphical plot in the UI.</li>
+                <li>D) <code>df.summary()</code> explicitly renders a graphical plot in the UI; <code>dbutils.data.summarize(df)</code> implicitly returns a Python dictionary.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> <code>df.summary()</code> is a standard PySpark DataFrame transformation that returns a new DataFrame containing statistical rows. <code>dbutils.data.summarize()</code> is a Databricks-specific utility that triggers a visual rendering of data profiles natively in the notebook UI.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 3</div>
+            <div class="question-text">How can a Data Scientist calculate only the 10th and 90th percentiles using the DataFrame <code>.summary()</code> method?</div>
+            <ul class="options">
+                <li>A) By invoking <code>df.summary(percentiles=["10%", "90%"])</code> to compute the specifically requested distribution statistics.</li>
+                <li>B) By invoking <code>df.summary(quantiles=["0.10", "0.90"])</code> to compute the specifically requested distribution statistics.</li>
+                <li>C) By invoking <code>df.summary("10%", "90%")</code> to compute the specifically requested distribution statistics.</li>
+                <li>D) By invoking <code>df.summary("0.10", "0.90")</code> to compute the specifically requested distribution statistics.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> The <code>.summary()</code> method accepts variable-length string arguments (<code>*statistics</code>) specifying the exact metrics to compute. Percentiles must be provided as strings formatted with the percentage sign, e.g., "10%".
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 4</div>
+            <div class="question-text">When analyzing a DataFrame with both numeric and string columns, how does <code>df.summary()</code> process the string columns?</div>
+            <ul class="options">
+                <li>A) It computes the count, min, and max values, but returns null strings for the mean and standard deviation.</li>
+                <li>B) It computes the count, min, and max values, but returns zero strings for the mean and standard deviation.</li>
+                <li>C) It ignores the string columns entirely, and returns statistics solely for the designated numeric columns.</li>
+                <li>D) It drops the string columns entirely, and throws a warning regarding unsupported column data types.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> <code>df.summary()</code> evaluates strings by applying alphabetical ordering for min and max, and calculating row counts. However, mathematical operations like mean and stddev are inapplicable to strings, thus resulting in null values in the output DataFrame.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 5</div>
+            <div class="question-text">What information is uniquely provided by <code>dbutils.data.summarize()</code> that is NOT provided by <code>df.summary()</code>?</div>
+            <ul class="options">
+                <li>A) The precise percentage of missing values and the memory footprint for each numeric column.</li>
+                <li>B) The precise percentage of missing values and the distribution histogram for each numeric column.</li>
+                <li>C) The precise standard deviation metric and the memory footprint for each numeric column.</li>
+                <li>D) The precise standard deviation metric and the distribution histogram for each numeric column.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Databricks <code>dbutils.data.summarize()</code> is a rich profiling tool that generates visual histograms and calculates the exact percentage of missing values or zeros. <code>df.summary()</code> does not provide visual histograms or automatic missing percentages.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 6</div>
+            <div class="question-text">To calculate exact summary statistics for a specific column named 'price' rather than the whole DataFrame, which syntax is correct?</div>
+            <ul class="options">
+                <li>A) <code>df.select("price").summary().show()</code> correctly isolates the target column prior to calculation.</li>
+                <li>B) <code>df.summary("price").show()</code> correctly isolates the target column prior to calculation.</li>
+                <li>C) <code>df.filter("price").summary().show()</code> correctly isolates the target column prior to calculation.</li>
+                <li>D) <code>df.stat.summary("price").show()</code> correctly isolates the target column prior to calculation.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> The <code>.summary()</code> method applies to all columns in the DataFrame it is called on. To summarize only one column, you must first narrow down the DataFrame using <code>.select("column_name")</code>. Passing "price" into <code>summary()</code> (Option B) would instruct Spark to look for a statistic metric named "price", which will fail.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 7</div>
+            <div class="question-text">What happens to null values when <code>df.summary("mean")</code> is executed on a numeric DataFrame column?</div>
+            <ul class="options">
+                <li>A) Null values are imputed with zero values before the overall mean statistic is formally calculated.</li>
+                <li>B) Null values are imputed with mode values before the overall mean statistic is formally calculated.</li>
+                <li>C) Null values are excluded completely before the overall mean statistic is formally calculated.</li>
+                <li>D) Null values are counted as error values and the overall mean calculation fails immediately.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> PySpark aggregation functions, including those executed via <code>.summary()</code> or <code>.describe()</code>, automatically ignore null values during computation. The mean is calculated exclusively over the non-null records.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.2: Remove outliers based on standard deviation or IQR</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 8</div>
+            <div class="question-text">Which mathematical expression correctly calculates the Interquartile Range (IQR) for a numeric feature?</div>
+            <ul class="options">
+                <li>A) <code>IQR = 75th percentile + 25th percentile</code>, serving to effectively measure the data's central tendency.</li>
+                <li>B) <code>IQR = 75th percentile - 25th percentile</code>, serving to effectively measure the data's statistical spread.</li>
+                <li>C) <code>IQR = 90th percentile - 10th percentile</code>, serving to effectively measure the data's statistical spread.</li>
+                <li>D) <code>IQR = 90th percentile + 10th percentile</code>, serving to effectively measure the data's central tendency.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The Interquartile Range (IQR) measures the spread of the middle 50% of the dataset. It is strictly calculated by subtracting the first quartile (25th percentile) from the third quartile (75th percentile).
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 9</div>
+            <div class="question-text">When removing outliers using the standard IQR methodology, how are the valid lower and upper boundaries defined?</div>
+            <ul class="options">
+                <li>A) <code>Lower = Q1 - 1.5 * IQR</code> and <code>Upper = Q3 + 1.5 * IQR</code> establish the valid baseline threshold.</li>
+                <li>B) <code>Lower = Q1 - 2.0 * IQR</code> and <code>Upper = Q3 + 2.0 * IQR</code> establish the valid baseline threshold.</li>
+                <li>C) <code>Lower = Q1 - 1.0 * IQR</code> and <code>Upper = Q3 + 1.0 * IQR</code> establish the valid baseline threshold.</li>
+                <li>D) <code>Lower = Q1 - 3.0 * IQR</code> and <code>Upper = Q3 + 3.0 * IQR</code> establish the valid baseline threshold.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> The standard Tukey method for outlier detection defines the inner fences (boundaries) as 1.5 times the IQR below Q1 and above Q3. Values outside this range are considered outliers.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 10</div>
+            <div class="question-text">How can you efficiently compute the 1st and 3rd quartiles for a column named 'sales' in PySpark to calculate IQR?</div>
+            <ul class="options">
+                <li>A) <code>df.approxQuantile("sales", [0.25, 0.75], 0.01)</code> computes the needed quantiles with a specified relative error.</li>
+                <li>B) <code>df.exactQuantile("sales", [0.25, 0.75], 0.01)</code> computes the needed quantiles with a specified relative error.</li>
+                <li>C) <code>df.stat.percentile("sales", [25, 75], 0.01)</code> computes the needed quantiles with a specified relative error.</li>
+                <li>D) <code>df.select.quantiles("sales", [0.25, 0.75], 0.01)</code> computes the needed quantiles with a specified relative error.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Because calculating exact quantiles over massive distributed datasets is highly expensive, PySpark provides <code>approxQuantile(col, probabilities, relativeError)</code> to estimate quantiles efficiently.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 11</div>
+            <div class="question-text">When using the standard deviation method to remove outliers, which condition typically defines an outlier in a normal distribution?</div>
+            <ul class="options">
+                <li>A) A data value that strictly falls outside <code>Mean ± 1 * Standard Deviation</code> is classified as a severe outlier.</li>
+                <li>B) A data value that strictly falls outside <code>Mean ± 2 * Standard Deviation</code> is classified as a severe outlier.</li>
+                <li>C) A data value that strictly falls outside <code>Mean ± 3 * Standard Deviation</code> is classified as a severe outlier.</li>
+                <li>D) A data value that strictly falls outside <code>Mean ± 4 * Standard Deviation</code> is classified as a severe outlier.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> Under the empirical rule for normal distributions, 99.7% of data points fall within 3 standard deviations of the mean. Consequently, values beyond ±3 Standard Deviations are universally treated as outliers.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 12</div>
+            <div class="question-text">Why might a Data Scientist preferentially select the IQR method over the Standard Deviation method for removing outliers?</div>
+            <ul class="options">
+                <li>A) The IQR method remains highly sensitive to massive extreme values, making it ideal for deeply skewed distributions.</li>
+                <li>B) The IQR method remains highly resistant to massive extreme values, making it ideal for deeply skewed distributions.</li>
+                <li>C) The IQR method remains mathematically identical to standard deviation, making it ideal for perfectly normal distributions.</li>
+                <li>D) The IQR method remains computationally faster than standard deviation, making it ideal for perfectly normal distributions.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The Standard Deviation method relies on the mean and standard deviation, both of which are heavily distorted by extreme outliers. The IQR uses quartiles based on rank ordering, making it highly robust to outliers and better for skewed data.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 13</div>
+            <div class="question-text">You have calculated <code>mean_val</code> and <code>stddev_val</code> for a column <code>price</code>. Which PySpark code correctly filters out values outside 3 standard deviations?</div>
+            <ul class="options">
+                <li>A) <code>df.filter((col("price") >= mean_val - 3 * stddev_val) & (col("price") <= mean_val + 3 * stddev_val))</code> retains valid rows.</li>
+                <li>B) <code>df.filter((col("price") <= mean_val - 3 * stddev_val) | (col("price") >= mean_val + 3 * stddev_val))</code> retains valid rows.</li>
+                <li>C) <code>df.select((col("price") >= mean_val - 3 * stddev_val) & (col("price") <= mean_val + 3 * stddev_val))</code> retains valid rows.</li>
+                <li>D) <code>df.select((col("price") <= mean_val - 3 * stddev_val) | (col("price") >= mean_val + 3 * stddev_val))</code> retains valid rows.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> To <em>filter out</em> outliers means to keep the non-outliers. Non-outliers are those values that are greater than or equal to the lower bound AND (<code>&</code>) less than or equal to the upper bound. Option A correctly applies this filter condition.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 14</div>
+            <div class="question-text">If a feature contains highly right-skewed data with massive extreme values, how is the standard deviation method impacted compared to IQR?</div>
+            <ul class="options">
+                <li>A) The standard deviation is artificially decreased by extreme outliers, causing the valid boundaries to become excessively narrow.</li>
+                <li>B) The standard deviation is artificially increased by extreme outliers, causing the valid boundaries to become excessively wide.</li>
+                <li>C) The standard deviation remains completely unaffected by extreme outliers, causing the valid boundaries to remain strictly constant.</li>
+                <li>D) The standard deviation is mathematically inverted by extreme outliers, causing the valid boundaries to become inherently negative.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Extreme high values vastly increase the mean and standard deviation. As a result, the calculated 3-standard-deviation threshold inflates so widely that it often fails to flag genuine outliers, rendering the method ineffective on skewed data.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.3: Create visualizations for categorical or continuous features</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 15</div>
+            <div class="question-text">Which visualization is most appropriate for analyzing the underlying distribution of a single continuous feature?</div>
+            <ul class="options">
+                <li>A) A vertical bar chart effectively displays the underlying frequency distribution for the specific continuous feature.</li>
+                <li>B) A circular pie chart effectively displays the underlying frequency distribution for the specific continuous feature.</li>
+                <li>C) A standard histogram effectively displays the underlying frequency distribution for the specific continuous feature.</li>
+                <li>D) A two-axis scatter plot effectively displays the underlying frequency distribution for the specific continuous feature.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> Histograms group continuous numbers into sequential numerical bins, providing the optimal visual representation of the probability distribution of a single continuous variable.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 16</div>
+            <div class="question-text">Which visualization is most appropriate for analyzing the discrete frequency of a single categorical feature?</div>
+            <ul class="options">
+                <li>A) A numerical scatter plot accurately represents the total occurrences of each distinct individual category.</li>
+                <li>B) A smoothed density plot accurately represents the total occurrences of each distinct individual category.</li>
+                <li>C) A vertical bar chart accurately represents the total occurrences of each distinct individual category.</li>
+                <li>D) A standard box plot accurately represents the total occurrences of each distinct individual category.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> Bar charts map discrete categorical variables to a corresponding length/height axis representing their raw count or relative frequency, making them ideal for univariate categorical analysis.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 17</div>
+            <div class="question-text">In a Databricks notebook, which built-in function automatically generates visualizations for a Spark DataFrame without writing custom matplotlib code?</div>
+            <ul class="options">
+                <li>A) Invoking <code>visualize(df)</code> automatically profiles the dataset and natively renders the interactive interface charts.</li>
+                <li>B) Invoking <code>plot(df)</code> automatically profiles the dataset and natively renders the interactive interface charts.</li>
+                <li>C) Invoking <code>display(df)</code> automatically profiles the dataset and natively renders the interactive interface charts.</li>
+                <li>D) Invoking <code>render(df)</code> automatically profiles the dataset and natively renders the interactive interface charts.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> The <code>display()</code> command is a Databricks-specific built-in function that renders DataFrames as an interactive HTML table. The UI also includes built-in buttons to switch the view to various charts (bar, scatter, map, etc.) and Data Profiles.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 18</div>
+            <div class="question-text">What characteristic of a continuous feature distribution is uniquely best identified using a Box Plot?</div>
+            <ul class="options">
+                <li>A) The precise correlation coefficient observed between two independent and strictly continuous variables.</li>
+                <li>B) The exact overall frequency count of every distinct and individually observed numerical data value.</li>
+                <li>C) The median point, interquartile range boundaries, and presence of potential extreme outlier points.</li>
+                <li>D) The categorical aggregate proportions analyzed strictly relative to the comprehensive dataset size.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> A Box Plot visually represents the five-number summary (minimum, first quartile, median, third quartile, maximum) and plots outliers as distinct individual points outside the whiskers, making outlier detection immediate.
+                </div>
+            </details>
+        </div>
+
+        <!-- Continue pattern up to Q50 maintaining strict structure -->
+        
+        <div class="question-card">
+            <div class="sub-topic">Question 19</div>
+            <div class="question-text">When visualizing a highly skewed continuous feature, applying a logarithmic transformation before plotting a histogram typically results in:</div>
+            <ul class="options">
+                <li>A) A transformed distribution that visually appears substantially more symmetrically centered and normally distributed.</li>
+                <li>B) A transformed distribution that visually appears substantially more heavily concentrated and leftward skewed.</li>
+                <li>C) A transformed distribution that visually eliminates entirely all underlying statistical variance and dispersion.</li>
+                <li>D) A transformed distribution that visually mirrors perfectly the initial structural shape of the raw dataset.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Right-skewed data spans orders of magnitude. A logarithmic transformation compresses the long tail of large values, resulting in a distribution that approaches a Gaussian (normal) bell curve shape, making visualization and subsequent linear modeling easier.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 20</div>
+            <div class="question-text">A Data Scientist uses Databricks Data Profiles on a categorical column. What key metric is prominently displayed to assess data quality?</div>
+            <ul class="options">
+                <li>A) The specific mathematical overall variance calculated for the observed nominal string categories.</li>
+                <li>B) The specific percentage ratio quantifying the exact volume of missing or null categorical records.</li>
+                <li>C) The specific mathematical median length calculated for the individual observed categorical strings.</li>
+                <li>D) The specific standard deviation calculated across the lengths of the nominal categorical strings.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Databricks Data Profiles instantly highlight missing value percentages for all column types, immediately alerting the data scientist to potential data quality issues before modeling.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 21</div>
+            <div class="question-text">Why is a kernel density plot often preferred over a standard histogram for visualizing a continuous feature?</div>
+            <ul class="options">
+                <li>A) It partitions the numerical data into rigid discrete bins which facilitates identifying exact aggregate frequencies.</li>
+                <li>B) It mathematically smooths the continuous distribution which facilitates identifying the underlying structural shape.</li>
+                <li>C) It visually aggregates discrete categorical labels which facilitates plotting multiple distinct string variables.</li>
+                <li>D) It automatically calculates rolling time averages which facilitates evaluating long-term chronological variations.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Histograms are highly sensitive to bin-width choices, which can obscure the true shape of the data. Density plots apply kernel smoothing to create a continuous curve, offering a clearer picture of the distribution's shape without binning bias.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.4: Compare two categorical or two continuous features</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 22</div>
+            <div class="question-text">Which visualization method is strictly best suited for comparing two continuous features to identify a linear relationship?</div>
+            <ul class="options">
+                <li>A) A layered horizontal stacked bar chart visually plotting the mathematical intersection of the dual variables.</li>
+                <li>B) A segmented side-by-side box plot visually plotting the mathematical intersection of the dual variables.</li>
+                <li>C) A standard two-dimensional scatter plot visually plotting the mathematical intersection of the dual variables.</li>
+                <li>D) A sequential one-dimensional histogram visually plotting the mathematical intersection of the dual variables.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> A scatter plot assigns one continuous variable to the X-axis and the other to the Y-axis. The resulting cloud of points instantly reveals positive, negative, linear, or non-linear correlations between the two metrics.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 23</div>
+            <div class="question-text">Which statistical metric is most appropriate for quantifying the explicit linear relationship between two continuous features?</div>
+            <ul class="options">
+                <li>A) The standardized Pearson correlation coefficient analytically measures the magnitude of the continuous linear relationship.</li>
+                <li>B) The standardized Chi-square statistical test analytically measures the magnitude of the continuous linear relationship.</li>
+                <li>C) The standardized Interquartile Range boundary analytically measures the magnitude of the continuous linear relationship.</li>
+                <li>D) The standardized population standard deviation analytically measures the magnitude of the continuous linear relationship.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Pearson's correlation coefficient evaluates the linear relationship between two continuous variables on a scale from -1.0 to 1.0. Chi-square is for categorical data, and IQR/Standard Deviation are univariate metrics.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 24</div>
+            <div class="question-text">In PySpark, which method creates a contingency table to analytically compare the frequencies of two categorical features?</div>
+            <ul class="options">
+                <li>A) <code>df.stat.corr("categorical_1", "categorical_2")</code> successfully generates a bi-dimensional tabular matrix of frequency counts.</li>
+                <li>B) <code>df.stat.freqItems(["categorical_1", "categorical_2"])</code> successfully generates a bi-dimensional tabular matrix of frequency counts.</li>
+                <li>C) <code>df.stat.crosstab("categorical_1", "categorical_2")</code> successfully generates a bi-dimensional tabular matrix of frequency counts.</li>
+                <li>D) <code>df.stat.cov("categorical_1", "categorical_2")</code> successfully generates a bi-dimensional tabular matrix of frequency counts.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> The <code>crosstab()</code> method in <code>df.stat</code> generates a cross-tabulation (contingency table) showing the pairwise frequency of categories across two distinct columns.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 25</div>
+            <div class="question-text">To visually compare the distribution of a continuous feature across different groups of a categorical feature, which plot is best?</div>
+            <ul class="options">
+                <li>A) A parallel side-by-side box plot isolates the continuous quantitative distribution discretely partitioned by the qualitative categories.</li>
+                <li>B) A standard two-dimensional scatter plot isolates the continuous quantitative distribution discretely partitioned by the qualitative categories.</li>
+                <li>C) A sequential chronological line chart isolates the continuous quantitative distribution discretely partitioned by the qualitative categories.</li>
+                <li>D) A proportional segmented pie chart isolates the continuous quantitative distribution discretely partitioned by the qualitative categories.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Placing multiple box plots side-by-side (one for each category) along a single axis provides an immediate visual comparison of medians, spread, and outliers of a continuous feature across different discrete groups.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 26</div>
+            <div class="question-text">What does a Pearson correlation coefficient of -0.95 between two continuous features explicitly indicate regarding their relationship?</div>
+            <ul class="options">
+                <li>A) A severely weak negative linear relationship statistically exists between the continuous variables.</li>
+                <li>B) A profoundly strong negative linear relationship statistically exists between the continuous variables.</li>
+                <li>C) A severely weak positive linear relationship statistically exists between the continuous variables.</li>
+                <li>D) A profoundly strong positive linear relationship statistically exists between the continuous variables.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The Pearson coefficient ranges from -1 to 1. A value of -0.95 is extremely close to -1.0, representing a very strong negative (inverse) linear relationship: as one variable increases, the other predictably decreases.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 27</div>
+            <div class="question-text">When evaluating two categorical features for independence, which visual chart provides the most intuitive comparison of their joint proportions?</div>
+            <ul class="options">
+                <li>A) A colored grouped or stacked bar chart effectively visualizes the relative interaction frequencies across cross-combinations.</li>
+                <li>B) A unified normalized multi-line chart effectively visualizes the relative interaction frequencies across cross-combinations.</li>
+                <li>C) A dual-axis temporal series chart effectively visualizes the relative interaction frequencies across cross-combinations.</li>
+                <li>D) A volumetric three-dimensional scatter effectively visualizes the relative interaction frequencies across cross-combinations.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> A stacked or grouped bar chart visually maps contingency tables, showing how the proportion of one categorical variable behaves within the buckets of another categorical variable.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 28</div>
+            <div class="question-text">If a scatter plot of two continuous features displays a perfectly horizontal cloud line of points, what is their expected mathematical correlation?</div>
+            <ul class="options">
+                <li>A) The expected statistical Pearson correlation coefficient is evaluated at exactly positive 1.00.</li>
+                <li>B) The expected statistical Pearson correlation coefficient is evaluated at exactly negative 1.00.</li>
+                <li>C) The expected statistical Pearson correlation coefficient is evaluated at exactly numerical 0.00.</li>
+                <li>D) The expected statistical Pearson correlation coefficient is evaluated at exactly mathematical infinity.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> A perfectly horizontal line indicates that changes in the X variable produce exactly zero change in the Y variable. Therefore, there is zero linear relationship, yielding a Pearson coefficient of 0.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.5: Compare and contrast imputing missing values with the mean/median/mode</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 29</div>
+            <div class="question-text">Under what exact data condition is mean imputation generally scientifically preferred over median imputation for a continuous feature?</div>
+            <ul class="options">
+                <li>A) When the target feature's distribution is highly skewed and inherently contains numerous severe mathematical outliers.</li>
+                <li>B) When the target feature's distribution is perfectly symmetric and consistently lacks any extreme mathematical outliers.</li>
+                <li>C) When the target feature's distribution is entirely categorical and strictly contains discrete nominal string labels.</li>
+                <li>D) When the target feature's distribution is uniformly random and unpredictably contains excessive structural null values.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The mean is the most efficient and unbiased estimator for the central tendency of normally distributed (symmetric) data without outliers. If outliers are present, the mean becomes distorted, necessitating the median instead.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 30</div>
+            <div class="question-text">Why is median imputation fundamentally more robust than mean imputation for right-skewed revenue tracking data?</div>
+            <ul class="options">
+                <li>A) The mathematical median is significantly artificially pulled toward the extreme high values, mirroring the outlier behavior.</li>
+                <li>B) The mathematical median is strictly minimally affected by the extreme high values, preserving the central tendency.</li>
+                <li>C) The mathematical median is algorithmically designed to apply a logarithmic normalization to the outlier behavior.</li>
+                <li>D) The mathematical median is procedurally guaranteed to completely delete rows possessing the extreme high values.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Revenue data often features massive outliers (e.g., billionaires pulling the average up). The median strictly identifies the 50th percentile rank, ignoring the magnitude of the extreme values and preserving the typical user's revenue representation.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 31</div>
+            <div class="question-text">For which specific type of structured feature is mode imputation mathematically the only valid option among the three classical techniques?</div>
+            <ul class="options">
+                <li>A) Continuous quantitative numerical features representing precise granular temperature scalar measurements.</li>
+                <li>B) Discrete quantitative numerical features representing integer-based counts of household physical items.</li>
+                <li>C) Categorical qualitative nominal features representing unranked string categories like colors or country names.</li>
+                <li>D) Temporal quantitative numerical features representing sequential chronological fluctuations in stock prices.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> Mean and median require mathematical operations (addition, division, ordering). Nominal categorical data (strings without a hierarchy) cannot be averaged or ordered, leaving the mode (most frequent item) as the sole valid metric.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 32</div>
+            <div class="question-text">What is a primary statistical disadvantage of systematically replacing a large percentage of missing values with the feature's calculated mean?</div>
+            <ul class="options">
+                <li>A) It dramatically artificially increases the intrinsic overall variance and standard deviation of the affected feature.</li>
+                <li>B) It dramatically artificially decreases the intrinsic overall variance and standard deviation of the affected feature.</li>
+                <li>C) It systematically structurally converts the continuous numerical feature directly into a discrete categorical feature.</li>
+                <li>D) It systematically structurally shifts the calculated median value to perfectly identically match the imputed mean.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Because imputation replaces missing values with the exact center point (mean), it clusters data at the center. This artificially reduces the natural spread of the data, thereby decreasing the overall variance and standard deviation, which can lead to overconfident models.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 33</div>
+            <div class="question-text">How does systematic mean imputation typically phenomenologically affect the linear correlation between the imputed feature and other dataset features?</div>
+            <ul class="options">
+                <li>A) It characteristically severely attenuates (weakens) the underlying calculated linear correlations with other dataset features.</li>
+                <li>B) It characteristically severely amplifies (strengthens) the underlying calculated linear correlations with other dataset features.</li>
+                <li>C) It mathematically perfectly preserves the underlying calculated linear correlations identically with other dataset features.</li>
+                <li>D) It mathematically perfectly inverts the underlying calculated linear correlations symmetrically with other dataset features.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Mean imputation injects constant values independent of the other features in the dataset. This dilutes the genuine relationships that the original non-null values had with other variables, attenuating covariance and correlation.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 34</div>
+            <div class="question-text">In scenarios where a continuous feature has missing values not distributed randomly (MNAR), why is simple mean/median imputation inherently scientifically risky?</div>
+            <ul class="options">
+                <li>A) It systematically introduces predictive bias by entirely overriding and ignoring the underlying reason for the data's missingness.</li>
+                <li>B) It systematically eliminates predictive bias by perfectly standardizing and overriding the underlying reason for the data's missingness.</li>
+                <li>C) It computationally drastically increases total model training duration by exponentially expanding the raw data physical volume.</li>
+                <li>D) It computationally completely prevents the internal algorithm from strictly utilizing advanced ensemble tree decision algorithms.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> If data is Missing Not At Random (e.g., high-income individuals refusing to disclose salary), the missingness itself contains valuable information. Blindly imputing the population mean misrepresents these specific individuals and biases the model.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 35</div>
+            <div class="question-text">What is the primary architectural purpose of deliberately adding a binary indicator (dummy) variable when imputing missing values in a feature?</div>
+            <ul class="options">
+                <li>A) To structurally completely remove the original defective feature and strictly use the binary indicator variable as its absolute replacement.</li>
+                <li>B) To structurally track which specific dataset rows were originally missing, actively allowing the predictive model to learn from the missingness.</li>
+                <li>C) To dynamically algorithmically calculate the exact statistical mean or median replacement value specifically during the model inference phase.</li>
+                <li>D) To dynamically algorithmically enforce that the machine learning optimization process specifically strictly utilizes a deep neural network approach.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Adding a binary column (e.g., `is_income_missing`) alongside the mean-imputed `income` column allows the model to utilize the imputed value while simultaneously learning if the fact that the data was missing is predictive of the target variable.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.6: Impute missing values</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 36</div>
+            <div class="question-text">Which explicit PySpark MLlib feature transformer class is specifically architected to replace missing numerical values with the computed mean or median?</div>
+            <ul class="options">
+                <li>A) The <code>pyspark.ml.feature.MissingValueReplacer</code> natively handles the comprehensive statistical numeric imputation transformation.</li>
+                <li>B) The <code>pyspark.ml.feature.NullFiller</code> natively handles the comprehensive statistical numeric imputation transformation.</li>
+                <li>C) The <code>pyspark.ml.feature.Imputer</code> natively handles the comprehensive statistical numeric imputation transformation.</li>
+                <li>D) The <code>pyspark.ml.feature.StandardScaler</code> natively handles the comprehensive statistical numeric imputation transformation.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: C</span><br>
+                    <strong>Explanation:</strong> <code>Imputer</code> is the official PySpark MLlib transformer designed to impute missing values using either the mean, median, or mode. The other options are fabricated class names or unrelated transformers.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 37</div>
+            <div class="question-text">When initializing the PySpark <code>Imputer</code>, which specific string parameter structurally determines whether the mean, median, or mode is applied?</div>
+            <ul class="options">
+                <li>A) Supplying the desired configuration to the <code>imputationMethod</code> parameter explicitly assigning it to "mean", "median", or "mode".</li>
+                <li>B) Supplying the desired configuration to the <code>strategy</code> parameter explicitly assigning it to "mean", "median", or "mode".</li>
+                <li>C) Supplying the desired configuration to the <code>fillValue</code> parameter explicitly assigning it to "mean", "median", or "mode".</li>
+                <li>D) Supplying the desired configuration to the <code>replacementRule</code> parameter explicitly assigning it to "mean", "median", or "mode".</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The parameter used in PySpark's <code>Imputer</code> to specify the imputation technique is <code>strategy</code>. Acceptable values are "mean", "median", or "mode".
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 38</div>
+            <div class="question-text">How can the PySpark <code>Imputer</code> be programmatically configured to process multiple separate DataFrame columns simultaneously in one pass?</div>
+            <ul class="options">
+                <li>A) By explicitly passing a standard string array of column names strictly to the <code>inputCol</code> parameter during early initialization.</li>
+                <li>B) By explicitly passing a standard string array of column names strictly to the <code>inputCols</code> parameter during early initialization.</li>
+                <li>C) By explicitly passing a standard string array of column names strictly to the <code>outputCol</code> parameter during early initialization.</li>
+                <li>D) By explicitly passing a standard string array of column names strictly to the <code>outputCols</code> parameter during early initialization.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> <code>Imputer</code> supports multi-column transformation. To do this, you provide a list of target columns to <code>inputCols</code> and a corresponding list of output columns to <code>outputCols</code>.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 39</div>
+            <div class="question-text">If a Data Scientist needs to manually impute missing values in a categorical string column with the mode in PySpark natively, what is the standard valid approach?</div>
+            <ul class="options">
+                <li>A) Programmatically compute the mode via grouping/sorting, extract the string value, and pass it explicitly into <code>df.na.fill()</code>.</li>
+                <li>B) Programmatically compute the mode via grouping/sorting, extract the string value, and pass it explicitly into <code>df.stat.fill()</code>.</li>
+                <li>C) Programmatically invoke <code>df.na.fill("mode", subset=["col"])</code> which triggers PySpark to implicitly auto-calculate the mode.</li>
+                <li>D) Programmatically invoke <code>df.replace("null", "mode", subset=["col"])</code> which triggers PySpark to implicitly auto-calculate the mode.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> `df.na.fill()` requires you to provide the explicit static replacement value. PySpark DataFrames do not have a built-in magic string "mode" that automatically calculates and replaces strings on the fly for `na.fill()`.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 40</div>
+            <div class="question-text">When utilizing <code>df.fillna()</code>, how can a Data Scientist precisely specify different static imputation values for distinct columns in a single cohesive operation?</div>
+            <ul class="options">
+                <li>A) By submitting a strictly formatted Python dictionary mapping column names to their exact replacement values into <code>df.fillna()</code>.</li>
+                <li>B) By submitting a strictly formatted Python tuple mapping column names to their exact replacement values into <code>df.fillna()</code>.</li>
+                <li>C) By submitting a strictly formatted Python list mapping column names to their exact replacement values into <code>df.fillna()</code>.</li>
+                <li>D) By submitting a strictly formatted Python string mapping column names to their exact replacement values into <code>df.fillna()</code>.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> The <code>DataFrame.fillna()</code> or <code>DataFrame.na.fill()</code> method natively accepts a Python dictionary where the keys are the column names and the values are the specific constants to replace nulls with in those respective columns.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 41</div>
+            <div class="question-text">You have a PySpark DataFrame <code>df</code>. Which precise code execution successfully fills entirely all nulls in the integer column <code>age</code> with the scalar value 35?</div>
+            <ul class="options">
+                <li>A) <code>df.fillna({"age": 35})</code> flawlessly applies the numeric null replacement successfully across the entire column.</li>
+                <li>B) <code>df.replace({"age": 35})</code> flawlessly applies the numeric null replacement successfully across the entire column.</li>
+                <li>C) <code>df.na.drop({"age": 35})</code> flawlessly applies the numeric null replacement successfully across the entire column.</li>
+                <li>D) <code>df.withColumn("age", 35)</code> flawlessly applies the numeric null replacement successfully across the entire column.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> Passing a dictionary to <code>fillna()</code> correctly identifies the column and the replacement value. <code>df.replace()</code> looks for specific existing values to swap out, not nulls. <code>withColumn</code> with a literal would overwrite the whole column.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 42</div>
+            <div class="question-text">Why must the MLlib <code>Imputer</code> formally be fit exclusively on the training dataset and then subsequently used to transform both the training and test datasets?</div>
+            <ul class="options">
+                <li>A) To artificially guarantee that the test dataset mean mathematically perfectly identically matches the baseline training dataset mean.</li>
+                <li>B) To strictly prevent dangerous data leakage by ensuring the test data distributions do not influence the calculated training statistics.</li>
+                <li>C) To dynamically increase model accuracy by programmatically recursively calculating entirely new imputation statistics for the test dataset.</li>
+                <li>D) To heavily optimize computational memory footprint by permanently forcefully deleting the originally calculated training dataset statistics.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Calculating the mean or median over the entire dataset (train + test) leaks information about the test set into the training phase, artificially boosting model performance metrics. The model must learn only from the training set.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 43</div>
+            <div class="question-text">What mathematically happens if you accidentally apply generic median imputation to your primary target (label) variable before training a supervised predictive model?</div>
+            <ul class="options">
+                <li>A) The supervised model naturally seamlessly learns to predict the median value, resulting in an artificially perfectly high model accuracy.</li>
+                <li>B) The supervised model effectively erroneously trains on fabricated ground truth, severely degrading its real-world predictive validity.</li>
+                <li>C) The supervised model automatically algorithmically ignores the median-imputed rows, preserving the strict integrity of the training phase.</li>
+                <li>D) The supervised model perfectly mathematically interpolates the missing target values, guaranteeing a fundamentally optimal predictive fit.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> The target variable represents the absolute truth you want the model to learn. If you fabricate the truth (by imputing it with a median), you confuse the algorithm by mapping real feature characteristics to an artificial, guessed label, ruining the model's reliability. Rows with missing targets should usually be dropped from the training set.
+                </div>
+            </details>
+        </div>
+
+        <h2>Subdomain 2.7: One-hot encoding and Log scale transformation</h2>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 44</div>
+            <div class="question-text">In PySpark MLlib pipelines, what specific mathematical transformation must strictly be done to a string categorical column prior to applying <code>OneHotEncoder</code>?</div>
+            <ul class="options">
+                <li>A) The unformatted string column must strictly be mathematically transformed into continuous numeric variables using the <code>VectorAssembler</code> algorithm.</li>
+                <li>B) The unformatted string column must strictly be mathematically transformed into categorical numeric integer indices using the <code>StringIndexer</code> algorithm.</li>
+                <li>C) The unformatted string column must strictly be mathematically transformed into standardized numerical vector ranges using the <code>StandardScaler</code> algorithm.</li>
+                <li>D) The unformatted string column must strictly be mathematically transformed into normalized probability floating bounds using the <code>MinMaxScaler</code> algorithm.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> <code>OneHotEncoder</code> in PySpark expects numeric data (specifically indices starting from 0) as input. Therefore, raw strings must first pass through <code>StringIndexer</code> to convert categorical strings into numeric indices.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 45</div>
+            <div class="question-text">What is the core mathematical purpose of effectively utilizing the <code>dropLast</code> parameter flag within PySpark's official <code>OneHotEncoder</code> configuration?</div>
+            <ul class="options">
+                <li>A) It programmatically drops the final sequential row of the training dataset to ensure the overall matrix dimensions remain perfectly mathematically balanced.</li>
+                <li>B) It programmatically drops the final encoded binary category to statistically avoid dangerous perfect multicollinearity creating the dummy variable trap.</li>
+                <li>C) It programmatically drops the final encoded binary category to structurally radically reduce the physical physical storage size of the sparse dataset vector.</li>
+                <li>D) It programmatically drops the final sequential column of the training dataset to statistically completely prevent malicious data leakage during model training.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> If a categorical feature has 3 options (A,B,C), one-hot encoding them all creates 3 features where A+B+C=1. This perfect collinearity crashes linear models (dummy variable trap). <code>dropLast=True</code> encodes them into 2 features, breaking the collinearity.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 46</div>
+            <div class="question-text">By default implementation, what explicit internal data structure does PySpark's <code>OneHotEncoder</code> consistently output to maximize system computational memory efficiency?</div>
+            <ul class="options">
+                <li>A) A mathematically dense vector matrix format representing comprehensively all zeros and ones explicitly occupying continuous physical memory blocks.</li>
+                <li>B) A mathematically sparse vector matrix format representing efficiently only the specific index locations of non-zero values preserving physical memory blocks.</li>
+                <li>C) A linguistically literal string array format containing comprehensively the textual names of the encoded categorical variables inside physical memory blocks.</li>
+                <li>D) A logically discrete boolean array format containing comprehensively True/False boolean markers for the encoded categorical variables inside physical memory blocks.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> One-hot encoding creates many columns filled mostly with zeros. To save memory on large datasets, PySpark generates SparseVectors, recording only the positions and values of the non-zero elements.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 47</div>
+            <div class="question-text">Under what exact statistical circumstances is systematically applying a log scale transformation natively to a continuous feature mathematically most appropriate?</div>
+            <ul class="options">
+                <li>A) When the targeted continuous feature exhibits a visibly perfect uniform geometric distribution equally across a heavily constricted and extremely small finite range.</li>
+                <li>B) When the targeted continuous feature exhibits a heavily structural right-skewed geometric distribution broadly spanning multiple massive mathematical orders of magnitude.</li>
+                <li>C) When the targeted continuous feature exhibits a visibly perfect normal geometric distribution centrally localized directly over the precise mathematical zero boundary line.</li>
+                <li>D) When the targeted continuous feature exhibits a heavily structural left-skewed geometric distribution broadly spanning multiple massive mathematical orders of magnitude.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Right-skewed distributions with massive outliers spanning orders of magnitude (like price, income, or population) are compressed nicely by logarithmic transformations, reducing outlier leverage and normalizing the distribution.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 48</div>
+            <div class="question-text">How does the <code>log1p(x)</code> mathematical scalar function explicitly differ conceptually from the standard <code>log(x)</code> function when transforming dataset features?</div>
+            <ul class="options">
+                <li>A) <code>log1p(x)</code> strictly calculates <code>log(x - 1)</code>, which mathematically intelligently avoids generating negative values when original inputs are severely greater than positive one.</li>
+                <li>B) <code>log1p(x)</code> strictly calculates <code>log(x + 1)</code>, which mathematically intelligently avoids triggering execution errors when original inputs are exactly evaluated to numerical zero.</li>
+                <li>C) <code>log1p(x)</code> strictly calculates <code>log(x) + 1</code>, which mathematically intelligently visually shifts the entire continuous distribution completely up by a solitary single unit.</li>
+                <li>D) <code>log1p(x)</code> strictly calculates <code>1 / log(x)</code>, which mathematically intelligently perfectly normalizes continuous features strictly bounded directly between absolute zero and one.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Because <code>log(0)</code> is mathematically undefined (resulting in negative infinity errors in Spark), <code>log1p(x)</code> applies <code>log(x + 1)</code>. This safely transforms data containing zeroes, maintaining 0 since <code>log(0 + 1) = 0</code>.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 49</div>
+            <div class="question-text">Why is One-Hot Encoding strictly scientifically generally preferred over simplistic Label Encoding for non-ordinal nominal categorical features targeting linear models?</div>
+            <ul class="options">
+                <li>A) Simple label encoding incorrectly falsely implies a structural ordinal mathematical hierarchical relationship explicitly between the completely independent discrete categories.</li>
+                <li>B) Simple label encoding incorrectly automatically triggers a structural catastrophic dummy variable trap explicitly within the underlying generated linear regression equations.</li>
+                <li>C) Simple label encoding incorrectly procedurally generates excessively wide structural dataset matrices that fundamentally overwhelm the available distributed computing node memory.</li>
+                <li>D) Simple label encoding incorrectly procedurally strictly requires original dataset categories to be inherently alphabetically completely sorted prior to initializing the model training.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: A</span><br>
+                    <strong>Explanation:</strong> If you encode colors as Red=1, Blue=2, Green=3, a linear model interprets Green as being 3 times "larger" than Red. One-Hot encoding converts them into independent binary columns, preventing the algorithm from falsely learning a ranked relationship.
+                </div>
+            </details>
+        </div>
+
+        <div class="question-card">
+            <div class="sub-topic">Question 50</div>
+            <div class="question-text">When structurally building complex tree-based models like Random Forest in Databricks, how does the analytical necessity of One-Hot Encoding structurally fundamentally differ compared to baseline linear models?</div>
+            <ul class="options">
+                <li>A) Complex tree-based algorithmic models strictly mathematically require explicit one-hot encoding because they structurally absolutely cannot split recursively on raw unordered numeric indices.</li>
+                <li>B) Complex tree-based algorithmic models effectively practically perform well with unformatted index encoding because they structurally naturally don't assume continuous linear inter-relationships.</li>
+                <li>C) Complex tree-based algorithmic models inherently natively mathematically support raw unencoded string categories and therefore structurally universally never require any form of categorical encoding.</li>
+                <li>D) Complex tree-based algorithmic models structurally algorithmically actively formally reject valid one-hot encoding because it procedurally forces entirely inappropriate absolute binary decision splits.</li>
+            </ul>
+            <details>
+                <summary>View Answer & Explanation</summary>
+                <div class="explanation">
+                    <span class="correct">Correct Answer: B</span><br>
+                    <strong>Explanation:</strong> Tree-based algorithms partition data based on thresholds and don't calculate linear weights. Therefore, mapping categorical variables to simple numerical indices (like with <code>StringIndexer</code>) is often sufficient, avoiding the massive dimensional explosion of one-hot encoding.
+                </div>
+            </details>
+        </div>
+    </div>
+</body>
+</html>

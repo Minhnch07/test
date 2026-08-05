@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks ML Associate Certification - Section 3 Practice Exam</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-orange: #ff3600;
+            --accent-blue: #38bdf8;
+            --success-green: #22c55e;
+            --error-red: #ef4444;
+            --border-color: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-primary); color: var(--text-main); line-height: 1.6; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { background: var(--bg-card); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        header h1 span { background: var(--accent-orange); font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-card .val { font-size: 1.8rem; font-weight: bold; color: var(--accent-blue); }
+        .stat-card .lbl { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        .filter-btn { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+        .filter-btn:hover, .filter-btn.active { background: var(--accent-orange); border-color: var(--accent-orange); color: #fff; font-weight: 600; }
+
+        .q-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; margin-bottom: 24px; transition: border 0.3s; }
+        .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .q-num { font-weight: bold; color: var(--accent-orange); font-size: 1.1rem; }
+        .q-topic { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); font-size: 0.8rem; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3); }
+
+        .q-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; color: #fff; }
+        pre { background: #090d16; padding: 14px; border-radius: 6px; overflow-x: auto; font-family: "Fira Code", monospace; font-size: 0.88rem; border: 1px solid #1e293b; margin: 12px 0; color: #e2e8f0; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .option-label { display: flex; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 6px; cursor: pointer; transition: background 0.2s; font-size: 0.95rem; }
+        .option-label:hover { background: var(--bg-hover); }
+        .option-label input { margin-right: 12px; accent-color: var(--accent-orange); transform: scale(1.1); }
+
+        .btn-check { background: var(--accent-blue); color: #0f172a; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn-check:hover { background: #7dd3fc; }
+
+        .explanation { display: none; margin-top: 16px; padding: 16px; border-radius: 6px; font-size: 0.93rem; border-left: 4px solid var(--accent-blue); background: rgba(15, 23, 42, 0.7); }
+        .explanation.correct { border-left-color: var(--success-green); background: rgba(34, 197, 94, 0.1); }
+        .explanation.incorrect { border-left-color: var(--error-red); background: rgba(239, 68, 68, 0.1); }
+        .explanation h4 { margin-bottom: 8px; font-size: 1rem; }
+        .explanation ul { margin-left: 20px; margin-top: 8px; }
+        .explanation li { margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Databricks ML Associate <span>Section 3 Exam Engine</span></h1>
+        <p>50 Exam-Standard Questions & Detailed Explanations covering Section 3 (Model Development, Spark ML & Scaling ML Solutions).</p>
+    </header>
+
+    <div class="dashboard">
+        <div class="stat-card"><div class="val" id="stat-total">50</div><div class="lbl">Total Questions</div></div>
+        <div class="stat-card"><div class="val" id="stat-answered">0</div><div class="lbl">Answered</div></div>
+        <div class="stat-card"><div class="val" id="stat-score">0 / 0</div><div class="lbl">Score</div></div>
+        <div class="stat-card"><div class="val" id="stat-pct">0%</div><div class="lbl">Accuracy</div></div>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterTopic('all')">All Sub-topics (1-50)</button>
+        <button class="filter-btn" onclick="filterTopic('3.1')">3.1 ML Foundations & Selection (1-10)</button>
+        <button class="filter-btn" onclick="filterTopic('3.2')">3.2 Spark ML APIs & Pipelines (11-20)</button>
+        <button class="filter-btn" onclick="filterTopic('3.3')">3.3 Hyperparameter Tuning & Hyperopt (21-30)</button>
+        <button class="filter-btn" onclick="filterTopic('3.4')">3.4 Evaluation Metrics & CV (31-40)</button>
+        <button class="filter-btn" onclick="filterTopic('3.5')">3.5 Scaling with Pandas API & UDFs (41-50)</button>
+    </div>
+
+    <div id="questions-container"></div>
+</div>
+
+<script>
+const questions = [
+  // SUB-TOPIC 3.1: ML Foundations & Algorithm Selection (Q1 - Q10)
+  {
+    id: 1,
+    topic: "3.1 ML Foundations",
+    title: "A data scientist is selecting an algorithm for a tabular dataset featuring complex, non-linear feature interactions and non-monotonic relationships. Which algorithm choice is most suitable?",
+    options: [
+      "A) Logistic Regression configured with default L2 regularization parameter settings.",
+      "B) Decision Tree Classifier configured with default shallow maxDepth settings.",
+      "C) Gradient-Boosted Trees Classifier configured with small learning step sizes.",
+      "D) Support Vector Machine Classifier configured with standard linear kernel options."
+    ],
+    answer: 2,
+    explanation: "Gradient-Boosted Trees (GBTs) combine an ensemble of weak decision trees iteratively to capture complex, highly non-linear feature interactions without requiring manual feature transformations. Logistic Regression and Linear SVMs are linear classifiers that fail to capture non-linear interactions without explicit polynomial feature engineering. A default single Decision Tree is prone to high variance or underfitting if kept shallow."
+  },
+  {
+    id: 2,
+    topic: "3.1 ML Foundations",
+    title: "A machine learning engineer is training a PySpark ML LogisticRegression model on a dataset with a severe 95:5 class imbalance. How can class weights be applied directly within PySpark ML?",
+    options: [
+      "A) Set weightCol parameter to a column containing inverse class frequency weights.",
+      "B) Set balanceCol parameter to a column containing binary class proportion ratios.",
+      "C) Set scaleCol parameter to a column containing standardized feature variance values.",
+      "D) Set sampleCol parameter to a column containing stratified random sampling flags."
+    ],
+    answer: 0,
+    explanation: "In PySpark ML, `LogisticRegression` provides the `weightCol` parameter. By creating a DataFrame column that maps class labels to inverse frequency weights (or custom weights) and passing its name to `weightCol`, PySpark adjusts the loss function contribution of each instance accordingly during optimization."
+  },
+  {
+    id: 3,
+    topic: "3.1 ML Foundations",
+    title: "How does feature scaling (e.g., standardizing or scaling features to unit variance) impact tree-based models versus distance-based / gradient-based models in Spark ML?",
+    options: [
+      "A) Feature scaling is mandatory for GBTRegressor but completely unnecessary for LinearRegression.",
+      "B) Feature scaling is mandatory for LinearRegression but completely unnecessary for GBTRegressor.",
+      "C) Feature scaling is mandatory for both GBTRegressor and LinearRegression estimators.",
+      "D) Feature scaling is completely unnecessary for both GBTRegressor and LinearRegression estimators."
+    ],
+    answer: 1,
+    explanation: "Tree-based models (such as Decision Trees, Random Forests, and GBTs) make axis-aligned split decisions on single features independently, making them scale-invariant. Linear and distance-based algorithms (such as Linear Regression, Logistic Regression with L1/L2 regularization, and K-Means) require feature scaling because feature magnitudes directly affect penalty calculations and gradient convergence speed."
+  },
+  {
+    id: 4,
+    topic: "3.1 ML Foundations",
+    title: "When using pyspark.ml.feature.Imputer to handle missing numeric values, what is the best practice to retain information about which values were originally imputed?",
+    options: [
+      "A) Set relativeError parameter to 0.0 to prevent numerical approximation drift.",
+      "B) Pass explicit missingValue replacement flags directly into VectorAssembler.",
+      "C) Enable trackNulls option to generate boolean missing value indicator columns.",
+      "D) Chain an Imputer values estimator prior to fitting OneHotEncoder Estimators."
+    ],
+    answer: 2,
+    explanation: "The `pyspark.ml.feature.Imputer` includes a `trackNulls` boolean parameter (or adding missing indicator transformers). Setting `trackNulls=True` creates additional binary indicator columns (e.g., `feature_imputed`) alongside the imputed columns, preserving information about missingness for downstream algorithms."
+  },
+  {
+    id: 5,
+    topic: "3.1 ML Foundations",
+    title: "A team needs to perform multi-class classification on text embeddings using PySpark ML. Which of the following estimators supports multi-class classification natively without One-vs-Rest wrappers?",
+    options: [
+      "A) LinearSVC estimator class in PySpark ML.",
+      "B) GBTClassifier estimator class in PySpark ML.",
+      "C) LogisticRegression estimator class in PySpark ML.",
+      "D) BinaryClassificationEvaluator class in PySpark ML."
+    ],
+    answer: 2,
+    explanation: "`pyspark.ml.classification.LogisticRegression` natively supports multinomial classification (multiclass logistic regression using softmax loss) when `family` is set to `'multinomial'` or `'auto'`. `LinearSVC` and `GBTClassifier` in PySpark ML currently support binary classification natively and require `OneVsRest` wrappers for multiclass tasks."
+  },
+  {
+    id: 6,
+    topic: "3.1 ML Foundations",
+    title: "While reviewing training logs, a data scientist notices training loss continues to decrease steadily while validation loss begins increasing sharply after epoch 20. What is occurring?",
+    options: [
+      "A) The machine learning model is experiencing extreme underfitting due to high regularization.",
+      "B) The machine learning model is experiencing high variance and overfitting the training set.",
+      "C) The optimization algorithm is stuck in a local minimum during gradient descent iterations.",
+      "D) The feature columns contain severe multicollinearity across numeric feature variables."
+    ],
+    answer: 1,
+    explanation: "A continuous divergence between decreasing training loss and increasing validation loss is the classic symptom of overfitting (high variance). The model is memorizing noise and patterns specific to the training split that do not generalize to the unseen validation split."
+  },
+  {
+    id: 7,
+    topic: "3.1 ML Foundations",
+    title: "What is the recommended PySpark ML pipeline transformer sequence for converting a raw categorical string column into a format suitable for Spark ML linear models?",
+    options: [
+      "A) Apply OneHotEncoder directly onto raw categorical string column values.",
+      "B) Apply VectorIndexer directly onto raw categorical string column values.",
+      "C) Apply StringIndexer followed immediately by OneHotEncoder transformer.",
+      "D) Apply IndexToString followed immediately by VectorAssembler transformer."
+    ],
+    answer: 2,
+    explanation: "`OneHotEncoder` in PySpark ML expects numeric category indices as input, not raw string values. Therefore, the canonical pipeline sequence requires applying `StringIndexer` first to convert raw strings to numeric category indices, followed by `OneHotEncoder` to convert indices into sparse vectors."
+  },
+  {
+    id: 8,
+    topic: "3.1 ML Foundations",
+    title: "When balancing a highly skewed dataset prior to training a Spark ML model, what is a key trade-off of applying random undersampling to the majority class?",
+    options: [
+      "A) Undersampling significantly increases memory overhead during distributed Spark fitting.",
+      "B) Undersampling risks discarding potentially valuable information from majority instances.",
+      "C) Undersampling artificially introduces extreme synthetic feature variance into training sets.",
+      "D) Undersampling causes deterministic data leakage between train and test splits."
+    ],
+    answer: 1,
+    explanation: "Random undersampling removes instances from the majority class to equalize class distribution. The primary downside is the loss of potentially valuable information contained within the discarded majority class samples. Oversampling or synthetic sampling (like SMOTE) retains majority data but increases training data volume."
+  },
+  {
+    id: 9,
+    topic: "3.1 ML Foundations",
+    title: "A data scientist needs to filter out low-variance numeric features before passing vector features into a machine learning estimator. Which transformer should be used?",
+    options: [
+      "A) VectorSlicer transformer in PySpark ML.",
+      "B) VarianceThresholdSelector transformer in PySpark ML.",
+      "C) ElementwiseProduct transformer in PySpark ML.",
+      "D) ChiSqSelector transformer in PySpark ML."
+    ],
+    answer: 1,
+    explanation: "`VarianceThresholdSelector` is a feature selector in PySpark ML that drops all features whose variance does not meet a specified user threshold. `VectorSlicer` slices vectors based on explicit indices, while `ChiSqSelector` selects features based on categorical Chi-Square independence tests."
+  },
+  {
+    id: 10,
+    topic: "3.1 ML Foundations",
+    title: "A financial service application requires real-time credit scoring with strict sub-10 millisecond latency and clear feature auditability. Which model architecture is best suited?",
+    options: [
+      "A) Deep Neural Network containing 15 hidden dense layers.",
+      "B) Gradient-Boosted Trees containing 1,000 deep decision trees.",
+      "C) Logistic Regression paired with explicit feature transformations.",
+      "D) Random Forest Classifier containing 500 max-depth trees."
+    ],
+    answer: 2,
+    explanation: "Logistic Regression provides extremely fast inference time (computing a simple dot product of weights and features) well within sub-10 millisecond requirements, and offers full model interpretability via linear coefficients. Deep tree ensembles or deep neural networks add computation latency and black-box complexity."
+  },
+
+  // SUB-TOPIC 3.2: Spark ML Modeling APIs & Pipelines (Q11 - Q20)
+  {
+    id: 11,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "In PySpark ML, what is the fundamental functional difference between an Estimator and a Transformer?",
+    options: [
+      "A) Estimators implement fit() method to produce Models; Transformers implement transform() method.",
+      "B) Transformers implement fit() method to produce Models; Estimators implement transform() method.",
+      "C) Estimators operate exclusively on streaming DataFrames; Transformers operate on static DataFrames.",
+      "D) Transformers require GPU compute clusters; Estimators run exclusively on CPU driver nodes."
+    ],
+    answer: 0,
+    explanation: "An `Estimator` represents an algorithm that can be fitted on a DataFrame to produce a `Transformer` (e.g., calling `estimator.fit(df)` returns a `Transformer`/`Model`). A `Transformer` represents an algorithm that transforms one DataFrame into another DataFrame by appending new columns (e.g., calling `transformer.transform(df)`)."
+  },
+  {
+    id: 12,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "Consider the following code snippet:\n\nfrom pyspark.ml import Pipeline\npipeline = Pipeline(stages=[string_indexer, vector_assembler, lr_estimator])\nmodel = pipeline.fit(train_df)\n\nWhat object type is returned by the pipeline.fit(train_df) call?",
+    options: [
+      "A) Pipeline object containing fitted estimator parameter states.",
+      "B) PipelineModel object containing a sequence of fitted Transformers.",
+      "C) Transformer object containing raw evaluation prediction metrics.",
+      "D) DataFrame object containing appended features and prediction vectors."
+    ],
+    answer: 1,
+    explanation: "In PySpark ML, calling `.fit()` on a `Pipeline` (which is an `Estimator`) fits all stages sequentially and returns a `PipelineModel` (which is a `Transformer`). Calling `.transform()` on a `PipelineModel` executes all stage transformations in order."
+  },
+  {
+    id: 13,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "What is a critical consideration when using df.randomSplit([0.8, 0.2], seed=42) to partition a PySpark DataFrame across a distributed cluster?",
+    options: [
+      "A) randomSplit guarantees identical partition sizes across driver and worker execution nodes.",
+      "B) Data shuffling across cluster nodes can cause inconsistent splits if seed is omitted.",
+      "C) randomSplit automatically standardizes numeric feature vectors across created splits.",
+      "D) randomSplit automatically handles class balancing for imbalanced target label columns."
+    ],
+    answer: 1,
+    explanation: "Because PySpark DataFrames are distributed across partitions, calling `randomSplit` without specifying an explicit `seed` parameter can lead to non-deterministic data splitting across runs or cluster re-evaluations. Specifying a deterministic `seed` is mandatory for reproducible train/test splits."
+  },
+  {
+    id: 14,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "A data science team wants to persist a fitted PySpark ML PipelineModel to storage and load it back later for batch scoring. Which methods should be used?",
+    options: [
+      "A) PipelineModel.save(path) to persist and PipelineModel.load(path) to reload.",
+      "B) PipelineModel.export(path) to persist and PipelineModel.import(path) to reload.",
+      "C) PipelineModel.dump(path) to persist and PipelineModel.restore(path) to reload.",
+      "D) PipelineModel.write_json(path) to persist and PipelineModel.read_json(path) to reload."
+    ],
+    answer: 0,
+    explanation: "PySpark ML models and pipelines implement `MLWritable` and `MLReadable` interfaces. You save a fitted model using `model.save(path)` (or `model.write().save(path)`) and reload it into memory using `PipelineModel.load(path)`."
+  },
+  {
+    id: 15,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "When configuring pyspark.ml.feature.VectorAssembler, how should missing or null values in input numeric feature columns be handled using the handleInvalid parameter?",
+    options: [
+      "A) handleInvalid parameter accepts 'skip', 'error', or 'keep' to handle null feature values.",
+      "B) handleInvalid parameter accepts 'drop', 'fill', or 'replace' to handle null feature values.",
+      "C) handleInvalid parameter accepts 'ignore', 'null', or 'zero' to handle null feature values.",
+      "D) handleInvalid parameter accepts 'remove', 'impute', or 'coerce' to handle null feature values."
+    ],
+    answer: 0,
+    explanation: "`VectorAssembler` accepts `handleInvalid` set to `'error'` (throw error on nulls, default), `'skip'` (filter out rows with nulls), or `'keep'` (produce vector with NaN values preserved). Options like `'drop'`, `'ignore'`, or `'impute'` are incorrect API parameter strings."
+  },
+  {
+    id: 16,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "After calling transform() on a fitted PySpark ML LogisticRegressionModel, what vector structures are generated by default in the output DataFrame?",
+    options: [
+      "A) rawPrediction (raw logits), probability (class probabilities), and prediction (scalar label).",
+      "B) marginPrediction (margins), confidence (confidence score), and label (scalar label).",
+      "C) coefficientVector (weights), interceptValue (bias), and finalPrediction (scalar label).",
+      "D) scaledFeatures (features), scoreVector (class scores), and outputLabel (scalar label)."
+    ],
+    answer: 0,
+    explanation: "PySpark classification models output three standard prediction columns by default: `rawPrediction` (raw logits/scores vector), `probability` (vector of normalized class probabilities sum to 1.0), and `prediction` (the final scalar prediction corresponding to highest probability class)."
+  },
+  {
+    id: 17,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "To prevent data leakage during feature preprocessing (such as standard scaling or mean imputation), how should PySpark ML transformers be fitted?",
+    options: [
+      "A) Fit transformers on entire dataset, then perform randomSplit on transformed DataFrame.",
+      "B) Fit transformers exclusively on training split, then transform both train and test splits.",
+      "C) Fit transformers exclusively on test split, then transform training split using fitted parameters.",
+      "D) Fit transformers independently on training split and test split using separate fitting calls."
+    ],
+    answer: 1,
+    explanation: "To prevent data leakage, estimators (like `StandardScaler` or `Imputer`) must be fitted *only* on the training data split to compute summary statistics (e.g., mean, stddev). The fitted transformer is then used to `.transform()` both the training and testing sets."
+  },
+  {
+    id: 18,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "Which two parameters are required by default across almost all PySpark ML Estimators to specify input features and target labels?",
+    options: [
+      "A) inputCols and outputCol parameters across all PySpark ML estimators.",
+      "B) featuresCol and labelCol parameters across all PySpark ML estimators.",
+      "C) xColumn and yColumn parameters across all PySpark ML estimators.",
+      "D) featureVector and targetVector parameters across all PySpark ML estimators."
+    ],
+    answer: 1,
+    explanation: "By convention, PySpark ML learning estimators use `featuresCol` (defaults to `'features'`) to specify the single vector column containing feature values and `labelCol` (defaults to `'label'`) to specify the target column."
+  },
+  {
+    id: 19,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "What happens when you pass a PySpark ML Pipeline containing 3 Transformers and 1 Estimator into a CrossValidator object?",
+    options: [
+      "A) CrossValidator fits Transformers once, then executes cross-validation loops only on Estimator.",
+      "B) CrossValidator fits all 3 Transformers and Estimator independently inside each fold fold-by-fold.",
+      "C) CrossValidator fails with TypeError because Pipelines cannot be passed into CrossValidator.",
+      "D) CrossValidator converts distributed PySpark DataFrames into single-node Pandas DataFrames."
+    ],
+    answer: 1,
+    explanation: "Passing an entire `Pipeline` into `CrossValidator` ensures that feature preprocessing transformers (e.g., `StringIndexer`, `StandardScaler`) are re-fitted *inside* each validation fold on the fold's training subset, preventing subtle data leakage across cross-validation folds."
+  },
+  {
+    id: 20,
+    topic: "3.2 Spark ML APIs & Pipelines",
+    title: "A data engineer wants to convert indexed numeric prediction values back into original categorical string labels after model scoring. Which PySpark ML class should be used?",
+    options: [
+      "A) StringIndexer class in PySpark ML.",
+      "B) IndexToString class in PySpark ML.",
+      "C) LabelEncoder class in PySpark ML.",
+      "D) VectorIndexer class in PySpark ML."
+    ],
+    answer: 1,
+    explanation: "`pyspark.ml.feature.IndexToString` maps a column of category indices back to a column containing the original string values using the labels metadata saved in `StringIndexer`."
+  },
+
+  // SUB-TOPIC 3.3: Hyperparameter Tuning & Hyperopt (Q21 - Q30)
+  {
+    id: 21,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "When using Hyperopt's fmin() function to optimize model hyperparameters on Databricks, which arguments are mandatory?",
+    options: [
+      "A) fn (objective function), space (search space), algo (search algorithm), and max_evals.",
+      "B) model (estimator), data (DataFrame), metric (evaluation metric), and num_trials.",
+      "C) objective (loss function), grid (parameter grid), solver (optimizer), and max_iter.",
+      "D) trainer (training function), params (dictionary), backend (Spark/Ray), and iterations."
+    ],
+    answer: 0,
+    explanation: "Hyperopt's core `fmin()` function requires `fn` (the Python function to minimize), `space` (search space expression defined using `hp`), `algo` (search algorithm like `tpe.suggest`), and `max_evals` (maximum number of trials to run)."
+  },
+  {
+    id: 22,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "What is the primary advantage of passing SparkTrials() into Hyperopt's fmin() function instead of standard Trials() on Databricks?",
+    options: [
+      "A) SparkTrials automatically converts Python code into C++ binaries for execution.",
+      "B) SparkTrials distributes trial evaluations across worker nodes in a Spark cluster.",
+      "C) SparkTrials eliminates requirement to log parameters into MLflow experiment runs.",
+      "D) SparkTrials guarantees deterministic convergence to global minimum loss values."
+    ],
+    answer: 1,
+    explanation: "`SparkTrials` is a Hyperopt class built specifically to parallelize single-node model hyperparameter tuning across a Databricks Spark cluster. Each worker node evaluates a distinct combination of hyperparameters in parallel, significantly accelerating optimization compared to single-node `Trials()`."
+  },
+  {
+    id: 23,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "In Hyperopt search space definitions, which expression correctly defines a continuous search space for a learning rate hyperparameter bounded between 0.001 and 0.1 log-scaled?",
+    options: [
+      "A) hp.choice('learning_rate', [0.001, 0.01, 0.1])",
+      "B) hp.loguniform('learning_rate', np.log(0.001), np.log(0.1))",
+      "C) hp.quniform('learning_rate', 0.001, 0.1, 0.001)",
+      "D) hp.randint('learning_rate', 0.001, 0.1)"
+    ],
+    answer: 1,
+    explanation: "`hp.loguniform(label, low, high)` samples continuously such that the logarithm of the returned value is uniformly distributed between `low` and `high`. Passing `np.log(0.001)` and `np.log(0.1)` properly specifies a log-scaled learning rate search space."
+  },
+  {
+    id: 24,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "How does Hyperopt integrate with MLflow when running hyperparameter tuning using SparkTrials on Databricks?",
+    options: [
+      "A) MLflow runs must be manually initialized using mlflow.start_run() inside every loop.",
+      "B) SparkTrials automatically logs parameters, metrics, and models to MLflow runs by default.",
+      "C) MLflow tracking cannot capture Hyperopt parameters unless custom plugins are compiled.",
+      "D) SparkTrials writes logs strictly to local DBFS storage without creating MLflow runs."
+    ],
+    answer: 1,
+    explanation: "When running Hyperopt on Databricks with `SparkTrials`, automated MLflow tracking is automatically enabled by default. Hyperopt automatically logs hyperparameter combinations, loss values, training metrics, and artifacts to nested MLflow runs under the active parent experiment."
+  },
+  {
+    id: 25,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "How does Bayesian Optimization (e.g., using tpe.suggest in Hyperopt) differ from traditional Random Search or Grid Search?",
+    options: [
+      "A) Bayesian optimization evaluates every parameter combination in a grid systematically.",
+      "B) Bayesian optimization selects random parameter combinations completely independently.",
+      "C) Bayesian optimization uses past trial results to build a probabilistic model of objective.",
+      "D) Bayesian optimization restricts hyperparameter tuning strictly to discrete integer values."
+    ],
+    answer: 2,
+    explanation: "Bayesian optimization (specifically Tree-structured Parzen Estimators / TPE) builds a probabilistic surrogate model mapping hyperparameters to objective loss based on past evaluation results. It intelligently samples promising hyperparameter combinations instead of guessing blindly like Random Search or evaluating rigidly like Grid Search."
+  },
+  {
+    id: 26,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "When configuring SparkTrials(parallelism=N), what determines the optimal value for the parallelism parameter N on a Databricks cluster?",
+    options: [
+      "A) Set N equal to total number of available CPU executor cores on cluster.",
+      "B) Set N equal to total size of training dataset divided by total worker RAM.",
+      "C) Set N equal to max_evals parameter passed directly into fmin() function.",
+      "D) Set N equal to number of hyperparameter variables defined in hp space."
+    ],
+    answer: 0,
+    explanation: "`parallelism` in `SparkTrials` defines maximum number of concurrent hyperparameter evaluation trials. Setting `parallelism` equal to total available cluster worker cores ensures full hardware utilization without resource starvation or thread over-subscription."
+  },
+  {
+    id: 27,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "A data scientist is optimizing an XGBoost model using Hyperopt where the objective metric is ROC-AUC (where higher values indicate better performance). How should the objective function return loss to fmin()?",
+    options: [
+      "A) Return status=STATUS_OK and loss = -auc (or loss = 1 - auc) because fmin minimizes loss.",
+      "B) Return status=STATUS_OK and loss = auc directly because fmin maximizes objective loss.",
+      "C) Return status=STATUS_OK and loss = np.exp(auc) to scale objective metric values.",
+      "D) Return status=STATUS_OK and loss = auc / max_evals to normalize validation metrics."
+    ],
+    answer: 0,
+    explanation: "Hyperopt's `fmin()` function *always* minimizes the `loss` value returned by the objective function. When optimizing metrics where higher is better (like ROC-AUC, Accuracy, or R2), the objective function must return negative score (`-auc`) or `1 - auc` so that minimizing loss corresponds to maximizing performance."
+  },
+  {
+    id: 28,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "What is the primary constraint when parallelizing single-node ML model tuning (e.g., scikit-learn or XGBoost) using Hyperopt with SparkTrials?",
+    options: [
+      "A) The model training data must fit entirely in memory on each individual worker node.",
+      "B) The training dataset must be partitioned across at least 100 Delta Lake files.",
+      "C) The Hyperopt search space must contain exclusively integer hyperparameters.",
+      "D) The driver node must possess GPU accelerators to broadcast trial parameters."
+    ],
+    answer: 0,
+    explanation: "When tuning single-node models with `SparkTrials`, each worker node runs an independent single-node training task. Therefore, the dataset must fit within the memory capacity of a single worker node (or be broadcasted to workers)."
+  },
+  {
+    id: 29,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "Which Hyperopt search space constructor should be used to select between discrete categorical model types, such as choosing between 'rf' and 'gbt'?",
+    options: [
+      "A) hp.choice('model_type', ['rf', 'gbt'])",
+      "B) hp.grid('model_type', ['rf', 'gbt'])",
+      "C) hp.categorical('model_type', ['rf', 'gbt'])",
+      "D) hp.uniform_string('model_type', ['rf', 'gbt'])"
+    ],
+    answer: 0,
+    explanation: "`hp.choice(label, options)` is the standard Hyperopt method for specifying categorical choices among a list of discrete options. `hp.grid` or `hp.categorical` are invalid API method names in Hyperopt."
+  },
+  {
+    id: 30,
+    topic: "3.3 Hyperparameter Tuning & Hyperopt",
+    title: "In Databricks MLflow tracking UI, how are trials generated by Hyperopt and SparkTrials structured in the experiment run list?",
+    options: [
+      "A) All hyperparameter trials are overwritten into a single active MLflow run.",
+      "B) Each trial is logged as a child run nested under a main parent Hyperopt experiment run.",
+      "C) Trials are saved as external CSV artifacts attached to workspace root folders.",
+      "D) Trials are logged under separate MLflow Model Registry registered model versions."
+    ],
+    answer: 1,
+    explanation: "Hyperopt on Databricks creates a hierarchical MLflow run structure: a parent run represents the overall `fmin()` optimization task, and each individual hyperparameter trial is recorded as a nested child run containing its specific parameters and computed metrics."
+  },
+
+  // SUB-TOPIC 3.4: Evaluation Metrics & Cross-Validation (Q31 - Q40)
+  {
+    id: 31,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "What is the computational difference between PySpark ML CrossValidator and TrainValidationSplit?",
+    options: [
+      "A) CrossValidator evaluates models on K-folds; TrainValidationSplit evaluates on a single split.",
+      "B) TrainValidationSplit evaluates models on K-folds; CrossValidator evaluates on a single split.",
+      "C) CrossValidator supports distributed training; TrainValidationSplit runs strictly on driver.",
+      "D) TrainValidationSplit supports MLflow tracking; CrossValidator lacks MLflow integration."
+    ],
+    answer: 0,
+    explanation: "`CrossValidator` splits dataset into $K$ folds and fits the model $K$ times for each parameter combination (more thorough, computationally expensive). `TrainValidationSplit` splits data once into a single training and validation pair (e.g., 80/20) and fits models once per parameter combination (much faster)."
+  },
+  {
+    id: 32,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "A data scientist is evaluating a PySpark ML regression model using RegressionEvaluator. Which metricName parameter value corresponds to Root Mean Squared Error?",
+    options: [
+      "A) RegressionEvaluator(metricName='rmse')",
+      "B) RegressionEvaluator(metricName='root_mean_squared_error')",
+      "C) RegressionEvaluator(metricName='std_err')",
+      "D) RegressionEvaluator(metricName='residual_squared')"
+    ],
+    answer: 0,
+    explanation: "In `pyspark.ml.evaluation.RegressionEvaluator`, valid string options for `metricName` are `'rmse'` (default), `'mse'`, `'r2'`, `'mae'`, and `'var`'."
+  },
+  {
+    id: 33,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "Which evaluation class in PySpark ML should be used to calculate Area Under ROC (areaUnderROC) for a binary classification model?",
+    options: [
+      "A) MulticlassClassificationEvaluator class in PySpark ML.",
+      "B) BinaryClassificationEvaluator class in PySpark ML.",
+      "C) BinaryROCMetricsEvaluator class in PySpark ML.",
+      "D) RegressionEvaluator class in PySpark ML."
+    ],
+    answer: 1,
+    explanation: "`BinaryClassificationEvaluator` is specifically designed for binary classification models and supports `metricName='areaUnderROC'` (default) and `'areaUnderPR'`. `MulticlassClassificationEvaluator` supports metrics like `accuracy`, `f1`, `weightedPrecision`, and `weightedRecall`."
+  },
+  {
+    id: 34,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "When training a regression model where target variable y was log-transformed (log_y = log(y)), how should prediction performance be evaluated against original y values?",
+    options: [
+      "A) Compute RMSE directly on log-transformed predictions without applying transformations.",
+      "B) Exponentiate predictions (exp(prediction)) before evaluating RMSE against raw y values.",
+      "C) Log-transform predicted values a second time before evaluating mean absolute error.",
+      "D) Divide raw predictions by target variance before passing columns into RegressionEvaluator."
+    ],
+    answer: 1,
+    explanation: "When target variables are log-transformed prior to model fitting, model output predictions are in log scale. To compute meaningful real-world error metrics (such as true dollar or volume RMSE), predictions must be inverse-transformed using `exp()` (or `expm1()`) to original scale before comparing against un-transformed actual target values."
+  },
+  {
+    id: 35,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "Consider a ParamGridBuilder with 3 values for maxDepth and 4 values for regParam. If passed into CrossValidator with numFolds=5, how many total models will be trained?",
+    options: [
+      "A) 12 total models trained across cross-validation execution.",
+      "B) 17 total models trained across cross-validation execution.",
+      "C) 60 total models trained across cross-validation execution.",
+      "D) 120 total models trained across cross-validation execution."
+    ],
+    answer: 2,
+    explanation: "Parameter grid size = $3 \\times 4 = 12$ hyperparameter combinations. With `numFolds=5`, each combination is evaluated on 5 folds ($12 \\times 5 = 60$ fold models). (Note: After cross-validation completes, 1 final model is fitted on the full dataset, making 60 evaluation models total)."
+  },
+  {
+    id: 36,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "For a medical diagnostic model where failing to identify a sick patient (False Negative) is far more dangerous than incorrectly flagging a healthy patient, which metric should be prioritized?",
+    options: [
+      "A) Precision evaluation metric.",
+      "B) Recall evaluation metric.",
+      "C) Specificity evaluation metric.",
+      "D) Accuracy evaluation metric."
+    ],
+    answer: 1,
+    explanation: "Recall measures $TP / (TP + FN)$. Maximizing recall minimizes False Negatives, ensuring that almost all positive cases (sick patients) are identified by the classifier."
+  },
+  {
+    id: 37,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "Why is standard Accuracy often a misleading evaluation metric for binary classification models trained on highly imbalanced datasets (e.g., 99% negative, 1% positive)?",
+    options: [
+      "A) Accuracy calculations fail to run on distributed PySpark DataFrame partitions.",
+      "B) A naive model predicting negative label for every row achieves 99% accuracy.",
+      "C) Accuracy values exceed 1.0 when evaluate() is called on imbalanced vector columns.",
+      "D) Accuracy is mathematically identical to Precision on imbalanced target distributions."
+    ],
+    answer: 1,
+    explanation: "On an imbalanced dataset where 99% of samples belong to the negative class, a dumb model that predicts 0 for every instance achieves 99% accuracy while having zero predictive power (0% recall for positive class). Metrics like Precision, Recall, F1-Score, and PR-AUC are far more informative."
+  },
+  {
+    id: 38,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "After fitting a CrossValidator model (cv_model = cv.fit(train_df)), how do you extract the single best-performing model instance?",
+    options: [
+      "A) cv_model.bestModel property access.",
+      "B) cv_model.getBestEstimator() method call.",
+      "C) cv_model.extractOption('best_model') method call.",
+      "D) cv_model.topPipeline() method call."
+    ],
+    answer: 0,
+    explanation: "In PySpark ML, a fitted `CrossValidatorModel` exposes `.bestModel`, which returns the single best `Transformer`/`Model` instance trained on the full dataset using the optimal parameter combination found during grid search."
+  },
+  {
+    id: 39,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "What is data leakage in machine learning model evaluation?",
+    options: [
+      "A) Loss of data records during streaming DataFrame joins across worker nodes.",
+      "B) Inadvertent inclusion of information from validation/test data during training.",
+      "C) Compression loss when persisting fitted MLflow model artifacts into DBFS.",
+      "D) Unencrypted network transport of feature matrices between driver and worker nodes."
+    ],
+    answer: 1,
+    explanation: "Data leakage occurs when information from outside the training dataset (such as target labels or summary statistics from testing/validation splits) is inadvertently used to train or feature-engineer the model, leading to overly optimistic evaluation metrics that fail to translate to production."
+  },
+  {
+    id: 40,
+    topic: "3.4 Evaluation Metrics & CV",
+    title: "Which metric is supported by MulticlassClassificationEvaluator to measure overall classification agreement while accounting for chance agreement?",
+    options: [
+      "A) f1 metric option in MulticlassClassificationEvaluator.",
+      "B) accuracy metric option in MulticlassClassificationEvaluator.",
+      "C) logLoss metric option in MulticlassClassificationEvaluator.",
+      "D) weightedPrecision metric option in MulticlassClassificationEvaluator."
+    ],
+    answer: 0,
+    explanation: "`MulticlassClassificationEvaluator` supports `f1`, `accuracy`, `weightedPrecision`, `weightedRecall`, `logLoss`, and `hammingLoss`. F1 score balances precision and recall across classes."
+  },
+
+  // SUB-TOPIC 3.5: Scaling ML with Pandas API & Pandas UDFs (Q41 - Q50)
+  {
+    id: 41,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "What is the primary operational difference between a native PySpark DataFrame and a Pandas API on Spark DataFrame (import pyspark.pandas as ps)?",
+    options: [
+      "A) Pandas API on Spark provides pandas-like syntax while executing distributedly on Spark.",
+      "B) Pandas API on Spark converts all data into a single-node pandas DataFrame in driver memory.",
+      "C) Native PySpark DataFrames execute strictly on GPUs; Pandas API on Spark runs on CPUs.",
+      "D) Pandas API on Spark cannot read Delta Lake files or perform DataFrame transformations."
+    ],
+    answer: 0,
+    explanation: "Pandas API on Spark (`pyspark.pandas`) allows data scientists to write familiar Pandas code and syntax while leveraging Spark's underlying distributed engine to process massive datasets distributed across cluster workers."
+  },
+  {
+    id: 42,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "Which in-memory columnar data format is used by PySpark to accelerate data conversion between PySpark DataFrames and Pandas DataFrames?",
+    options: [
+      "A) Apache Parquet file format.",
+      "B) Apache Arrow columnar memory format.",
+      "C) Apache Avro binary serialization format.",
+      "D) Apache ORC file format."
+    ],
+    answer: 1,
+    explanation: "Apache Arrow is an in-memory columnar data format that enables zero-copy (or near zero-copy) low-overhead data transfer between PySpark and Pandas DataFrames, dramatically speeding up Pandas UDFs and `toPandas()` execution."
+  },
+  {
+    id: 43,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "A data scientist needs to fit independent scikit-learn models for 100 different store branches in parallel. Which PySpark method is best suited for group-specific model training?",
+    options: [
+      "A) applyInPandas() method called on a GroupedData object.",
+      "B) mapPartitions() method called on a single-node RDD object.",
+      "C) foreachBatch() method called on a Structured Streaming DataFrame.",
+      "D) pivot() method called on a PySpark DataFrame object."
+    ],
+    answer: 0,
+    explanation: "`df.groupBy('store_id').applyInPandas(train_store_model, schema=...)` allows data scientists to partition data by group (`store_id`), pass each store's subset as a Pandas DataFrame into a custom training function, and execute training in parallel across worker nodes."
+  },
+  {
+    id: 44,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "When writing a Scalar Pandas UDF using Python type hints, which type signature correctly decorates a vectorized function transforming two Series into a Series?",
+    options: [
+      "A) @pandas_udf(DoubleType())\ndef fn(s1: pd.Series, s2: pd.Series) -> pd.Series:",
+      "B) @pandas_udf('double')\ndef fn(s1: list, s2: list) -> list:",
+      "C) @spark_udf(DoubleType())\ndef fn(s1: np.ndarray, s2: np.ndarray) -> np.ndarray:",
+      "D) @udf_vectorized(returnType='double')\ndef fn(s1: pd.DataFrame) -> pd.DataFrame:"
+    ],
+    answer: 0,
+    explanation: "PySpark Pandas UDFs use Python type hints (`pd.Series` -> `pd.Series`) along with `@pandas_udf(returnType)` decorator to signal vectorized Arrow execution."
+  },
+  {
+    id: 45,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "Why is an Iterator Pandas UDF (Iterator[pd.Series] -> Iterator[pd.Series]) preferred when loading expensive model artifacts (like deep learning checkpoints) for inference?",
+    options: [
+      "A) It reloads model weights for every individual row in DataFrame partitions.",
+      "B) It allows initializing heavy model artifacts ONCE per worker batch/partition.",
+      "C) It bypasses Spark executor nodes and performs model inference on driver.",
+      "D) It converts PySpark DataFrame predictions automatically into SQL tables."
+    ],
+    answer: 1,
+    explanation: "Iterator Pandas UDFs allow developers to initialize heavy resources (such as loading a large model file into GPU/CPU memory) once per executor task iterator, instead of repeatedly loading the model artifact for every sub-batch."
+  },
+  {
+    id: 46,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "How do you convert a native PySpark DataFrame (spark_df) into a Pandas API on Spark DataFrame?",
+    options: [
+      "A) ps_df = spark_df.pandas_api()",
+      "B) ps_df = spark_df.to_pandas_on_spark()",
+      "C) ps_df = pyspark.pandas.from_spark(spark_df)",
+      "D) ps_df = spark_df.toPandas()"
+    ],
+    answer: 0,
+    explanation: "In modern PySpark, calling `.pandas_api()` (or `pyspark.pandas.DataFrame(spark_df)`) converts a PySpark DataFrame directly into a Pandas API on Spark DataFrame without bringing data into driver driver memory. `toPandas()` brings data to single-node driver memory as a standard Pandas DataFrame."
+  },
+  {
+    id: 47,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "What happens if a data scientist calls df.toPandas() on a 500 GB PySpark DataFrame on a driver node with 16 GB of RAM?",
+    options: [
+      "A) PySpark automatically spills excess memory onto Delta Lake worker disks.",
+      "B) The driver node exhausts its memory and crashes with an OutOfMemoryError.",
+      "C) Spark converts 500 GB DataFrame into a compressed streaming generator.",
+      "D) Spark automatically partitions driver memory across worker worker executors."
+    ],
+    answer: 1,
+    explanation: "`toPandas()` collects all distributed dataset partitions from workers and attempts to assemble them into a single-node Pandas DataFrame in driver memory. If dataset size exceeds available driver RAM, an `OutOfMemoryError` (OOM) crashes the driver process."
+  },
+  {
+    id: 48,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "Which technique allows distributing model inference across a Spark cluster using a pre-trained scikit-learn model without re-training?",
+    options: [
+      "A) Broadcast trained model weights to workers and apply model inside Pandas UDF.",
+      "B) Pass scikit-learn model directly into PySpark Pipeline Estimator stage.",
+      "C) Convert scikit-learn model into PySpark RDD using sparkContext.parallelize().",
+      "D) Call fit() on scikit-learn model inside a CrossValidator grid search loop."
+    ],
+    answer: 0,
+    explanation: "To run distributed inference with a single-node model (like scikit-learn or LightGBM), broadcast the model object across the cluster using `sc.broadcast(model)`, and call `broadcast_model.value.predict()` inside a vectorized Pandas UDF or `mapPartitions`."
+  },
+  {
+    id: 49,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "What is a major difference in scaling characteristics between Linear Regression and Decision Trees when training distributed models in PySpark ML?",
+    options: [
+      "A) Linear Regression requires passing entire dataset across driver node every iteration.",
+      "B) Decision Tree communication overhead increases with tree depth as histograms transfer.",
+      "C) Linear Regression cannot compute matrix multiplication on distributed worker nodes.",
+      "D) Decision Trees require features to be stored in single-node dense matrices."
+    ],
+    answer: 1,
+    explanation: "In PySpark ML, distributed Decision Tree training computes feature histogram summaries across worker partitions at each tree node split. As tree depth increases, communication overhead between workers and driver scales significantly."
+  },
+  {
+    id: 50,
+    topic: "3.5 Scaling with Pandas API & UDFs",
+    title: "How can you convert a Pandas API on Spark DataFrame (ps_df) back into a native PySpark DataFrame?",
+    options: [
+      "A) spark_df = ps_df.to_spark()",
+      "B) spark_df = ps_df.as_pyspark()",
+      "C) spark_df = ps_df.export_spark()",
+      "D) spark_df = ps_df.to_dataframe()"
+    ],
+    answer: 0,
+    explanation: "In `pyspark.pandas`, calling `.to_spark()` converts a Pandas API on Spark DataFrame back into an underlying native PySpark `DataFrame`."
+  }
+];
+
+let userAnswers = {};
+
+function renderQuestions(filter = 'all') {
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
+
+    const filtered = questions.filter(q => {
+        if (filter === 'all') return true;
+        return q.topic.includes(filter);
+    });
+
+    filtered.forEach(q => {
+        const qCard = document.createElement('div');
+        qCard.className = 'q-card';
+        qCard.id = `card-${q.id}`;
+
+        let optionsHTML = '';
+        q.options.forEach((opt, idx) => {
+            const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+            optionsHTML += `
+                <label class="option-label">
+                    <input type="radio" name="q-${q.id}" value="${idx}" ${isChecked} onchange="selectAnswer(${q.id}, ${idx})">
+                    <span>${opt}</span>
+                </label>
+            `;
+        });
+
+        qCard.innerHTML = `
+            <div class="q-header">
+                <span class="q-num">Question ${q.id} of 50</span>
+                <span class="q-topic">${q.topic}</span>
+            </div>
+            <div class="q-title">${q.title.replace(/\n/g, '<br>')}</div>
+            <div class="options">${optionsHTML}</div>
+            <button class="btn-check" onclick="checkAnswer(${q.id})">Check Answer</button>
+            <div class="explanation" id="exp-${q.id}">
+                <h4 id="exp-title-${q.id}">Explanation</h4>
+                <p>${q.explanation}</p>
+            </div>
+        `;
+        container.appendChild(qCard);
+    });
+
+    updateStats();
+}
+
+function selectAnswer(qId, optIdx) {
+    userAnswers[qId] = optIdx;
+    updateStats();
+}
+
+function checkAnswer(qId) {
+    const q = questions.find(item => item.id === qId);
+    const selected = userAnswers[qId];
+    const expDiv = document.getElementById(`exp-${qId}`);
+    const expTitle = document.getElementById(`exp-title-${qId}`);
+
+    if (selected === undefined) {
+        alert("Please select an answer choice before checking.");
+        return;
+    }
+
+    expDiv.style.display = 'block';
+    if (selected === q.answer) {
+        expDiv.className = 'explanation correct';
+        expTitle.innerHTML = ' Correct!';
+        expTitle.style.color = 'var(--success-green)';
+    } else {
+        expDiv.className = 'explanation incorrect';
+        expTitle.innerHTML = ` Incorrect (Correct Option: Choice ${String.fromCharCode(65 + q.answer)})`;
+        expTitle.style.color = 'var(--error-red)';
+    }
+}
+
+function filterTopic(topic) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    renderQuestions(topic);
+}
+
+function updateStats() {
+    const answeredCount = Object.keys(userAnswers).length;
+    let correctCount = 0;
+
+    Object.keys(userAnswers).forEach(qId => {
+        const q = questions.find(item => item.id == qId);
+        if (q && userAnswers[qId] === q.answer) {
+            correctCount++;
+        }
+    });
+
+    document.getElementById('stat-answered').innerText = answeredCount;
+    document.getElementById('stat-score').innerText = `${correctCount} / ${answeredCount}`;
+    const pct = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+    document.getElementById('stat-pct').innerText = `${pct}%`;
+}
+
+// Initial render
+renderQuestions('all');
+</script>
+
+</body>
+</html>

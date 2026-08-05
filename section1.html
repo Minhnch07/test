@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Databricks ML Associate Exam Prep - Section 1 (Sorted by Sub-topic)</title>
+    <style>
+        :root {
+            --db-blue: #1b5193;
+            --db-orange: #ff3621;
+            --db-bg: #f5f6f7;
+            --db-card: #ffffff;
+            --db-text: #1c2024;
+            --db-border: #dcdedf;
+            --db-correct: #00a972;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--db-bg);
+            color: var(--db-text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: var(--db-blue);
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1em;
+            color: #555;
+        }
+        .question-card {
+            background-color: var(--db-card);
+            border: 1px solid var(--db-border);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .subtopic {
+            display: inline-block;
+            background-color: #e8f3fe;
+            color: var(--db-blue);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .stem {
+            font-size: 1.15em;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .option {
+            background-color: var(--db-bg);
+            border: 1px solid var(--db-border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: flex-start;
+        }
+        .option:hover {
+            border-color: var(--db-blue);
+            background-color: #f0f7ff;
+        }
+        .option input {
+            margin-right: 15px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+            word-wrap: break-word;
+        }
+        code {
+            background-color: #eaeaea;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+        }
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            background-color: var(--db-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #123c70;
+        }
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9fffb;
+            border-left: 4px solid var(--db-correct);
+            border-radius: 0 4px 4px 0;
+        }
+        .explanation h4 {
+            margin-top: 0;
+            color: var(--db-correct);
+        }
+        /* State classes */
+        .option.correct {
+            border-color: var(--db-correct);
+            background-color: #eafaf1;
+        }
+        .option.wrong {
+            border-color: var(--db-orange);
+            background-color: #fff1f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Databricks Machine Learning Associate (March 2025)</h1>
+        <p>Section 1: Databricks Machine Learning | 50 Exam-Standard Questions (Sorted by Sub-topic)</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 1: Identify the advantages of using ML runtimes -->
+    <!-- ========================================== -->
+
+    <!-- Question 1 -->
+    <div class="question-card" id="q1">
+        <div class="subtopic">Question 1: Identify the advantages of using ML runtimes</div>
+        <div class="stem">What is a primary advantage of provisioning a cluster with the Databricks Runtime for Machine Learning (MLR) instead of the standard Databricks Runtime?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q1" value="A"><label>A) It automatically scales compute nodes based on model complexity and dataset size during distributed training.</label></li>
+            <li class="option"><input type="radio" name="q1" value="B"><label>B) It includes pre-configured, optimized versions of popular ML libraries like TensorFlow, PyTorch, and XGBoost.</label></li>
+            <li class="option"><input type="radio" name="q1" value="C"><label>C) It automatically converts all single-node scikit-learn models into distributed Apache Spark MLlib pipelines.</label></li>
+            <li class="option"><input type="radio" name="q1" value="D"><label>D) It enforces strict role-based access controls for machine learning artifacts across the entire Unity Catalog.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q1', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> The Databricks Runtime for ML comes pre-installed and optimized with standard machine learning libraries (TensorFlow, PyTorch, scikit-learn), saving significant environment setup time. <strong>A</strong> is wrong because autoscaling depends on the cluster's general sizing configuration, not specifically the ML runtime. <strong>C</strong> is conceptually false; code conversion requires manual rewriting or tools like spark.pandas. <strong>D</strong> describes a function of Unity Catalog, which applies independently of the runtime chosen.</p>
+        </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-card" id="q2">
+        <div class="subtopic">Question 2: Identify the advantages of using ML runtimes</div>
+        <div class="stem">When configuring a Databricks environment for distributed deep learning, what is a primary advantage of selecting a GPU-enabled Databricks Machine Learning Runtime?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q2" value="A"><label>A) The runtime automatically rewrites custom Python CPU code into optimized CUDA C++ code for execution.</label></li>
+            <li class="option"><input type="radio" name="q2" value="B"><label>B) The runtime includes pre-configured GPU-accelerated libraries such as Horovod and specialized drivers.</label></li>
+            <li class="option"><input type="radio" name="q2" value="C"><label>C) The runtime allocates dedicated GPU resources to the driver node while restricting worker nodes to CPU.</label></li>
+            <li class="option"><input type="radio" name="q2" value="D"><label>D) The runtime automatically replicates the entire training dataset across all available GPU memory banks.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q2', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> GPU-enabled ML runtimes remove the heavy lifting of environment management by providing pre-installed, GPU-accelerated libraries (like Horovod for distributed training) and underlying NVIDIA drivers (CUDA/cuDNN). <strong>A</strong> is impossible magic. <strong>C</strong> is incorrect because worker nodes utilize GPUs extensively in distributed training. <strong>D</strong> is wrong because data replication logic is handled by the modeling framework code, not automatically by the runtime.</p>
+        </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-card" id="q3">
+        <div class="subtopic">Question 3: Identify the advantages of using ML runtimes</div>
+        <div class="stem">In addition to pre-installed machine learning libraries, what is a crucial built-in optimization provided by the Databricks Machine Learning Runtime?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q3" value="A"><label>A) It guarantees zero data loss by continuously streaming memory states directly to Unity Catalog storage containers.</label></li>
+            <li class="option"><input type="radio" name="q3" value="B"><label>B) It automatically caches multi-terabyte datasets into memory without requiring any user-defined configuration.</label></li>
+            <li class="option"><input type="radio" name="q3" value="C"><label>C) It includes integrations with MLflow to automatically track cluster utilization and cost metrics during training.</label></li>
+            <li class="option"><input type="radio" name="q3" value="D"><label>D) It provides pre-configured integration with Databricks Feature Store and MLflow to streamline model lifecycles.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q3', 'D')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: D</h4>
+            <p><strong>Explanation:</strong> The ML Runtime goes beyond just installing Python packages; it is deeply integrated into the Databricks ecosystem, providing out-of-the-box readiness for MLflow tracking and Feature Store/Feature Engineering clients without complex setup. <strong>A and B</strong> are false descriptions of data management. <strong>C</strong> is incorrect because while MLflow tracks model metrics, it does not inherently act as a cluster billing/cost metric tracker.</p>
+        </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-card" id="q4">
+        <div class="subtopic">Question 4: Identify the advantages of using ML runtimes</div>
+        <div class="stem">What is the default behavior of MLflow autologging when training a model interactively using a Databricks Machine Learning Runtime cluster?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q4" value="A"><label>A) Autologging is completely disabled by default and requires users to manually invoke the feature in every notebook cell.</label></li>
+            <li class="option"><input type="radio" name="q4" value="B"><label>B) Autologging is enabled automatically for supported ML libraries and captures metrics, parameters, and model artifacts.</label></li>
+            <li class="option"><input type="radio" name="q4" value="C"><label>C) Autologging captures only the final evaluation metrics while requiring manual logging for the model hyper-parameters.</label></li>
+            <li class="option"><input type="radio" name="q4" value="D"><label>D) Autologging automatically persists the complete training dataset into Unity Catalog as a dedicated tracking table.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q4', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> A significant advantage of the Databricks ML Runtime is that MLflow autologging is enabled by default. For supported libraries (like scikit-learn, XGBoost, PyTorch), it automatically tracks parameters, metrics, and models without requiring explicit <code>mlflow.log_metric()</code> or <code>mlflow.autolog()</code> calls. <strong>A and C</strong> falsely claim limitations on this automatic tracking. <strong>D</strong> is incorrect because MLflow autologs metadata and models, not the raw multi-gigabyte training dataset itself.</p>
+        </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-card" id="q5">
+        <div class="subtopic">Question 5: Identify the advantages of using ML runtimes</div>
+        <div class="stem">Why might a data scientist specifically choose to provision a Single Node Databricks Machine Learning Runtime cluster rather than a Multi-Node cluster?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q5" value="A"><label>A) To perform distributed training of deep neural networks using multi-worker frameworks such as HorovodRunner or PyTorch DDP.</label></li>
+            <li class="option"><input type="radio" name="q5" value="B"><label>B) To execute single-machine libraries like standard pandas and scikit-learn without incurring the overhead of Spark orchestration.</label></li>
+            <li class="option"><input type="radio" name="q5" value="C"><label>C) To automatically convert legacy Spark SQL data pipelines into highly optimized single-threaded Python backend transformations.</label></li>
+            <li class="option"><input type="radio" name="q5" value="D"><label>D) To guarantee that all Unity Catalog feature tables are cached simultaneously within the dedicated driver node hardware memory.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q5', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Many popular ML libraries (like scikit-learn and native pandas) are strictly single-node and cannot inherently utilize Spark's distributed worker nodes. Utilizing a Single Node ML cluster for these workloads saves costs and removes Spark orchestration overhead while still providing the pre-installed ML environments of the Databricks ML Runtime. <strong>A</strong> requires multi-node for distribution. <strong>C</strong> is a fabricated capability. <strong>D</strong> misrepresents how caching and memory management work.</p>
+        </div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-card" id="q6">
+        <div class="subtopic">Question 6: Identify the advantages of using ML runtimes</div>
+        <div class="stem">Which distributed deep learning helper utility is pre-installed in Databricks Runtime for ML to easily run multi-GPU PyTorch models on Spark clusters?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q6" value="A"><label>A) <code>TorchDistributor</code>, which enables native scaling of PyTorch training workloads across Spark driver and worker nodes.</label></li>
+            <li class="option"><input type="radio" name="q6" value="B"><label>B) <code>SparkPyTorchRunner</code>, which enables native scaling of PyTorch training workloads across Spark driver and worker nodes.</label></li>
+            <li class="option"><input type="radio" name="q6" value="C"><label>C) <code>DistributedTorchClient</code>, which enables native scaling of PyTorch training workloads across Spark driver and worker nodes.</label></li>
+            <li class="option"><input type="radio" name="q6" value="D"><label>D) <code>PyTorchSparkCluster</code>, which enables native scaling of PyTorch training workloads across Spark driver and worker nodes.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q6', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> <code>pyspark.ml.deepspeed.torch.distributor.TorchDistributor</code> (or PySpark's native <code>TorchDistributor</code>) is built into the Databricks ML Runtime to help launch distributed PyTorch training jobs seamlessly across a Spark cluster without manual cluster orchestration. <strong>B, C, and D</strong> are fabricated API names.</p>
+        </div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-card" id="q7">
+        <div class="subtopic">Question 7: Identify the advantages of using ML runtimes</div>
+        <div class="stem">What is the recommended method for installing additional Python libraries on a cluster running Databricks Runtime for ML?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q7" value="A"><label>A) Using <code>%pip install</code> within a notebook to ensure the library is available for the current session.</label></li>
+            <li class="option"><input type="radio" name="q7" value="B"><label>B) Manually SSHing into each worker node to run <code>conda install</code> commands across the backend.</label></li>
+            <li class="option"><input type="radio" name="q7" value="C"><label>C) Modifying the underlying Docker container image used by the ML Runtime and restarting the cluster.</label></li>
+            <li class="option"><input type="radio" name="q7" value="D"><label>D) Using <code>dbutils.library.installPyPI()</code> which is the only supported method for ML-specific runtimes.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q7', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Databricks recommends using <strong>notebook-scoped libraries</strong> via <code>%pip install</code>. This ensures reproducibility and isolation. <strong>B</strong> is not possible in a managed environment. <strong>C</strong> is a complex, non-standard approach. <strong>D</strong> uses a legacy utility that has been largely replaced by the more standard <code>%pip</code> magic.</p>
+        </div>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-card" id="q8">
+        <div class="subtopic">Question 8: Identify the advantages of using ML runtimes</div>
+        <div class="stem">Which component of the Databricks Runtime for ML is specifically designed to handle the distributed execution of Horovod on Spark?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q8" value="A"><label>A) <code>HorovodRunner</code>, a utility that simplifies migrating single-node deep learning code to a distributed cluster.</label></li>
+            <li class="option"><input type="radio" name="q8" value="B"><label>B) <code>HorovodDistributor</code>, a utility that simplifies migrating single-node deep learning code to a distributed cluster.</label></li>
+            <li class="option"><input type="radio" name="q8" value="C"><label>C) <code>DeepLearningManager</code>, a utility that simplifies migrating single-node deep learning code to a distributed cluster.</label></li>
+            <li class="option"><input type="radio" name="q8" value="D"><label>D) <code>SparkDeepSpeedClient</code>, a utility that simplifies migrating single-node deep learning code to a distributed cluster.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q8', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> <code>HorovodRunner</code> is the API provided by Databricks to run Horovod (distributed deep learning) jobs on a Databricks cluster. It handles the distribution of the training workload across the cluster workers. <strong>B, C, and D</strong> are incorrect API names.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 2: Identify how AutoML facilitates model/feature selection -->
+    <!-- ========================================== -->
+
+    <!-- Question 9 -->
+    <div class="question-card" id="q9">
+        <div class="subtopic">Question 9: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">How does Databricks AutoML facilitate the feature selection process during the automated model development lifecycle?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q9" value="A"><label>A) It permanently deletes low-variance features from the original Delta table to optimize underlying storage costs.</label></li>
+            <li class="option"><input type="radio" name="q9" value="B"><label>B) It automatically identifies and uses the most predictive features while tracking their importance in MLflow runs.</label></li>
+            <li class="option"><input type="radio" name="q9" value="C"><label>C) It mandates that users manually define a strict subset of input columns prior to initiating the AutoML experiment.</label></li>
+            <li class="option"><input type="radio" name="q9" value="D"><label>D) It converts all categorical features into text embeddings using foundational Large Language Models by default.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q9', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Databricks AutoML inherently evaluates and uses the most predictive features, tracking SHAP values and feature importance transparently in MLflow. <strong>A</strong> is wrong because AutoML only reads data; it never modifies or deletes source Delta tables. <strong>C</strong> is wrong because AutoML handles subsetting automatically, though users *can* exclude columns if desired. <strong>D</strong> is false; AutoML uses standard encoders (like One-Hot or Target encoding) for tabular data, not default LLMs.</p>
+        </div>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-card" id="q10">
+        <div class="subtopic">Question 10: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">Which of the following machine learning problem types is natively supported and automated by the Databricks AutoML API?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q10" value="A"><label>A) Unsupervised clustering for automated customer segmentation and anomaly detection.</label></li>
+            <li class="option"><input type="radio" name="q10" value="B"><label>B) Supervised forecasting for predicting future numeric values based on time-series data.</label></li>
+            <li class="option"><input type="radio" name="q10" value="C"><label>C) Reinforcement learning for optimizing sequential decision-making within environments.</label></li>
+            <li class="option"><input type="radio" name="q10" value="D"><label>D) Generative adversarial networks for producing synthetic categorical tabular datasets.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q10', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Databricks AutoML natively supports three main problem types: Classification, Regression, and Forecasting. <strong>A, C, and D</strong> (Clustering, Reinforcement Learning, and GANs) are currently unsupported by the automated AutoML interface and must be implemented manually by the user.</p>
+        </div>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-card" id="q11">
+        <div class="subtopic">Question 11: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">During a Databricks AutoML experiment run, how can a data scientist efficiently prevent specific columns from being used as predictive features?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q11" value="A"><label>A) By physically deleting the targeted columns from the underlying Delta table prior to initiating the automated experiment.</label></li>
+            <li class="option"><input type="radio" name="q11" value="B"><label>B) By passing a list of column names to the <code>exclude_columns</code> parameter when configuring the AutoML experiment API.</label></li>
+            <li class="option"><input type="radio" name="q11" value="C"><label>C) By editing the generated baseline notebook and manually rewriting the automated feature extraction pipeline code.</label></li>
+            <li class="option"><input type="radio" name="q11" value="D"><label>D) By applying a strict data masking policy within Unity Catalog to hide the columns from the compute cluster backend.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q11', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> The Databricks AutoML API natively supports an <code>exclude_columns</code> parameter. This allows users to pass a list of strings (column names) that should be ignored during feature selection and model training, preventing data leakage (e.g., dropping an ID or a highly correlated proxy variable). <strong>A</strong> is destructive and unnecessary. <strong>C</strong> defeats the purpose of the automated run. <strong>D</strong> is a governance feature, not a machine learning parameter.</p>
+        </div>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-card" id="q12">
+        <div class="subtopic">Question 12: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">When running a classification experiment via Databricks AutoML, how does specifying a primary evaluation metric impact the model selection process?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q12" value="A"><label>A) It forces AutoML to train models exclusively using the specified metric while discarding all default loss functions.</label></li>
+            <li class="option"><input type="radio" name="q12" value="B"><label>B) It determines which performance metric is used to evaluate, rank, and select the best-performing trial notebook run.</label></li>
+            <li class="option"><input type="radio" name="q12" value="C"><label>C) It automatically adjusts the underlying Spark cluster hardware configuration to optimize throughput for that metric.</label></li>
+            <li class="option"><input type="radio" name="q12" value="D"><label>D) It filters out training dataset rows that fail to satisfy the minimum statistical threshold required for that metric.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q12', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> The primary evaluation metric (e.g., F1 score, Log Loss, ROC-AUC) dictates how AutoML evaluates and ranks trial runs. The best notebook/model generated and flagged by AutoML will be chosen based on optimizing this specific metric. <strong>A</strong> is wrong because loss functions are separate from evaluation ranking metrics. <strong>C and D</strong> falsely claim hardware or dataset modifications.</p>
+        </div>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-card" id="q13">
+        <div class="subtopic">Question 13: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">When running an AutoML experiment for a small dataset, how does Databricks AutoML ensure robust evaluation of model performance?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q13" value="A"><label>A) It automatically uses K-fold cross-validation and reports the average metric across all folds for every trial.</label></li>
+            <li class="option"><input type="radio" name="q13" value="B"><label>B) It automatically uses a single hold-out validation set to minimize the compute time required for small data.</label></li>
+            <li class="option"><input type="radio" name="q13" value="C"><label>C) It automatically applies synthetic data augmentation to double the dataset size before performing evaluation.</label></li>
+            <li class="option"><input type="radio" name="q13" value="D"><label>D) It automatically disables evaluation metrics for small datasets to prevent the introduction of statistical bias.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q13', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> For smaller datasets where a simple train/test split might lead to high variance in metrics, Databricks AutoML automatically employs K-fold cross-validation. It partitions the data and averages performance across folds to find the best model. <strong>B</strong> is only done for larger datasets. <strong>C and D</strong> are incorrect descriptions of AutoML's statistical methodology.</p>
+        </div>
+    </div>
+
+    <!-- Question 14 -->
+    <div class="question-card" id="q14">
+        <div class="subtopic">Question 14: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">Which statement describes the behavior of Databricks AutoML when a dataset exceeds the memory capacity of the driver node?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q14" value="A"><label>A) It automatically samples the dataset to a manageable size that fits within the driver's memory for training.</label></li>
+            <li class="option"><input type="radio" name="q14" value="B"><label>B) It automatically increases the driver node's instance size and restarts the experiment with higher costs.</label></li>
+            <li class="option"><input type="radio" name="q14" value="C"><label>C) It automatically crashes and provides an error message suggesting the use of a larger all-purpose cluster.</label></li>
+            <li class="option"><input type="radio" name="q14" value="D"><label>D) It automatically converts the training logic into distributed Spark MLlib code to utilize worker node memory.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q14', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> For most models (like scikit-learn or XGBoost), AutoML performs single-node training on the driver. If the data is too large, AutoML automatically samples the data down to ensure the training process can complete on the driver node. <strong>D</strong> is wrong because while AutoML uses Spark for data prep, the actual training trials for these frameworks are usually single-node.</p>
+        </div>
+    </div>
+
+    <!-- Question 15 -->
+    <div class="question-card" id="q15">
+        <div class="subtopic">Question 15: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">Which automated feature engineering technique is applied by Databricks AutoML to improve the performance of models on text-based columns?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q15" value="A"><label>A) It applies TF-IDF vectorization to convert raw text into numerical features for the modeling trials.</label></li>
+            <li class="option"><input type="radio" name="q15" value="B"><label>B) It applies automatic translation to convert all text features into English prior to training.</label></li>
+            <li class="option"><input type="radio" name="q15" value="C"><label>C) It applies manual keyword extraction based on a pre-defined list of common industry industry terms.</label></li>
+            <li class="option"><input type="radio" name="q15" value="D"><label>D) It applies automatic sentiment analysis scores to replace the original text content with a numeric scale.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q15', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> For classification and regression tasks, AutoML detects text columns and applies TF-IDF (Term Frequency-Inverse Document Frequency) to transform them into numeric features. <strong>B, C, and D</strong> are not native automated feature engineering steps performed by the standard AutoML engine.</p>
+        </div>
+    </div>
+
+    <!-- Question 16 -->
+    <div class="question-card" id="q16">
+        <div class="subtopic">Question 16: Identify how AutoML facilitates model/feature selection</div>
+        <div class="stem">How does Databricks AutoML provide interpretability for the best-performing model identified during an experiment?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q16" value="A"><label>A) It automatically calculates SHAP values and includes visualization plots in the generated trial notebook.</label></li>
+            <li class="option"><input type="radio" name="q16" value="B"><label>B) It automatically generates a PDF report summarizing the ethical implications and potential biases of the model.</label></li>
+            <li class="option"><input type="radio" name="q16" value="C"><label>C) It automatically converts the final complex model into a simple decision tree for easier human inspection.</label></li>
+            <li class="option"><input type="radio" name="q16" value="D"><label>D) It automatically logs the coefficients for all features, even for non-linear models like Random Forests.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q16', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> AutoML includes a "Data Exploration" and "Trial" notebook for the best model. In the trial notebook, it uses the <code>shap</code> library to generate feature importance plots, explaining how each feature contributed to the predictions. <strong>B and C</strong> are incorrect. <strong>D</strong> is wrong because non-linear models do not use coefficients in the same way linear models do.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 3: Identify the advantages AutoML brings to the model development process -->
+    <!-- ========================================== -->
+
+    <!-- Question 17 -->
+    <div class="question-card" id="q17">
+        <div class="subtopic">Question 17: Identify the advantages AutoML brings to the model development process</div>
+        <div class="stem">Which of the following describes a key advantage that Databricks AutoML provides to the model development process?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q17" value="A"><label>A) It generates editable Python notebooks containing the exact source code for data exploration and model training.</label></li>
+            <li class="option"><input type="radio" name="q17" value="B"><label>B) It automatically deploys the highest-performing model directly to a production serverless endpoint without review.</label></li>
+            <li class="option"><input type="radio" name="q17" value="C"><label>C) It guarantees a mathematically optimal model by exhaustively evaluating every possible hyperparameter combination.</label></li>
+            <li class="option"><input type="radio" name="q17" value="D"><label>D) It obfuscates the underlying training code to protect intellectual property and ensure strict regulatory compliance.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q17', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> A major differentiator of Databricks AutoML is its "glass-box" approach. It generates editable baseline notebooks so data scientists can inspect, modify, and build upon the training code. <strong>B</strong> is wrong; AutoML registers the model but manual/CI/CD review is best practice before deployment. <strong>C</strong> is wrong; it uses heuristic searches (e.g., Hyperopt) rather than exhaustively testing every combination. <strong>D</strong> directly contradicts the glass-box advantage.</p>
+        </div>
+    </div>
+
+    <!-- Question 18 -->
+    <div class="question-card" id="q18">
+        <div class="subtopic">Question 18: Identify the advantages AutoML brings to the model development process</div>
+        <div class="stem">How does Databricks AutoML address class imbalance issues when training classification models on highly skewed datasets?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q18" value="A"><label>A) It automatically duplicates minority class samples until the dataset achieves a perfectly equal statistical distribution.</label></li>
+            <li class="option"><input type="radio" name="q18" value="B"><label>B) It automatically applies class weights and transparently logs the specific balancing techniques within the generated code.</label></li>
+            <li class="option"><input type="radio" name="q18" value="C"><label>C) It restricts the maximum number of majority class samples by permanently dropping rows from the source Delta table.</label></li>
+            <li class="option"><input type="radio" name="q18" value="D"><label>D) It requires users to manually execute SMOTE algorithms on the data prior to triggering the automated experiment UI.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q18', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Databricks AutoML automatically detects severe class imbalances and applies techniques like class weights during model training. Because of its "glass-box" approach, this logic is fully visible in the generated notebook. <strong>A</strong> is incorrect as it doesn't blindly duplicate data to 50/50. <strong>C</strong> is wrong because AutoML never modifies or deletes source Delta tables. <strong>D</strong> is wrong because AutoML handles this automatically without requiring manual pre-processing like SMOTE.</p>
+        </div>
+    </div>
+
+    <!-- Question 19 -->
+    <div class="question-card" id="q19">
+        <div class="subtopic">Question 19: Identify the advantages AutoML brings to the model development process</div>
+        <div class="stem">Which configuration parameter allows a data scientist to effectively limit the total compute resources consumed by a Databricks AutoML experiment?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q19" value="A"><label>A) Setting the <code>timeout_minutes</code> parameter to explicitly cap the maximum duration of the overall training process.</label></li>
+            <li class="option"><input type="radio" name="q19" value="B"><label>B) Setting the <code>max_cluster_nodes</code> parameter to explicitly cap the maximum hardware allocated for model training.</label></li>
+            <li class="option"><input type="radio" name="q19" value="C"><label>C) Setting the <code>max_cpu_utilization</code> parameter to strictly enforce hardware limits across the backend Spark cluster.</label></li>
+            <li class="option"><input type="radio" name="q19" value="D"><label>D) Setting the <code>terminate_on_metric</code> parameter to strictly enforce hardware limits across the backend Spark cluster.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q19', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> The primary way to constrain an AutoML run in Databricks is by utilizing the <code>timeout_minutes</code> parameter, which halts the experiment after the specified time limit. <strong>B and C</strong> are incorrect because cluster size and utilization limits are configured at the compute cluster level, not within the AutoML API call. <strong>D</strong> is a fabricated parameter for hardware enforcement.</p>
+        </div>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-card" id="q20">
+        <div class="subtopic">Question 20: Identify the advantages AutoML brings to the model development process</div>
+        <div class="stem">How does Databricks AutoML handle missing values in tabular datasets during the automated training process?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q20" value="A"><label>A) It automatically drops any rows containing null values to ensure strict compatibility with underlying scikit-learn models.</label></li>
+            <li class="option"><input type="radio" name="q20" value="B"><label>B) It automatically imputes missing values using statistical strategies and documents the exact logic in the generated code.</label></li>
+            <li class="option"><input type="radio" name="q20" value="C"><label>C) It forces users to explicitly define a custom imputation strategy before launching the automated training experiment.</label></li>
+            <li class="option"><input type="radio" name="q20" value="D"><label>D) It replaces all missing numerical values with zeros and categorical values with empty strings without logging the changes.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q20', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> A primary advantage of Databricks AutoML is its transparent handling of common data quality issues. It automatically applies robust imputation strategies (like mean/mode imputation) and, crucially, exposes this preprocessing logic in the generated Python notebooks so users can review or modify it. <strong>A</strong> is destructive to data. <strong>C</strong> defeats the purpose of automation. <strong>D</strong> is an overly simplistic and undocumented approach that Databricks does not use.</p>
+        </div>
+    </div>
+
+    <!-- Question 21 -->
+    <div class="question-card" id="q21">
+        <div class="subtopic">Question 21: Identify the advantages AutoML brings to the model development process</div>
+        <div class="stem">Which underlying technology does Databricks AutoML utilize to perform efficient hyperparameter tuning during trial runs?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q21" value="A"><label>A) Hyperopt integrated with SparkTrials to distribute search algorithms across all available compute nodes.</label></li>
+            <li class="option"><input type="radio" name="q21" value="B"><label>B) Optuna integrated with Ray Core to execute parallel randomized search algorithms across all driver memory banks.</label></li>
+            <li class="option"><input type="radio" name="q21" value="C"><label>C) Scikit-learn GridSearchCV to execute exhaustive grid search algorithms sequentially across all worker nodes.</label></li>
+            <li class="option"><input type="radio" name="q21" value="D"><label>D) KerasTuner integrated with Horovod to perform bayesian optimization search algorithms across all GPU devices.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q21', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Databricks AutoML leverages <strong>Hyperopt</strong> alongside <strong>SparkTrials</strong> to perform distributed hyperparameter tuning, automatically evaluating multiple trial runs in parallel across worker nodes. <strong>B, C, and D</strong> substitute different framework names that Databricks AutoML does not use by default.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 4: Benefits of UC feature store vs Workspace feature store -->
+    <!-- ========================================== -->
+
+    <!-- Question 22 -->
+    <div class="question-card" id="q22">
+        <div class="subtopic">Question 22: Benefits of UC feature store vs Workspace feature store</div>
+        <div class="stem">What is a primary benefit of creating feature tables within Unity Catalog rather than the legacy Workspace Feature Store?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q22" value="A"><label>A) Unity Catalog automatically duplicates feature tables across all workspaces to guarantee zero-latency read access.</label></li>
+            <li class="option"><input type="radio" name="q22" value="B"><label>B) Unity Catalog allows feature tables to be shared and accessed seamlessly across multiple independent workspaces.</label></li>
+            <li class="option"><input type="radio" name="q22" value="C"><label>C) Unity Catalog restricts feature table access to the workspace admin role to ensure strict security and compliance.</label></li>
+            <li class="option"><input type="radio" name="q22" value="D"><label>D) Unity Catalog automatically applies deep neural networks to extract latent features from unstructured text data.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q22', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Unity Catalog acts at the <i>account level</i>. This means a single feature table can be governed centrally and shared across multiple Databricks workspaces without data movement. <strong>A</strong> is wrong because UC centralizes metadata rather than physically duplicating data. <strong>C</strong> is wrong; UC provides fine-grained grants to any users/groups, not just admins. <strong>D</strong> is a fabricated distractor regarding automated neural networks.</p>
+        </div>
+    </div>
+
+    <!-- Question 23 -->
+    <div class="question-card" id="q23">
+        <div class="subtopic">Question 23: Benefits of UC feature store vs Workspace feature store</div>
+        <div class="stem">How does Unity Catalog enhance the governance of feature store tables compared to the legacy Workspace Feature Store?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q23" value="A"><label>A) It automatically encrypts all numeric feature values using proprietary Databricks hashing algorithms by default.</label></li>
+            <li class="option"><input type="radio" name="q23" value="B"><label>B) It provides centralized data lineage tracking and unified access controls across all attached Databricks workspaces.</label></li>
+            <li class="option"><input type="radio" name="q23" value="C"><label>C) It prevents data scientists from modifying any feature store tables once they have been registered in the system.</label></li>
+            <li class="option"><input type="radio" name="q23" value="D"><label>D) It forces all feature store queries to execute on dedicated SQL Serverless warehouses to guarantee performance.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q23', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Unity Catalog natively tracks data lineage (who read/wrote what and when) and handles unified Identity and Access Management across all workspaces in an account. <strong>A</strong> is wrong because column values are not hashed by default. <strong>C</strong> is wrong because feature tables require continuous updates for fresh model serving. <strong>D</strong> is wrong; features can be queried by standard all-purpose compute, ML runtimes, or SQL warehouses.</p>
+        </div>
+    </div>
+
+    <!-- Question 24 -->
+    <div class="question-card" id="q24">
+        <div class="subtopic">Question 24: Benefits of UC feature store vs Workspace feature store</div>
+        <div class="stem">How are permissions and access controls managed for feature tables registered within the Unity Catalog architecture?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q24" value="A"><label>A) By configuring standard table ACLs using SQL GRANT statements applied directly to the catalog, schema, or table.</label></li>
+            <li class="option"><input type="radio" name="q24" value="B"><label>B) By assigning workspace-level IAM roles specifically designated for the legacy Databricks Feature Store UI configuration.</label></li>
+            <li class="option"><input type="radio" name="q24" value="C"><label>C) By embedding hardcoded authentication tokens within the PySpark scripts used to query the underlying feature table.</label></li>
+            <li class="option"><input type="radio" name="q24" value="D"><label>D) By restricting access entirely to the single Databricks workspace where the feature table was initially created and stored.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q24', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> A major benefit of Unity Catalog Feature Store is that feature tables are standard UC tables. Consequently, they inherit Unity Catalog's robust, centralized governance model, allowing administrators to use standard SQL (e.g., <code>GRANT SELECT ON TABLE...</code>) to control access across all workspaces. <strong>B, C, and D</strong> describe insecure, legacy, or heavily restrictive patterns that UC was designed to solve.</p>
+        </div>
+    </div>
+
+    <!-- Question 25 -->
+    <div class="question-card" id="q25">
+        <div class="subtopic">Question 25: Benefits of UC feature store vs Workspace feature store</div>
+        <div class="stem">Which naming convention is strictly required when defining a new feature table in the Unity Catalog Feature Store?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q25" value="A"><label>A) A two-tier namespace specifying the target database and feature table name, formatted as <code>database.table_name</code>.</label></li>
+            <li class="option"><input type="radio" name="q25" value="B"><label>B) A three-tier namespace specifying the target catalog, schema, and feature table name, formatted as <code>catalog.schema.table_name</code>.</label></li>
+            <li class="option"><input type="radio" name="q25" value="C"><label>C) A single-tier namespace specifying only the unique global feature table name, formatted directly as <code>table_name</code>.</label></li>
+            <li class="option"><input type="radio" name="q25" value="D"><label>D) A workspace-prefixed namespace specifying the workspace ID and table name, formatted as <code>workspace_id.table_name</code>.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q25', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> All assets managed by Unity Catalog—including feature tables—must follow the standard three-tier namespace structure: <code>catalog_name.schema_name.table_name</code>. <strong>A and C</strong> describe legacy Hive metastore naming patterns. <strong>D</strong> is a fabricated namespace convention.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 5: Create a feature store table in Unity Catalog -->
+    <!-- ========================================== -->
+
+    <!-- Question 26 -->
+    <div class="question-card" id="q26">
+        <div class="subtopic">Question 26: Create a feature store table in Unity Catalog</div>
+        <div class="stem">Which PySpark code snippet correctly creates a new feature table in Unity Catalog, assuming the appropriate client module has been instantiated?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q26" value="A"><label>A) <code>fe.create_table(name="catalog.schema.features", primary_keys=["id"], df=feature_df, description="table")</code></label></li>
+            <li class="option"><input type="radio" name="q26" value="B"><label>B) <code>fs.create_table(name="catalog.schema.features", primary_keys=["id"], df=feature_df, description="table")</code></label></li>
+            <li class="option"><input type="radio" name="q26" value="C"><label>C) <code>fe.insert_table(name="catalog.schema.features", primary_keys=["id"], df=feature_df, description="table")</code></label></li>
+            <li class="option"><input type="radio" name="q26" value="D"><label>D) <code>fs.insert_table(name="catalog.schema.features", primary_keys=["id"], df=feature_df, description="table")</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q26', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> For Unity Catalog feature tables, the <code>FeatureEngineeringClient</code> (instantiated as <code>fe</code>) is strictly required, utilizing the <code>create_table()</code> method. <strong>B</strong> utilizes the legacy <code>FeatureStoreClient</code> (<code>fs</code>), which is deprecated for UC tables. <strong>C</strong> and <strong>D</strong> use a non-existent method (<code>insert_table</code>).</p>
+        </div>
+    </div>
+
+    <!-- Question 27 -->
+    <div class="question-card" id="q27">
+        <div class="subtopic">Question 27: Create a feature store table in Unity Catalog</div>
+        <div class="stem">When creating a feature table in Unity Catalog using <code>FeatureEngineeringClient.create_table</code>, what is an absolute requirement for the underlying DataFrame?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q27" value="A"><label>A) The DataFrame must be pre-sorted in descending order based on the specified primary key column.</label></li>
+            <li class="option"><input type="radio" name="q27" value="B"><label>B) The DataFrame must contain a primary key that uniquely identifies each row within the feature table.</label></li>
+            <li class="option"><input type="radio" name="q27" value="C"><label>C) The DataFrame must consist exclusively of numeric data types to ensure compatibility with ML models.</label></li>
+            <li class="option"><input type="radio" name="q27" value="D"><label>D) The DataFrame must be partitioned by a timestamp column to support point-in-time feature lookups.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q27', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> A feature table fundamentally requires at least one primary key to ensure it can be mapped and joined correctly to lookup tables during model training and inference. <strong>A</strong> is wrong as pre-sorting is not required. <strong>C</strong> is wrong because categorical string variables are entirely acceptable. <strong>D</strong> is wrong; while timestamp columns (timeseries keys) are supported for point-in-time lookups, they are not strictly required for standard feature tables.</p>
+        </div>
+    </div>
+
+    <!-- Question 28 -->
+    <div class="question-card" id="q28">
+        <div class="subtopic">Question 28: Create a feature store table in Unity Catalog</div>
+        <div class="stem">When creating a Unity Catalog feature table using <code>fe.create_table()</code> without an initial DataFrame, how must the table structure be defined?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q28" value="A"><label>A) By explicitly passing a StructType schema object to the <code>schema</code> parameter within the method call.</label></li>
+            <li class="option"><input type="radio" name="q28" value="B"><label>B) By explicitly passing a list of column name strings to the <code>columns</code> parameter within the method call.</label></li>
+            <li class="option"><input type="radio" name="q28" value="C"><label>C) By explicitly passing a DDL table definition string to the <code>sql_schema</code> parameter within the method call.</label></li>
+            <li class="option"><input type="radio" name="q28" value="D"><label>D) By explicitly passing an empty Pandas DataFrame object to the <code>data_structure</code> parameter within the method call.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q28', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> In <code>FeatureEngineeringClient.create_table()</code>, you can either pass a PySpark DataFrame <code>df</code> (from which the schema is inferred) or explicitly pass a PySpark <code>StructType</code> object using the <code>schema=</code> argument if creating an empty table. <strong>B, C, and D</strong> use invalid parameter names.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 6: Write data to a feature store table -->
+    <!-- ========================================== -->
+
+    <!-- Question 29 -->
+    <div class="question-card" id="q29">
+        <div class="subtopic">Question 29: Write data to a feature store table</div>
+        <div class="stem">Which method should a data scientist use to update an existing Unity Catalog feature table with new records?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q29" value="A"><label>A) <code>fe.write_table(name="catalog.schema.features", df=new_df, mode="merge")</code></label></li>
+            <li class="option"><input type="radio" name="q29" value="B"><label>B) <code>fs.write_table(name="catalog.schema.features", df=new_df, mode="merge")</code></label></li>
+            <li class="option"><input type="radio" name="q29" value="C"><label>C) <code>fe.update_table(name="catalog.schema.features", df=new_df, mode="merge")</code></label></li>
+            <li class="option"><input type="radio" name="q29" value="D"><label>D) <code>fs.update_table(name="catalog.schema.features", df=new_df, mode="merge")</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q29', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> To write to a Unity Catalog feature table, you must use the <code>FeatureEngineeringClient</code> (<code>fe</code>) and call the <code>write_table()</code> method with <code>mode="merge"</code> (or "overwrite"). <strong>B</strong> incorrectly uses the legacy Workspace <code>FeatureStoreClient</code> (<code>fs</code>). <strong>C</strong> and <strong>D</strong> use a non-existent method name (<code>update_table</code>) to act as plausible distractors.</p>
+        </div>
+    </div>
+
+    <!-- Question 30 -->
+    <div class="question-card" id="q30">
+        <div class="subtopic">Question 30: Write data to a feature store table</div>
+        <div class="stem">When writing dataframe updates to a Unity Catalog feature table using <code>fe.write_table()</code>, what does setting <code>mode="merge"</code> accomplish?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q30" value="A"><label>A) It deletes the existing table and completely replaces it with the new DataFrame provided within the Python API call.</label></li>
+            <li class="option"><input type="radio" name="q30" value="B"><label>B) It appends entirely new rows and updates existing rows based on matching primary keys defined in the table schema.</label></li>
+            <li class="option"><input type="radio" name="q30" value="C"><label>C) It automatically drops duplicate rows across all available feature tables sharing the exact same Unity Catalog schema.</label></li>
+            <li class="option"><input type="radio" name="q30" value="D"><label>D) It requires the user to manually define a custom SQL MERGE statement as a string parameter within the Python API call.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q30', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> In the Databricks Feature Engineering API, <code>mode="merge"</code> performs an upsert. It leverages the feature table's defined primary key(s) to insert new records and overwrite (update) existing records where the primary key matches. <strong>A</strong> describes <code>mode="overwrite"</code>. <strong>C</strong> is a fabricated behavior affecting unrelated tables. <strong>D</strong> is false because the API handles the MERGE syntax under the hood natively.</p>
+        </div>
+    </div>
+
+    <!-- Question 31 -->
+    <div class="question-card" id="q31">
+        <div class="subtopic">Question 31: Write data to a feature store table</div>
+        <div class="stem">Because Unity Catalog feature tables are backed by Delta Lake, what capability is natively available to data teams inspecting feature history?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q31" value="A"><label>A) Time Travel, which allows querying historical versions of feature values using Delta table versioning or timestamps.</label></li>
+            <li class="option"><input type="radio" name="q31" value="B"><label>B) Live Streaming, which automatically publishes every feature update to external real-time REST endpoints.</label></li>
+            <li class="option"><input type="radio" name="q31" value="C"><label>C) Auto-Vectorization, which transforms all tabular string features into vector embeddings upon table write.</label></li>
+            <li class="option"><input type="radio" name="q31" value="D"><label>D) Cross-Cloud Sync, which automatically mirrors feature tables across AWS, Azure, and GCP storage natively.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q31', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Since feature tables in Databricks are underlying Delta Lake tables, they inherit all Delta features including Delta Time Travel (e.g., querying data `VERSION AS OF` or `TIMESTAMP AS OF`), which provides auditability and historical inspection. <strong>B, C, and D</strong> are false statements.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 7: Join a feature store table to data -->
+    <!-- ========================================== -->
+
+    <!-- Question 32 -->
+    <div class="question-card" id="q32">
+        <div class="subtopic">Question 32: Join a feature store table to data</div>
+        <div class="stem">Which object must be instantiated to define the join condition between a Unity Catalog feature table and a training dataset?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q32" value="A"><label>A) A <code>FeatureLookup</code> object that maps the feature table's primary key to the corresponding lookup key in the dataset.</label></li>
+            <li class="option"><input type="radio" name="q32" value="B"><label>B) A <code>FeatureJoiner</code> object that maps the feature table's primary key to the corresponding lookup key in the dataset.</label></li>
+            <li class="option"><input type="radio" name="q32" value="C"><label>C) A <code>FeatureReference</code> object that explicitly maps every required column between the table and the target dataset.</label></li>
+            <li class="option"><input type="radio" name="q32" value="D"><label>D) A <code>FeatureMatcher</code> object that explicitly maps every required column between the table and the target dataset.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q32', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> The <code>FeatureLookup</code> class is used to specify how to join features from a feature table into an existing DataFrame (typically containing labels and keys). <strong>B, C, and D</strong> are plausible-sounding but completely fabricated API names.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 8: Point-in-time lookups for feature tables -->
+    <!-- ========================================== -->
+
+    <!-- Question 33 -->
+    <div class="question-card" id="q33">
+        <div class="subtopic">Question 33: Point-in-time lookups for feature tables</div>
+        <div class="stem">What is the specific purpose of configuring a <code>timestamp_keys</code> argument when performing a feature lookup in Databricks Unity Catalog?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q33" value="A"><label>A) It prevents data leakage by ensuring that only feature values recorded strictly prior to the label's timestamp are used.</label></li>
+            <li class="option"><input type="radio" name="q33" value="B"><label>B) It accelerates query execution by partitioning the underlying Delta table strictly according to the provided timestamp.</label></li>
+            <li class="option"><input type="radio" name="q33" value="C"><label>C) It automatically schedules recurring Spark jobs to update the corresponding feature table based on the given timestamp.</label></li>
+            <li class="option"><input type="radio" name="q33" value="D"><label>D) It restricts user access by ensuring only users authenticated after the specified timestamp can read the feature table.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q33', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> The <code>timestamp_keys</code> argument enables point-in-time ("AS OF") lookups for time-series features. This ensures that when training a model, the join operation only retrieves the feature values that were known at the exact time the label was created, preventing future data leakage into the training set. <strong>B, C, and D</strong> misrepresent the purpose of this argument entirely.</p>
+        </div>
+    </div>
+
+    <!-- Question 34 -->
+    <div class="question-card" id="q34">
+        <div class="subtopic">Question 34: Point-in-time lookups for feature tables</div>
+        <div class="stem">A data scientist needs to prevent data leakage by joining time-series features based on event timestamps. Which argument inside <code>FeatureLookup</code> specifies the timestamp column in the feature table?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q34" value="A"><label>A) Setting <code>timestamp_lookup_key="event_timestamp"</code> within the <code>FeatureLookup</code> constructor to define the temporal join axis.</label></li>
+            <li class="option"><input type="radio" name="q34" value="B"><label>B) Setting <code>time_window_key="event_timestamp"</code> within the <code>FeatureLookup</code> constructor to define the temporal join axis.</label></li>
+            <li class="option"><input type="radio" name="q34" value="C"><label>C) Setting <code>filter_timestamp="event_timestamp"</code> within the <code>FeatureLookup</code> constructor to define the temporal join axis.</label></li>
+            <li class="option"><input type="radio" name="q34" value="D"><label>D) Setting <code>as_of_timestamp="event_timestamp"</code> within the <code>FeatureLookup</code> constructor to define the temporal join axis.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q34', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> When setting up point-in-time feature lookups, the <code>timestamp_lookup_key</code> parameter inside <code>FeatureLookup</code> tells Databricks which column in the feature table represents the event timestamp to perform temporal joins. <strong>B, C, and D</strong> are plausible-sounding but incorrect parameter names.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 9: Create a training dataset -->
+    <!-- ========================================== -->
+
+    <!-- Question 35 -->
+    <div class="question-card" id="q35">
+        <div class="subtopic">Question 35: Create a training dataset</div>
+        <div class="stem">Which PySpark command correctly generates a training dataset by joining Unity Catalog features with an existing label DataFrame?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q35" value="A"><label>A) <code>fe.create_training_set(df=labels_df, feature_lookups=[lookup], label="target", exclude_columns=["id"])</code></label></li>
+            <li class="option"><input type="radio" name="q35" value="B"><label>B) <code>fs.create_training_set(df=labels_df, feature_lookups=[lookup], label="target", exclude_columns=["id"])</code></label></li>
+            <li class="option"><input type="radio" name="q35" value="C"><label>C) <code>fe.build_training_data(df=labels_df, feature_lookups=[lookup], label="target", exclude_columns=["id"])</code></label></li>
+            <li class="option"><input type="radio" name="q35" value="D"><label>D) <code>fs.build_training_data(df=labels_df, feature_lookups=[lookup], label="target", exclude_columns=["id"])</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q35', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> To create a training set with Unity Catalog, you must use the <code>FeatureEngineeringClient</code> (instantiated as <code>fe</code>) and its <code>create_training_set()</code> method. <strong>B</strong> incorrectly uses the legacy Workspace <code>FeatureStoreClient</code> (<code>fs</code>). <strong>C and D</strong> use <code>build_training_data</code>, which is not a valid Databricks API method.</p>
+        </div>
+    </div>
+
+    <!-- Question 36 -->
+    <div class="question-card" id="q36">
+        <div class="subtopic">Question 36: Create a training dataset</div>
+        <div class="stem">A model was trained using features from Unity Catalog. Which method should be used to log the model to MLflow so that it retains automatic feature lookup capabilities during inference?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q36" value="A"><label>A) <code>fe.log_model(model=model, artifact_path="model", flavor=mlflow.sklearn, training_set=training_set)</code></label></li>
+            <li class="option"><input type="radio" name="q36" value="B"><label>B) <code>fs.log_model(model=model, artifact_path="model", flavor=mlflow.sklearn, training_set=training_set)</code></label></li>
+            <li class="option"><input type="radio" name="q36" value="C"><label>C) <code>mlflow.sklearn.log_model(sk_model=model, artifact_path="model", feature_set=training_set)</code></label></li>
+            <li class="option"><input type="radio" name="q36" value="D"><label>D) <code>fe.register_model(model=model, artifact_path="model", flavor=mlflow.sklearn, training_set=training_set)</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q36', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> To log a feature-store-aware model, you must call <code>log_model()</code> on the <code>FeatureEngineeringClient</code> (<code>fe</code>) and pass the <code>training_set</code> object. This ensures feature metadata is packaged with the model so it can perform automatic feature lookups at inference time. <strong>B</strong> uses the legacy client (`fs`). <strong>C</strong> uses standard MLflow, which misses feature lookup metadata. <strong>D</strong> uses a non-existent method name (`register_model`).</p>
+        </div>
+    </div>
+
+    <!-- Question 37 -->
+    <div class="question-card" id="q37">
+        <div class="subtopic">Question 37: Create a training dataset</div>
+        <div class="stem">After defining a <code>TrainingSet</code> object using the Feature Engineering client, how do you retrieve the joined PySpark DataFrame?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q37" value="A"><label>A) By calling the <code>training_set.load_df()</code> method to execute the joins and return the results.</label></li>
+            <li class="option"><input type="radio" name="q37" value="B"><label>B) By calling the <code>training_set.to_spark()</code> method to execute the joins and return the results.</label></li>
+            <li class="option"><input type="radio" name="q37" value="C"><label>C) By calling the <code>training_set.get_dataframe()</code> method to execute the joins and return the results.</label></li>
+            <li class="option"><input type="radio" name="q37" value="D"><label>D) By calling the <code>training_set.show()</code> method to execute the joins and return the results.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q37', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Once a <code>TrainingSet</code> is created (defining the lookups and labels), the data isn't actually joined until you call <code>load_df()</code>. This returns the Spark DataFrame ready for model training. <strong>B, C, and D</strong> use incorrect method names.</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 10: Manage Unity Catalog feature tables -->
+    <!-- ========================================== -->
+
+    <!-- Question 38 -->
+    <div class="question-card" id="q38">
+        <div class="subtopic">Question 38: Manage Unity Catalog feature tables</div>
+        <div class="stem">Which programmatic command correctly deletes an existing Unity Catalog feature table and purges its underlying Delta data?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q38" value="A"><label>A) <code>fe.drop_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q38" value="B"><label>B) <code>fs.drop_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q38" value="C"><label>C) <code>fe.delete_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q38" value="D"><label>D) <code>fs.delete_table(name="catalog.schema.features")</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q38', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> To delete a feature table governed by Unity Catalog, you must use the <code>FeatureEngineeringClient</code> (<code>fe</code>) and invoke the <code>drop_table()</code> method. <strong>B</strong> uses the legacy <code>FeatureStoreClient</code> (<code>fs</code>). <strong>C and D</strong> use <code>delete_table</code>, which is not the correct API syntax.</p>
+        </div>
+    </div>
+
+    <!-- Question 39 -->
+    <div class="question-card" id="q39">
+        <div class="subtopic">Question 39: Manage Unity Catalog feature tables</div>
+        <div class="stem">Which PySpark code snippet correctly reads an existing Unity Catalog feature table into a DataFrame for exploratory data analysis?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q39" value="A"><label>A) <code>fe.read_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q39" value="B"><label>B) <code>fs.read_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q39" value="C"><label>C) <code>fe.load_feature_table(name="catalog.schema.features")</code></label></li>
+            <li class="option"><input type="radio" name="q39" value="D"><label>D) <code>fs.load_feature_table(name="catalog.schema.features")</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q39', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> To interact with Unity Catalog feature tables, the <code>FeatureEngineeringClient</code> (instantiated as <code>fe</code>) must be used. The correct method to load the table into a DataFrame is <code>read_table()</code>. <strong>B</strong> incorrectly uses the deprecated workspace <code>FeatureStoreClient</code> (<code>fs</code>). <strong>C and D</strong> invent a non-existent method called <code>load_feature_table</code>.</p>
+        </div>
+    </div>
+
+    <!-- Question 40 -->
+    <div class="question-card" id="q40">
+        <div class="subtopic">Question 40: Manage Unity Catalog feature tables</div>
+        <div class="stem">Which statement accurately distinguishes the role of offline feature tables from online feature stores within a Databricks environment?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q40" value="A"><label>A) Offline tables are used for high-throughput model training, while online stores provide low-latency lookups for serving.</label></li>
+            <li class="option"><input type="radio" name="q40" value="B"><label>B) Offline tables are designed strictly for low-latency lookups, while online stores are used for large-scale model training.</label></li>
+            <li class="option"><input type="radio" name="q40" value="C"><label>C) Offline tables require manual synchronization, while online stores automatically regenerate features using serverless SQL.</label></li>
+            <li class="option"><input type="radio" name="q40" value="D"><label>D) Offline tables store raw unstructured data arrays, while online stores contain highly structured numeric machine learning arrays.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q40', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Offline feature tables (backed by Delta Lake) are optimized for high-throughput bulk reads, making them ideal for generating historical training datasets and batch inference. Online feature stores (like CosmosDB or DynamoDB, published to via Databricks) are optimized for millisecond-latency, single-record lookups required by real-time model serving endpoints. <strong>B</strong> flips these definitions. <strong>C and D</strong> are conceptually inaccurate distractors.</p>
+        </div>
+    </div>
+
+    <!-- Question 41 -->
+    <div class="question-card" id="q41">
+        <div class="subtopic">Question 41: Manage Unity Catalog feature tables</div>
+        <div class="stem">Which programmatic command is used to synchronize a Unity Catalog feature table with an external low-latency online feature store?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q41" value="A"><label>A) <code>fe.publish_table(name="catalog.schema.features", online_store=spec)</code></label></li>
+            <li class="option"><input type="radio" name="q41" value="B"><label>B) <code>fs.publish_table(name="catalog.schema.features", online_store=spec)</code></label></li>
+            <li class="option"><input type="radio" name="q41" value="C"><label>C) <code>fe.sync_online(name="catalog.schema.features", online_store=spec)</code></label></li>
+            <li class="option"><input type="radio" name="q41" value="D"><label>D) <code>fs.sync_online(name="catalog.schema.features", online_store=spec)</code></label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q41', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> The <code>publish_table()</code> method of the <code>FeatureEngineeringClient</code> (<code>fe</code>) is the standard way to push offline features into an online store (like DynamoDB or CosmosDB) for real-time inference. <strong>B</strong> uses the legacy client. <strong>C and D</strong> use a non-existent method (<code>sync_online</code>).</p>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CATEGORY 11: Identify the best practices of an MLOps strategy -->
+    <!-- ========================================== -->
+
+    <!-- Question 42 -->
+    <div class="question-card" id="q42">
+        <div class="subtopic">Question 42: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">Which of the following practices represents a core component of a mature MLOps strategy within a Databricks environment?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q42" value="A"><label>A) Promoting models directly from user workspaces to production without registering them in a central model registry.</label></li>
+            <li class="option"><input type="radio" name="q42" value="B"><label>B) Utilizing automated CI/CD pipelines to promote registered models across isolated dev, staging, and prod environments.</label></li>
+            <li class="option"><input type="radio" name="q42" value="C"><label>C) Storing all production model artifacts in localized temporary DBFS folders to minimize real-time serving latency.</label></li>
+            <li class="option"><input type="radio" name="q42" value="D"><label>D) Relying entirely on the manual execution of individual Databricks notebooks to retrain models on a weekly cadence.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q42', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Automated CI/CD promotion of models across isolated environments is a core tenet of mature Databricks MLOps. <strong>A</strong> is wrong because models should always go through Unity Catalog / Model Registry. <strong>C</strong> is wrong because artifacts must be managed centrally by MLflow, not stored in ephemeral or localized DBFS folders. <strong>D</strong> is wrong because relying on manual execution directly contradicts the automation principles of MLOps.</p>
+        </div>
+    </div>
+
+    <!-- Question 43 -->
+    <div class="question-card" id="q43">
+        <div class="subtopic">Question 43: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">According to Databricks MLOps best practices, how should a machine learning team ensure the absolute reproducibility of a production model?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q43" value="A"><label>A) By storing the model weights in a local DBFS folder and appending the timestamp to the resulting filename.</label></li>
+            <li class="option"><input type="radio" name="q43" value="B"><label>B) By tracking the code version, data version, and model hyperparameters centrally within an MLflow experiment run.</label></li>
+            <li class="option"><input type="radio" name="q43" value="C"><label>C) By exporting the model code as an HTML file and attaching it to the specific Unity Catalog model registry entry.</label></li>
+            <li class="option"><input type="radio" name="q43" value="D"><label>D) By manually logging the cluster configuration details in a shared workspace document for cross-team reference.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q43', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> True reproducibility requires tying the exact code (Git commit), the exact data (Delta table version), and the exact environment/hyperparameters together. MLflow tracking does exactly this automatically. <strong>A</strong> relies on fragile manual file management. <strong>C</strong> and <strong>D</strong> are disjointed, manual processes that violate MLOps automation principles.</p>
+        </div>
+    </div>
+
+    <!-- Question 44 -->
+    <div class="question-card" id="q44">
+        <div class="subtopic">Question 44: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">When migrating from the legacy workspace model registry to Unity Catalog, how are model deployment lifecycles best managed across environments?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q44" value="A"><label>A) By applying traditional workspace stage tags such as "Staging" and "Production" to the registered model versions.</label></li>
+            <li class="option"><input type="radio" name="q44" value="B"><label>B) By leveraging a multi-tiered catalog architecture (catalog.schema.model) to isolate dev, staging, and prod assets.</label></li>
+            <li class="option"><input type="radio" name="q44" value="C"><label>C) By mandating manual approvals from workspace administrators before updating any model versions to "Production".</label></li>
+            <li class="option"><input type="radio" name="q44" value="D"><label>D) By continuously replicating the unified model artifacts across isolated workspaces to ensure cross-environment sync.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q44', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> With the transition to Models in Unity Catalog, Databricks best practice dictates dropping the legacy MLflow stages ("Staging", "Production"). Instead, isolation is achieved natively using Unity Catalog's three-tier structure (e.g., deploying a model to a <code>prod</code> catalog vs a <code>dev</code> catalog). <strong>A</strong> describes the deprecated legacy workflow. <strong>C</strong> relies on manual steps rather than automated CI/CD. <strong>D</strong> violates Unity Catalog's central premise, which eliminates the need to physically replicate data/models across workspaces.</p>
+        </div>
+    </div>
+
+    <!-- Question 45 -->
+    <div class="question-card" id="q45">
+        <div class="subtopic">Question 45: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">Which approach strictly aligns with Databricks MLOps best practices for deploying real-time inference endpoints across different environments?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q45" value="A"><label>A) Manually updating a single production endpoint from a centralized notebook shared by multiple collaborative data scientists.</label></li>
+            <li class="option"><input type="radio" name="q45" value="B"><label>B) Utilizing Infrastructure as Code (IaC) or CI/CD pipelines to programmatically deploy and update serving endpoints.</label></li>
+            <li class="option"><input type="radio" name="q45" value="C"><label>C) Exporting the model artifacts locally and deploying them to standalone external Docker containers outside the workspace.</label></li>
+            <li class="option"><input type="radio" name="q45" value="D"><label>D) Registering the model in the legacy workspace registry and relying on the default automatic production endpoint updates.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q45', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> Best practices for MLOps dictate that infrastructure (like Model Serving endpoints) should be managed via automated CI/CD pipelines or Infrastructure as Code (e.g., Databricks Asset Bundles or Terraform). <strong>A</strong> relies on manual, error-prone processes. <strong>C</strong> abandons the managed Databricks Model Serving ecosystem entirely. <strong>D</strong> is false; Databricks does not automatically update live endpoints just because a model is registered.</p>
+        </div>
+    </div>
+
+    <!-- Question 46 -->
+    <div class="question-card" id="q46">
+        <div class="subtopic">Question 46: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">In a mature Unity Catalog-based MLOps architecture, how should a machine learning model logically move from the staging phase to the production phase?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q46" value="A"><label>A) By physically downloading the MLflow artifacts from the staging workspace and manually uploading them to production.</label></li>
+            <li class="option"><input type="radio" name="q46" value="B"><label>B) By copying or registering the newly validated model version directly into a dedicated production catalog namespace.</label></li>
+            <li class="option"><input type="radio" name="q46" value="C"><label>C) By applying a "Production" stage tag to the existing model version located within the legacy workspace model registry.</label></li>
+            <li class="option"><input type="radio" name="q46" value="D"><label>D) By permanently deleting the model from the staging environment before retraining it entirely from scratch in production.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q46', 'B')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: B</h4>
+            <p><strong>Explanation:</strong> With Models in Unity Catalog, environment separation is handled at the catalog level (e.g., <code>dev.models.churn_model</code> vs <code>prod.models.churn_model</code>). Promoting a model means registering/copying it into the production catalog via automated CI/CD pipelines. <strong>C</strong> describes the deprecated Workspace Model Registry workflow. <strong>A</strong> and <strong>D</strong> are manual, anti-MLOps practices that risk introducing inconsistencies.</p>
+        </div>
+    </div>
+
+    <!-- Question 47 -->
+    <div class="question-card" id="q47">
+        <div class="subtopic">Question 47: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">How does Databricks Asset Bundles (DABs) support MLOps best practices when deploying machine learning workflows across dev, staging, and production environments?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q47" value="A"><label>A) By defining infrastructure, code, and training pipelines as declarative configuration files that can be version-controlled and deployed automatically.</label></li>
+            <li class="option"><input type="radio" name="q47" value="B"><label>B) By automatically converting single-node scikit-learn models into distributed PySpark pipelines prior to registering them in Unity Catalog.</label></li>
+            <li class="option"><input type="radio" name="q47" value="C"><label>C) By physically replicating underlying Delta Lake feature tables across all workspace storage accounts to eliminate cross-region network latency.</label></li>
+            <li class="option"><input type="radio" name="q47" value="D"><label>D) By executing interactive notebook cells in real time across multiple target workspaces simultaneously to verify code execution parity.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q47', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Databricks Asset Bundles (DABs) embody Infrastructure-as-Code (IaC) principles for Databricks projects. They allow data teams to define resources, code, MLflow experiments, and job workflows in YAML files, enabling reliable, automated deployment across dev, staging, and production environments via CI/CD. <strong>B, C, and D</strong> describe incorrect, non-existent, or manual features.</p>
+        </div>
+    </div>
+
+    <!-- Question 48 -->
+    <div class="question-card" id="q48">
+        <div class="subtopic">Question 48: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">What is the Databricks recommended best practice for monitoring production model performance and detecting data drift in Unity Catalog?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q48" value="A"><label>A) Creating a Databricks Lakehouse Monitor on the inference table to automatically calculate data drift and quality metrics.</label></li>
+            <li class="option"><input type="radio" name="q48" value="B"><label>B) Executing custom cron jobs in interactive notebooks that query raw MLflow log files once every 24 hours.</label></li>
+            <li class="option"><input type="radio" name="q48" value="C"><label>C) Writing custom Spark Streaming jobs that compare live request payloads against local static CSV benchmark files.</label></li>
+            <li class="option"><input type="radio" name="q48" value="D"><label>D) Relying on automated alerts built into the legacy workspace model registry to trigger retraining notifications.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q48', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Databricks Lakehouse Monitoring is the native solution for tracking quality, data drift, and model performance metrics directly on inference tables logged in Unity Catalog. <strong>B and C</strong> involve manual, custom code maintenance. <strong>D</strong> relies on the legacy workspace registry, which does not provide native continuous drift detection.</p>
+        </div>
+    </div>
+
+    <!-- Question 49 -->
+    <div class="question-card" id="q49">
+        <div class="subtopic">Question 49: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">How are model "Stages" (e.g., Staging, Production) handled when utilizing models registered within Unity Catalog?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q49" value="A"><label>A) Model stages are replaced by Model Aliases, allowing teams to assign custom labels like "champion" to versions.</label></li>
+            <li class="option"><input type="radio" name="q49" value="B"><label>B) Model stages are replaced by mandatory SQL Tags that must be manually applied via the Unity Catalog UI.</label></li>
+            <li class="option"><input type="radio" name="q49" value="C"><label>C) Model stages are identical to the legacy registry and function exactly the same across all UC catalogs.</label></li>
+            <li class="option"><input type="radio" name="q49" value="D"><label>D) Model stages are automatically determined by the inference volume tracked by Databricks Lakehouse Monitor.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q49', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> In Unity Catalog, the legacy concept of "Stages" is deprecated. Instead, Databricks introduces <strong>Model Aliases</strong> (and tags). Aliases allow you to point a label like "@prod" to a specific version, making it easier to update production models without changing deployment code. <strong>C</strong> is wrong because UC models do not support legacy stages.</p>
+        </div>
+    </div>
+
+    <!-- Question 50 -->
+    <div class="question-card" id="q50">
+        <div class="subtopic">Question 50: Identify the best practices of an MLOps strategy</div>
+        <div class="stem">In a production MLOps pipeline, what is the best practice for managing sensitive credentials like API keys for model deployment?</div>
+        <ul class="options">
+            <li class="option"><input type="radio" name="q50" value="A"><label>A) Storing the credentials in Databricks Secrets and retrieving them via <code>dbutils.secrets.get()</code> in the pipeline.</label></li>
+            <li class="option"><input type="radio" name="q50" value="B"><label>B) Storing the credentials as plain-text environment variables in the Databricks cluster configuration settings.</label></li>
+            <li class="option"><input type="radio" name="q50" value="C"><label>C) Hardcoding the credentials into the MLflow model flavor's metadata to ensure they travel with the model.</label></li>
+            <li class="option"><input type="radio" name="q50" value="D"><label>D) Passing the credentials as command-line arguments when triggering the automated CI/CD deployment job.</label></li>
+        </ul>
+        <div class="actions">
+            <button class="btn" onclick="checkAnswer('q50', 'A')">Check Answer</button>
+        </div>
+        <div class="explanation">
+            <h4>Correct Answer: A</h4>
+            <p><strong>Explanation:</strong> Security best practices dictate using the <strong>Databricks Secrets</strong> utility. This prevents credentials from being exposed in code or UI logs. <strong>B, C, and D</strong> all risk exposing secrets in version control, logs, or metadata, which is a major security risk.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function checkAnswer(questionId, correctOptionValue) {
+        const qDiv = document.getElementById(questionId);
+        const selected = qDiv.querySelector(`input[name="${questionId}"]:checked`);
+        
+        if (!selected) {
+            alert("Please select an option before checking your answer.");
+            return;
+        }
+
+        const options = qDiv.querySelectorAll('.option');
+        // Reset styles
+        options.forEach(opt => {
+            opt.classList.remove('correct', 'wrong');
+        });
+
+        // Apply styles
+        options.forEach(opt => {
+            const input = opt.querySelector('input');
+            if (input.value === correctOptionValue) {
+                opt.classList.add('correct');
+            } else if (input.checked && input.value !== correctOptionValue) {
+                opt.classList.add('wrong');
+            }
+        });
+
+        // Show explanation
+        const explanation = qDiv.querySelector('.explanation');
+        explanation.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
