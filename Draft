@@ -1,0 +1,6 @@
+- Version everything: code, data, models, and configurations
+- Automate pipelines: training, validation, and deployment should be repeatable
+- Monitor in production: track data drift, model performance degradation
+- Separate environments: dev/staging/prod with promotion gates
+- Reproducibility: any model should be retrainable from logged params + data version
+- Governance: access control, lineage tracking, audit trails (Unity Catalog)
